@@ -1,7 +1,6 @@
 package com.example.foglalo;
 
 import java.time.*;
-import java.time.format.*;
 
 public class Foglalas implements iDateFormatting{
     private String foglaloNev, foglaloTSzam;
@@ -9,10 +8,10 @@ public class Foglalas implements iDateFormatting{
     private LocalDateTime idopont;
 
     public Foglalas(String foglaloNev, String foglaloTSzam, int asztalId, String formattedIdopont)
-    {   this.foglaloNev = foglaloNev;
-        this.foglaloTSzam = foglaloTSzam;
-        this.asztalId = asztalId;
-        this.idopont = LocalDateTime.parse(formattedIdopont, dtf);
+    {   this.setFoglaloNev(foglaloNev);
+        this.setFoglaloTSzam(foglaloTSzam);
+        this.setAsztalId(asztalId);
+        this.setIdopont(LocalDateTime.parse(formattedIdopont, dtf));
     }
 
     public String getFoglaloNev() {
@@ -39,12 +38,21 @@ public class Foglalas implements iDateFormatting{
         this.asztalId = asztalId;
     }
 
-    public LocalDateTime getIdopont() {
-        return idopont;
+    public String getIdopont() {
+        return dtf.format(idopont);
     }
 
     public void setIdopont(LocalDateTime idopont) {
         this.idopont = idopont;
     }
 
+    @Override
+    public String toString() {
+        return "Foglalas{" +
+                "foglaloNev='" + this.getFoglaloNev() + '\'' +
+                ", foglaloTSzam='" + this.getFoglaloTSzam() + '\'' +
+                ", asztalId=" + this.getAsztalId() +
+                ", idopont=" + this.getIdopont() +
+                '}';
+    }
 }
