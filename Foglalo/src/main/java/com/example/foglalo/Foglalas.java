@@ -7,7 +7,7 @@ public class Foglalas implements iDateFormatting{
     private int asztalId;
     private LocalDateTime idopont;
 
-    public Foglalas(String foglaloNev, String foglaloTSzam, int asztalId, String formattedIdopont)
+    public Foglalas(String foglaloNev, String foglaloTSzam, int asztalId, String formattedIdopont) throws OldDateException
     {   this.setFoglaloNev(foglaloNev);
         this.setFoglaloTSzam(foglaloTSzam);
         this.setAsztalId(asztalId);
@@ -42,7 +42,10 @@ public class Foglalas implements iDateFormatting{
         return dtf.format(idopont);
     }
 
-    public void setIdopont(LocalDateTime idopont) {
+    public void setIdopont(LocalDateTime idopont) throws OldDateException{
+        if (idopont.isBefore(LocalDateTime.now())){
+            throw new OldDateException("A past date can't be set as reservation!");
+        }
         this.idopont = idopont;
     }
 
