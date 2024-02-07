@@ -1,14 +1,12 @@
 package com.example.foglalo;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-import java.io.IOException;
 
 public class MainWindowController implements iDateFormatting {
     public FlowPane foglalasokFlowPane;
@@ -16,7 +14,41 @@ public class MainWindowController implements iDateFormatting {
     private TextField foglaloNev, tSzam, asztalId, idopont;
     @FXML
     private Label feedBackLabel;
+    private void generateFogalalasPane(Foglalas f){
+        AnchorPane foglalasPane = new AnchorPane();
+        foglalasPane.setPrefWidth(305.0);
+        foglalasPane.setMinWidth(305.0);
+        String[] datumIdo = f.getIdopont().split(" ");
 
+        Label name = new Label(f.getFoglaloNev()),
+                asztalLabel = new Label("Asztal:"),
+                asztalID = new Label(String.valueOf(f.getAsztalId())),
+                emberSzam = new Label("X fő"),
+                telLabel = new Label("Tel.:"),
+                tel = new Label(f.getFoglaloTSzam()),
+                datum = new Label(datumIdo[0]),
+                ido=new Label(datumIdo[1]);
+
+        name.setLayoutX(14.0);
+        name.setLayoutY(14.0);
+        asztalLabel.setLayoutX(14.0);
+        asztalLabel.setLayoutY(38.0);
+        asztalID.setLayoutX(52.0);
+        asztalID.setLayoutY(38.0);
+        emberSzam.setLayoutX(106.0);
+        emberSzam.setLayoutY(38.0);
+        telLabel.setLayoutX(14.0);
+        telLabel.setLayoutY(65.0);
+        tel.setLayoutX(38.0);
+        tel.setLayoutY(65.0);
+        datum.setLayoutX(229.0);
+        datum.setLayoutY(14.0);
+        ido.setLayoutX(229.0);
+        ido.setLayoutY(30.0);
+
+        foglalasPane.getChildren().addAll(name,asztalLabel,asztalID,emberSzam,telLabel,tel,datum,ido);
+        foglalasokFlowPane.getChildren().add(foglalasPane);
+    }
 
     @FXML
     protected void onSubmitButtonClicked(){
@@ -27,11 +59,7 @@ public class MainWindowController implements iDateFormatting {
             System.out.println(f);
             feedBackLabel.setText("Success!");
             feedBackLabel.setTextFill(Color.GREEN);
-            try {
-                foglalasokFlowPane.getChildren().add(FXMLLoader.load(getClass().getResource("FoglalasBox.fxml")));
-            }catch (IOException ioe){
-                System.out.println(ioe.getMessage());
-            }
+            generateFogalalasPane(f);
         }catch (OldDateException ode){
             feedBackLabel.setText(ode.toString());
             feedBackLabel.setTextFill(Color.RED);
