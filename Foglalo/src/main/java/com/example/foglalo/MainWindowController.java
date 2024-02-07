@@ -5,12 +5,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;
 
-public class HelloController implements iDateFormatting {
+public class MainWindowController implements iDateFormatting {
     public FlowPane foglalasokFlowPane;
     @FXML
     private TextField foglaloNev, tSzam, asztalId, idopont;
@@ -19,7 +18,7 @@ public class HelloController implements iDateFormatting {
 
     @FXML
     protected void onSubmitButtonClicked(){
-        Foglalas f=null;
+        Foglalas f;
 
         try {
             f = new Foglalas(foglaloNev.getText(),tSzam.getText(),Integer.parseInt(asztalId.getText()),idopont.getText());
@@ -29,7 +28,7 @@ public class HelloController implements iDateFormatting {
             try {
                 foglalasokFlowPane.getChildren().add(FXMLLoader.load(getClass().getResource("FoglalasBox.fxml")));
             }catch (IOException ioe){
-                System.out.println("Oh shit");
+                System.out.println(ioe.getMessage());
             }
         }catch (OldDateException ode){
             feedBackLabel.setText(ode.toString());
