@@ -4,14 +4,26 @@ import java.time.*;
 
 public class Foglalas implements iDateFormatting{
     private String foglaloNev, foglaloTSzam;
-    private int asztalId;
+    private int asztalId, emberSzam;
     private LocalDateTime idopont;
 
-    public Foglalas(String foglaloNev, String foglaloTSzam, int asztalId, String formattedIdopont) throws OldDateException
+    public Foglalas(String foglaloNev, String foglaloTSzam,int emberSzam, int asztalId, String formattedIdopont) throws OldDateException, IllegalArgumentException
     {   this.setFoglaloNev(foglaloNev);
         this.setFoglaloTSzam(foglaloTSzam);
+        this.setEmberSzam(emberSzam);
         this.setAsztalId(asztalId);
         this.setIdopont(LocalDateTime.parse(formattedIdopont, dtf));
+    }
+
+    public int getEmberSzam() {
+        return emberSzam;
+    }
+
+    public void setEmberSzam(int emberszam) throws IllegalArgumentException{
+        if (emberszam<1){
+            throw new IllegalArgumentException("Az fők száma nem lehet kisebb mint 1!");
+        }
+        this.emberSzam = emberszam;
     }
 
     public String getFoglaloNev() {

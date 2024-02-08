@@ -3,27 +3,28 @@ package com.example.foglalo;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 
 public class MainWindowController implements iDateFormatting {
     public FlowPane foglalasokFlowPane;
     @FXML
-    private TextField foglaloNev, tSzam, asztalId, idopont;
+    private TextField foglaloNev, tSzam, emberSzam, asztalId, idopont;
     @FXML
     private Label feedBackLabel;
     private void generateFogalalasPane(Foglalas f){
         AnchorPane foglalasPane = new AnchorPane();
         foglalasPane.setPrefWidth(305.0);
         foglalasPane.setMinWidth(305.0);
+
+        foglalasPane.setStyle("-fx-border-color: black; -fx-border-width: 2px; -fx-border-radius: 5px");
         String[] datumIdo = f.getIdopont().split(" ");
 
         Label name = new Label(f.getFoglaloNev()),
                 asztalLabel = new Label("Asztal:"),
                 asztalID = new Label(String.valueOf(f.getAsztalId())),
-                emberSzam = new Label("X fő"),
+                emberSzam = new Label(f.getEmberSzam()+" fő"),
                 telLabel = new Label("Tel.:"),
                 tel = new Label(f.getFoglaloTSzam()),
                 datum = new Label(datumIdo[0]),
@@ -55,7 +56,7 @@ public class MainWindowController implements iDateFormatting {
         Foglalas f;
 
         try {
-            f = new Foglalas(foglaloNev.getText(),tSzam.getText(),Integer.parseInt(asztalId.getText()),idopont.getText());
+            f = new Foglalas(foglaloNev.getText(),tSzam.getText(),Integer.parseInt(emberSzam.getText()),Integer.parseInt(asztalId.getText()),idopont.getText());
             System.out.println(f);
             feedBackLabel.setText("Success!");
             feedBackLabel.setTextFill(Color.GREEN);
