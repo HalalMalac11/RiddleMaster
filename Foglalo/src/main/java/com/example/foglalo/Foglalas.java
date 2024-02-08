@@ -1,13 +1,14 @@
 package com.example.foglalo;
 
 import java.time.*;
+import java.time.format.DateTimeParseException;
 
 public class Foglalas implements iDateFormatting{
     private String foglaloNev, foglaloTSzam;
     private int asztalId, emberSzam;
     private LocalDateTime idopont;
 
-    public Foglalas(String foglaloNev, String foglaloTSzam,int emberSzam, int asztalId, String formattedIdopont) throws OldDateException, IllegalArgumentException
+    public Foglalas(String foglaloNev, String foglaloTSzam,int emberSzam, int asztalId, String formattedIdopont) throws OldDateException, IllegalArgumentException, InvalidTimeException
     {   this.setFoglaloNev(foglaloNev);
         this.setFoglaloTSzam(foglaloTSzam);
         this.setEmberSzam(emberSzam);
@@ -54,9 +55,9 @@ public class Foglalas implements iDateFormatting{
         return dtf.format(idopont);
     }
 
-    public void setIdopont(LocalDateTime idopont) throws OldDateException{
+    public void setIdopont(LocalDateTime idopont) throws OldDateException,InvalidTimeException{
         if (idopont.isBefore(LocalDateTime.now())){
-            throw new OldDateException("A past date can't be set as reservation!");
+            throw new OldDateException("Egy múltbéli dátumra nem lehet foglalni!");
         }
         this.idopont = idopont;
     }
