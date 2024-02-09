@@ -55,7 +55,7 @@ public class Foglalas implements iDateFormatting{
         return dtf.format(idopont);
     }
 
-    public void setIdopont(LocalDateTime idopont) throws OldDateException,InvalidTimeException{
+    public void setIdopont(LocalDateTime idopont) throws OldDateException{
         if (idopont.isBefore(LocalDateTime.now())){
             throw new OldDateException("Egy múltbéli dátumra nem lehet foglalni!");
         }
