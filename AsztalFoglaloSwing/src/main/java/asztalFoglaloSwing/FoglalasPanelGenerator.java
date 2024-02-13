@@ -1,4 +1,4 @@
-package com.mycompany.asztalfoglaloswing;
+package asztalFoglaloSwing;
 
 import javax.swing.JPanel;
 

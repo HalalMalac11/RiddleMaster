@@ -1,6 +1,4 @@
-package com.mycompany.asztalfoglaloswing;
-
-import javafx.scene.layout.AnchorPane;
+package asztalFoglaloSwing;
 
 import java.util.ArrayList;
 import javax.swing.JPanel;

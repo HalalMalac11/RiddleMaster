@@ -1,4 +1,4 @@
-package com.mycompany.asztalfoglaloswing;
+package asztalFoglaloSwing;
 
 import java.time.*;
 import java.time.format.DateTimeParseException;

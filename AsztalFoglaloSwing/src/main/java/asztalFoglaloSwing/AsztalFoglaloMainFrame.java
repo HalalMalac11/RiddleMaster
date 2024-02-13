@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.asztalfoglaloswing;
+package asztalFoglaloSwing;
 
-import com.example.foglalo.InvalidTimeException;
-import com.example.foglalo.OldDateException;
 import java.awt.Color;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import javax.swing.JPanel;
+import asztalFoglaloSwing.InvalidTimeException;
+import asztalFoglaloSwing.OldDateException;
 /**
  *
  * @author Kiss Márton
