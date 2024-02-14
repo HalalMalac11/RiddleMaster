@@ -64,11 +64,6 @@ public class Foglalas implements iDateFormatting{
 
     @Override
     public String toString() {
-        return "Foglalas{" +
-                "foglaloNev='" + this.getFoglaloNev() + '\'' +
-                ", foglaloTSzam='" + this.getFoglaloTSzam() + '\'' +
-                ", asztalId=" + this.getAsztalId() +
-                ", idopont=" + this.getIdopont() +
-                '}';
+        return getFoglaloNev()+" "+getIdopont();
     }
 }
