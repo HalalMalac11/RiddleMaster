@@ -1,4 +1,4 @@
-package com.mycompany.asztalfoglaloswing;
+package asztalFoglaloSwing;
 
 public class OldDateException extends Exception{
     public OldDateException(String message) {

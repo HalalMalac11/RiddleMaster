@@ -1,6 +1,4 @@
-package com.mycompany.asztalfoglaloswing;
-
-import javafx.util.converter.LocalDateStringConverter;
+package asztalFoglaloSwing;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
