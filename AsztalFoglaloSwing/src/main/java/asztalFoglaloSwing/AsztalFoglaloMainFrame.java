@@ -168,6 +168,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
+                                                    
         Foglalas f;
 
         try {
@@ -176,10 +177,13 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 throw new InvalidTimeException("Inavlid időpont");
             }
             f = new Foglalas(foglaloNev.getText(),tSzam.getText(),Integer.parseInt(emberSzam.getText()),Integer.parseInt(asztalId.getText()),new String(datum.getText()+" "+idopont.getText()+":00"));
-            System.out.println(f);
-            feedBackLabel.setText("Success!");
-            feedBackLabel.setForeground(Color.green);
-            foglalasokLista.addElement(f);
+            if(addFoglalas(f)){
+                feedBackLabel.setText("Sikeres hozzáadás!");
+                feedBackLabel.setForeground(Color.green);
+            }else{
+                feedBackLabel.setText("A hozzáadás sikertelen!");
+                feedBackLabel.setForeground(Color.red);
+            }
         }catch (OldDateException ode){
             feedBackLabel.setText(ode.toString());
             feedBackLabel.setForeground(Color.red);
@@ -189,31 +193,51 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         }catch (IllegalArgumentException iae){
             feedBackLabel.setText(iae.toString());
             feedBackLabel.setForeground(Color.red);
+        } catch (SQLException sqle) {
+            JOptionPane.showMessageDialog(errorFrame,sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
         }
+        
     }//GEN-LAST:event_submitButtonActionPerformed
 
     private void loadListFromDB() throws SQLException{
+        foglalasokLista.clear();
         String todaysDateTime=dtf.format(LocalDateTime.now());
         String sql="SELECT * FROM `foglalasok` WHERE `idopont`>'"+todaysDateTime+"' ORDER BY `idopont`;";
         Statement stmt= con.createStatement();
-        stmt.execute(sql);
-        ResultSet rs = stmt.getResultSet();
-        Foglalas f;
-        while(rs.next()){
-            try {
-                f= new Foglalas(rs.getString(2),rs.getString(3),rs.getInt(4),rs.getInt(5),rs.getString(6));
-                foglalasokLista.addElement(f);
-            } catch (OldDateException ode) {
-                JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ode.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
-            } catch (IllegalArgumentException iae) {
-                JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+iae.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
-            } catch (InvalidTimeException ite) {
-                JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ite.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
+        if(stmt.execute(sql)){
+            ResultSet rs = stmt.getResultSet();
+            Foglalas f;
+            while(rs.next()){
+                try {
+                    f= new Foglalas(rs.getString(2),rs.getString(3),rs.getInt(4),rs.getInt(5),rs.getString(6));
+                    foglalasokLista.addElement(f);
+                } catch (OldDateException ode) {
+                    JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ode.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+                } catch (IllegalArgumentException iae) {
+                    JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+iae.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+                } catch (InvalidTimeException ite) {
+                    JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ite.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+                }
             }
         }
+    }
+    
+    public boolean addFoglalas(Foglalas f) throws SQLException{
+        String sql="INSERT INTO "+
+                "`foglalasok` (`id`, `foglalo_nev`, `foglalo_telszam`, `csoport_meret`, `asztal_id`, `idopont`) "+
+                "VALUES "+
+                "(NULL, '"+f.getFoglaloNev()+"', '"+f.getFoglaloTSzam()+"', '"+f.getEmberSzam()+"', '"+f.getAsztalId()+"', '"+f.getIdopont()+"');";
+        Statement stmt= con.createStatement();
+        stmt.execute(sql);
+        boolean success=stmt.getUpdateCount()==1;
+        if(success){
+            loadListFromDB();
+        }
+        return success;
     }
     /**
      * @param args the command line arguments
