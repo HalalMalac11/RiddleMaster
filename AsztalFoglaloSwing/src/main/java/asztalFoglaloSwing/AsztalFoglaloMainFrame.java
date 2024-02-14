@@ -11,20 +11,34 @@ import java.time.LocalDateTime;
 import javax.swing.JPanel;
 import asztalFoglaloSwing.InvalidTimeException;
 import asztalFoglaloSwing.OldDateException;
+import static asztalFoglaloSwing.iDateFormatting.dtf;
 import javax.swing.DefaultListModel;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Kiss Márton
  */
 public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private final FoglalasPanelGenerator fpg = new FoglalasPanelGenerator();
-    private final FoglalasPanelList fpl= new FoglalasPanelList();
     private DefaultListModel<Foglalas> foglalasokLista;
+    private Connection con;
+    private JFrame errorFrame= new JFrame();
     /**
      * Creates new form AsztalFoglaloMainFrame
      */
     public AsztalFoglaloMainFrame() {
         foglalasokLista= new DefaultListModel<Foglalas>();
+        try {
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/foglalas","foglalas_kezelo","4N6jqhr7dnwCACRI");
+            loadListFromDB();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(errorFrame,"Sikertelen adatbázis kapcsolódás!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        }
         initComponents();
     }
 
@@ -166,8 +180,6 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             feedBackLabel.setText("Success!");
             feedBackLabel.setForeground(Color.green);
             foglalasokLista.addElement(f);
-            JPanel ujPanel = fpg.generateFogalalasPanel(f, fpl.getSize());
-            fpl.addPanel(ujPanel);
         }catch (OldDateException ode){
             feedBackLabel.setText(ode.toString());
             feedBackLabel.setForeground(Color.red);
@@ -180,6 +192,29 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_submitButtonActionPerformed
 
+    private void loadListFromDB() throws SQLException{
+        String todaysDateTime=dtf.format(LocalDateTime.now());
+        String sql="SELECT * FROM `foglalasok` WHERE `idopont`>'"+todaysDateTime+"' ORDER BY `idopont`;";
+        Statement stmt= con.createStatement();
+        stmt.execute(sql);
+        ResultSet rs = stmt.getResultSet();
+        Foglalas f;
+        while(rs.next()){
+            try {
+                f= new Foglalas(rs.getString(2),rs.getString(3),rs.getInt(4),rs.getInt(5),rs.getString(6));
+                foglalasokLista.addElement(f);
+            } catch (OldDateException ode) {
+                JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ode.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+            } catch (IllegalArgumentException iae) {
+                JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+iae.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+            } catch (InvalidTimeException ite) {
+                JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ite.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+            }
+        }
+    }
     /**
      * @param args the command line arguments
      */
