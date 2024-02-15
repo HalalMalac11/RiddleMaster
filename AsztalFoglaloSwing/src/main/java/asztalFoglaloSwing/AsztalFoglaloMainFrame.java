@@ -42,6 +42,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             System.exit(0);
         }
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**
@@ -71,6 +72,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         jList3 = new javax.swing.JList<Foglalas>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Asztal foglalas");
         setResizable(false);
 
         submitButton.setText("Létrhoz");
@@ -207,7 +209,6 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
 
     private void loadListFromDB() throws SQLException, ClassNotFoundException{
         foglalasokLista.clear();
-        //Class.forName("com.mysql.cj.jdbc.Driver");
         Connection con = DriverManager.getConnection(dbURL,dbUser,dbPass);
         String todaysDateTime=dtf.format(LocalDateTime.now());
         String sql="SELECT * FROM `foglalasok` WHERE `idopont`>'"+todaysDateTime+"' ORDER BY `idopont`;";
@@ -219,14 +220,8 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 try {
                     f= new Foglalas(rs.getString(2),rs.getString(3),rs.getInt(4),rs.getInt(5),rs.getString(6));
                     foglalasokLista.addElement(f);
-                } catch (OldDateException ode) {
-                    JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ode.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
-                System.exit(0);
-                } catch (IllegalArgumentException iae) {
-                    JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+iae.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
-                System.exit(0);
-                } catch (InvalidTimeException ite) {
-                    JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ite.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+                } catch (OldDateException | IllegalArgumentException | InvalidTimeException ex) {
+                    JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
                 System.exit(0);
                 }
             }
@@ -235,7 +230,11 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     }
     
     public boolean addFoglalas(Foglalas f) throws SQLException, ClassNotFoundException{
-        //Class.forName("com.mysql.cj.jdbc.Driver");
+        for (int i = 0; i < foglalasokLista.getSize(); i++) {
+            if(foglalasokLista.get(i).getIdopont().equals(f.getIdopont())){
+                return false;
+            }
+        }
         Connection con = DriverManager.getConnection(dbURL,dbUser,dbPass);
         String sql="INSERT INTO "+
                 "`foglalasok` (`id`, `foglalo_nev`, `foglalo_telszam`, `csoport_meret`, `asztal_id`, `idopont`) "+
