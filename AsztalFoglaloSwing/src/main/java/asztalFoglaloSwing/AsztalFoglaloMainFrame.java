@@ -24,8 +24,8 @@ import javax.swing.JOptionPane;
  */
 public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private final FoglalasPanelGenerator fpg = new FoglalasPanelGenerator();
+    private final String dbURL="jdbc:mysql://localhost:3306/foglalas",dbUser="foglalas_kezelo",dbPass="4N6jqhr7dnwCACRI";
     private DefaultListModel<Foglalas> foglalasokLista;
-    private Connection con;
     private JFrame errorFrame= new JFrame();
     /**
      * Creates new form AsztalFoglaloMainFrame
@@ -33,10 +33,12 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     public AsztalFoglaloMainFrame() {
         foglalasokLista= new DefaultListModel<Foglalas>();
         try {
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/foglalas","foglalas_kezelo","4N6jqhr7dnwCACRI");
             loadListFromDB();
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(errorFrame,"Sikertelen adatbázis kapcsolódás!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException sqle) {
+            JOptionPane.showMessageDialog(errorFrame,"Sikertelen adatbázis kapcsolódás!\n"+sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        } catch (ClassNotFoundException cnfe) {
+            JOptionPane.showMessageDialog(errorFrame,"Sikertelen driver betöltés!\n"+cnfe,"Hiba!",JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
         initComponents();
@@ -196,12 +198,17 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         } catch (SQLException sqle) {
             JOptionPane.showMessageDialog(errorFrame,sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
             System.exit(0);
+        } catch (ClassNotFoundException cnfe) {
+            JOptionPane.showMessageDialog(errorFrame,"Sikertelen driver betöltés!\n"+cnfe,"Hiba!",JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
         }
         
     }//GEN-LAST:event_submitButtonActionPerformed
 
-    private void loadListFromDB() throws SQLException{
+    private void loadListFromDB() throws SQLException, ClassNotFoundException{
         foglalasokLista.clear();
+        //Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection con = DriverManager.getConnection(dbURL,dbUser,dbPass);
         String todaysDateTime=dtf.format(LocalDateTime.now());
         String sql="SELECT * FROM `foglalasok` WHERE `idopont`>'"+todaysDateTime+"' ORDER BY `idopont`;";
         Statement stmt= con.createStatement();
@@ -224,9 +231,12 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 }
             }
         }
+        con.close();
     }
     
-    public boolean addFoglalas(Foglalas f) throws SQLException{
+    public boolean addFoglalas(Foglalas f) throws SQLException, ClassNotFoundException{
+        //Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection con = DriverManager.getConnection(dbURL,dbUser,dbPass);
         String sql="INSERT INTO "+
                 "`foglalasok` (`id`, `foglalo_nev`, `foglalo_telszam`, `csoport_meret`, `asztal_id`, `idopont`) "+
                 "VALUES "+
@@ -234,6 +244,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         Statement stmt= con.createStatement();
         stmt.execute(sql);
         boolean success=stmt.getUpdateCount()==1;
+        con.close();
         if(success){
             loadListFromDB();
         }
