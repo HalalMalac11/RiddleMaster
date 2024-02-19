@@ -51,9 +51,14 @@ public class Foglalas implements iDateFormatting{
         this.asztalId = asztalId;
     }
 
-    public String getIdopont() {
+    public String getIdopontString() {
         return dtf.format(idopont);
     }
+
+    public LocalDateTime getIdopont() {
+        return idopont;
+    }
+    
 
     public void setIdopont(LocalDateTime idopont) throws OldDateException{
         if (idopont.isBefore(LocalDateTime.now())){
@@ -64,6 +69,6 @@ public class Foglalas implements iDateFormatting{
 
     @Override
     public String toString() {
-        return getFoglaloNev()+" "+getIdopont();
+        return getFoglaloNev()+" "+getIdopontString();
     }
 }

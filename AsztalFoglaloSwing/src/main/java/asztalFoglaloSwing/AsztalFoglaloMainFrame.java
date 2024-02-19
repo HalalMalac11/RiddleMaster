@@ -231,7 +231,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     
     public boolean addFoglalas(Foglalas f) throws SQLException, ClassNotFoundException{
         for (int i = 0; i < foglalasokLista.getSize(); i++) {
-            if(foglalasokLista.get(i).getIdopont().equals(f.getIdopont())){
+            if(foglalasokLista.get(i).getIdopontString().equals(f.getIdopontString())){
                 return false;
             }
         }
@@ -239,7 +239,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         String sql="INSERT INTO "+
                 "`foglalasok` (`id`, `foglalo_nev`, `foglalo_telszam`, `csoport_meret`, `asztal_id`, `idopont`) "+
                 "VALUES "+
-                "(NULL, '"+f.getFoglaloNev()+"', '"+f.getFoglaloTSzam()+"', '"+f.getEmberSzam()+"', '"+f.getAsztalId()+"', '"+f.getIdopont()+"');";
+                "(NULL, '"+f.getFoglaloNev()+"', '"+f.getFoglaloTSzam()+"', '"+f.getEmberSzam()+"', '"+f.getAsztalId()+"', '"+f.getIdopontString()+"');";
         Statement stmt= con.createStatement();
         stmt.execute(sql);
         boolean success=stmt.getUpdateCount()==1;
@@ -249,9 +249,15 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         }
         return success;
     }
-    /**
-     * @param args the command line arguments
-     */
+    
+    public boolean canBeReserved(LocalDateTime foglalasIdo)
+    {
+        for (int i = 0; i < foglalasokLista.getSize(); i++) {
+            LocalDateTime marFoglaltIdo = foglalasokLista.get(i).getIdopont();
+            
+        }
+    }
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
