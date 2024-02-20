@@ -6,14 +6,15 @@ import java.time.format.DateTimeParseException;
 public class Foglalas implements iDateFormatting{
     private String foglaloNev, foglaloTSzam;
     private int asztalId, emberSzam;
-    private LocalDateTime idopont;
+    private LocalDateTime idopontKezd, idopontVeg;
 
-    public Foglalas(String foglaloNev, String foglaloTSzam,int emberSzam, int asztalId, String formattedIdopont) throws OldDateException, IllegalArgumentException, InvalidTimeException
+    public Foglalas(String foglaloNev, String foglaloTSzam,int emberSzam, int asztalId, String formattedIdopontKezd, String formattedIdopontVeg) throws OldDateException, IllegalArgumentException, InvalidTimeException
     {   this.setFoglaloNev(foglaloNev);
         this.setFoglaloTSzam(foglaloTSzam);
         this.setEmberSzam(emberSzam);
         this.setAsztalId(asztalId);
-        this.setIdopont(LocalDateTime.parse(formattedIdopont, dtf));
+        this.setIdopontKezd(LocalDateTime.parse(formattedIdopontKezd, dtf));
+        this.setIdopontVeg(LocalDateTime.parse(formattedIdopontVeg, dtf));
     }
 
     public int getEmberSzam() {
@@ -51,24 +52,42 @@ public class Foglalas implements iDateFormatting{
         this.asztalId = asztalId;
     }
 
-    public String getIdopontString() {
-        return dtf.format(idopont);
+    public String getIdopontKezdString() {
+        return dtf.format(idopontKezd);
     }
 
-    public LocalDateTime getIdopont() {
-        return idopont;
+    public LocalDateTime getIdopontKezd() {
+        return idopontKezd;
     }
     
-
-    public void setIdopont(LocalDateTime idopont) throws OldDateException{
-        if (idopont.isBefore(LocalDateTime.now())){
+    public void setIdopontKezd(LocalDateTime idopontKezd) throws OldDateException{
+        if (idopontKezd.isBefore(LocalDateTime.now())){
             throw new OldDateException("Egy múltbéli dátumra nem lehet foglalni!");
         }
-        this.idopont = idopont;
+        this.idopontKezd = idopontKezd;
+    }
+    
+    public String getIdopontVegString() {
+        return dtf.format(idopontVeg);
+    }
+    
+    public LocalDateTime getIdopontVeg() {
+        return idopontVeg;
+    }
+
+    public void setIdopontVeg(LocalDateTime idopontVeg) throws OldDateException{
+        if (idopontVeg.isBefore(this.getIdopontKezd())){
+            throw new OldDateException("Az időpontnak nem lehet vége mielőtt elkezdődik!");
+        }
+        this.idopontVeg = idopontVeg;
+    }
+    
+    public String getIdoIntervallumString(){
+        return ""+this.getIdopontKezdString()+" - "+this.getIdopontVeg().getHour()+":"+this.getIdopontVeg().getMinute()+":00";
     }
 
     @Override
     public String toString() {
-        return getFoglaloNev()+" "+getIdopontString();
+        return this.getFoglaloNev()+" "+this.getIdoIntervallumString();
     }
 }

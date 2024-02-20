@@ -67,7 +67,8 @@ CREATE TABLE `foglalasok` (
   `foglalo_telszam` varchar(12) NOT NULL,
   `csoport_meret` tinyint(4) UNSIGNED NOT NULL,
   `asztal_id` int(10) UNSIGNED NOT NULL,
-  `idopont` datetime NOT NULL
+  `idopont_kezd` datetime NOT NULL,
+  `idopont_veg` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

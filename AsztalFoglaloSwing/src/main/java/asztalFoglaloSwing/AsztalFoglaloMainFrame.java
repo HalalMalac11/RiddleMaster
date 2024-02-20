@@ -67,9 +67,11 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         datum = new javax.swing.JTextField();
-        idopont = new javax.swing.JTextField();
+        idopontKezd = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList3 = new javax.swing.JList<Foglalas>();
+        jLabel7 = new javax.swing.JLabel();
+        idopontVeg = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Asztal foglalas");
@@ -94,11 +96,14 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
 
         jLabel6.setText("Időpont (HH:mm):");
 
-        idopont.setToolTipText("");
+        idopontKezd.setToolTipText("");
 
         jList3.setModel(foglalasokLista);
         jList3.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(jList3);
+
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel7.setText("-");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -120,15 +125,21 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                             .addComponent(jLabel5)
                             .addComponent(jLabel6))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(datum, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(idopont, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(asztalId, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(emberSzam, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(tSzam, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(foglaloNev, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(foglaloNev, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(idopontKezd, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(idopontVeg, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(3, 3, 3)))))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -159,7 +170,9 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel6)
-                            .addComponent(idopont, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(idopontKezd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7)
+                            .addComponent(idopontVeg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(submitButton)
@@ -176,11 +189,11 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         Foglalas f;
 
         try {
-            String[] idopontSplit= idopont.getText().split(":");
+            String[] idopontSplit= idopontKezd.getText().split(":");
             if (Integer.parseInt(idopontSplit[0])>23||Integer.parseInt(idopontSplit[0])<0||Integer.parseInt(idopontSplit[1])>59||Integer.parseInt(idopontSplit[1])<0){
                 throw new InvalidTimeException("Inavlid időpont");
             }
-            f = new Foglalas(foglaloNev.getText(),tSzam.getText(),Integer.parseInt(emberSzam.getText()),Integer.parseInt(asztalId.getText()),new String(datum.getText()+" "+idopont.getText()+":00"));
+            f = new Foglalas(foglaloNev.getText(),tSzam.getText(),Integer.parseInt(emberSzam.getText()),Integer.parseInt(asztalId.getText()),new String(datum.getText()+" "+idopontKezd.getText()+":00"),new String(datum.getText()+" "+idopontVeg.getText()+":00"));
             if(addFoglalas(f)){
                 feedBackLabel.setText("Sikeres hozzáadás!");
                 feedBackLabel.setForeground(Color.green);
@@ -211,14 +224,14 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         foglalasokLista.clear();
         Connection con = DriverManager.getConnection(dbURL,dbUser,dbPass);
         String todaysDateTime=dtf.format(LocalDateTime.now());
-        String sql="SELECT * FROM `foglalasok` WHERE `idopont`>'"+todaysDateTime+"' ORDER BY `idopont`;";
+        String sql="SELECT * FROM `foglalasok` WHERE `idopont_kezd`>'"+todaysDateTime+"' ORDER BY `idopont_kezd`;";
         Statement stmt= con.createStatement();
         if(stmt.execute(sql)){
             ResultSet rs = stmt.getResultSet();
             Foglalas f;
             while(rs.next()){
                 try {
-                    f= new Foglalas(rs.getString(2),rs.getString(3),rs.getInt(4),rs.getInt(5),rs.getString(6));
+                    f= new Foglalas(rs.getString(2),rs.getString(3),rs.getInt(4),rs.getInt(5),rs.getString(6),rs.getString(7));
                     foglalasokLista.addElement(f);
                 } catch (OldDateException | IllegalArgumentException | InvalidTimeException ex) {
                     JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
@@ -230,32 +243,51 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     }
     
     public boolean addFoglalas(Foglalas f) throws SQLException, ClassNotFoundException{
-        for (int i = 0; i < foglalasokLista.getSize(); i++) {
-            if(foglalasokLista.get(i).getIdopontString().equals(f.getIdopontString())){
-                return false;
+        if (canBeReserved(f)) {
+            Connection con = DriverManager.getConnection(dbURL,dbUser,dbPass);
+            String sql="INSERT INTO "+
+                    "`foglalasok` (`id`, `foglalo_nev`, `foglalo_telszam`, `csoport_meret`, `asztal_id`, `idopont_kezd`, `idopont_veg`) "+
+                    "VALUES "+
+                    "(NULL, '"+f.getFoglaloNev()+"', '"+f.getFoglaloTSzam()+"', '"+f.getEmberSzam()+"', '"+f.getAsztalId()+"', '"+f.getIdopontKezdString()+"', '"+f.getIdopontVegString()+"');";
+            Statement stmt= con.createStatement();
+            stmt.execute(sql);
+            boolean success=stmt.getUpdateCount()==1;
+            con.close();
+            if(success){
+                loadListFromDB();
             }
+            return success;
         }
-        Connection con = DriverManager.getConnection(dbURL,dbUser,dbPass);
-        String sql="INSERT INTO "+
-                "`foglalasok` (`id`, `foglalo_nev`, `foglalo_telszam`, `csoport_meret`, `asztal_id`, `idopont`) "+
-                "VALUES "+
-                "(NULL, '"+f.getFoglaloNev()+"', '"+f.getFoglaloTSzam()+"', '"+f.getEmberSzam()+"', '"+f.getAsztalId()+"', '"+f.getIdopontString()+"');";
-        Statement stmt= con.createStatement();
-        stmt.execute(sql);
-        boolean success=stmt.getUpdateCount()==1;
-        con.close();
-        if(success){
-            loadListFromDB();
-        }
-        return success;
+        return false;
     }
     
-    public boolean canBeReserved(LocalDateTime foglalasIdo)
+    public boolean canBeReserved(Foglalas ujFoglalas)
     {
         for (int i = 0; i < foglalasokLista.getSize(); i++) {
-            LocalDateTime marFoglaltIdo = foglalasokLista.get(i).getIdopont();
-            
+            Foglalas f = foglalasokLista.get(i);
+            if(f.getAsztalId()==ujFoglalas.getAsztalId()){
+                LocalDateTime 
+                            marFoglaltIdoKezd = foglalasokLista.get(i).getIdopontKezd(),
+                            marFoglaltIdoVeg = foglalasokLista.get(i).getIdopontVeg();
+                
+                if(ujFoglalas.getIdopontKezd().isBefore(marFoglaltIdoVeg)&&ujFoglalas.getIdopontKezd().isAfter(marFoglaltIdoKezd)){
+                    return false;
+                }
+            }
         }
+        for (int i = foglalasokLista.getSize()-1; i > 0; i--) {
+            Foglalas f = foglalasokLista.get(i);
+            if(f.getAsztalId()==ujFoglalas.getAsztalId()){
+                LocalDateTime 
+                            marFoglaltIdoKezd = foglalasokLista.get(i).getIdopontKezd(),
+                            marFoglaltIdoVeg = foglalasokLista.get(i).getIdopontVeg();
+                
+                if(ujFoglalas.getIdopontVeg().isBefore(marFoglaltIdoKezd)){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     
     public static void main(String args[]) {
@@ -296,13 +328,15 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private javax.swing.JTextField emberSzam;
     private javax.swing.JLabel feedBackLabel;
     private javax.swing.JTextField foglaloNev;
-    private javax.swing.JTextField idopont;
+    private javax.swing.JTextField idopontKezd;
+    private javax.swing.JTextField idopontVeg;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JList<Foglalas> jList3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton submitButton;
