@@ -35,34 +35,33 @@
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="foglaloNevLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="tSzamLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="emberSzamLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="datumLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="idopontLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="asztalIdLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="datum" alignment="1" min="-2" pref="121" max="-2" attributes="0"/>
-                          <Component id="asztalId" alignment="0" min="-2" pref="121" max="-2" attributes="0"/>
-                          <Component id="emberSzam" alignment="0" min="-2" pref="121" max="-2" attributes="0"/>
-                          <Component id="tSzam" alignment="0" min="-2" pref="121" max="-2" attributes="0"/>
-                          <Component id="foglaloNev" alignment="0" min="-2" pref="121" max="-2" attributes="0"/>
-                          <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
                               <Component id="idopontKezd" min="-2" pref="50" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jLabel7" min="-2" pref="10" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="idopontVeg" min="-2" pref="50" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
                           </Group>
+                          <Component id="tSzam" alignment="0" pref="121" max="32767" attributes="0"/>
+                          <Component id="foglaloNev" alignment="0" pref="121" max="32767" attributes="0"/>
+                          <Component id="emberSzam" alignment="0" pref="121" max="32767" attributes="0"/>
+                          <Component id="datum" alignment="0" pref="121" max="32767" attributes="0"/>
+                          <Component id="asztalokComboBox" alignment="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
-              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="281" max="32767" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="27" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -74,31 +73,31 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="foglaloNev" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="foglaloNevLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="tSzam" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="tSzamLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="asztalIdLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="asztalokComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="emberSzam" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="asztalId" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="emberSzamLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="datumLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="datum" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="idopontLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="idopontKezd" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="idopontVeg" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -133,34 +132,32 @@
     </Component>
     <Component class="javax.swing.JTextField" name="emberSzam">
     </Component>
-    <Component class="javax.swing.JTextField" name="asztalId">
-    </Component>
-    <Component class="javax.swing.JLabel" name="jLabel1">
+    <Component class="javax.swing.JLabel" name="foglaloNevLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Foglal&#xf3; neve:"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel2">
+    <Component class="javax.swing.JLabel" name="tSzamLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Telefonsz&#xe1;m:"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel3">
+    <Component class="javax.swing.JLabel" name="emberSzamLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Csoport m&#xe9;rete:"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel4">
+    <Component class="javax.swing.JLabel" name="asztalIdLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Asztal ID:"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel5">
+    <Component class="javax.swing.JLabel" name="datumLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="D&#xe1;tum (yyyy-MM-dd):"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel6">
+    <Component class="javax.swing.JLabel" name="idopontLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Id&#x151;pont (HH:mm):"/>
       </Properties>
@@ -200,6 +197,17 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="idopontVeg">
+    </Component>
+    <Component class="javax.swing.JComboBox" name="asztalokComboBox">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="asztalokDCBM" type="code"/>
+        </Property>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JComboBox&lt;Asztal&gt;()"/>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Asztal&gt;"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

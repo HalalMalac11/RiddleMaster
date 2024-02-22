@@ -5,14 +5,15 @@ import java.time.format.DateTimeParseException;
 
 public class Foglalas implements iDateFormatting{
     private String foglaloNev, foglaloTSzam;
-    private int asztalId, emberSzam;
+    private int emberSzam;
     private LocalDateTime idopontKezd, idopontVeg;
+    private Asztal asztal;
 
-    public Foglalas(String foglaloNev, String foglaloTSzam,int emberSzam, int asztalId, String formattedIdopontKezd, String formattedIdopontVeg) throws OldDateException, IllegalArgumentException, InvalidTimeException
+    public Foglalas(String foglaloNev, String foglaloTSzam, Asztal asztal,int emberSzam, String formattedIdopontKezd, String formattedIdopontVeg) throws OldDateException, IllegalArgumentException, InvalidTimeException
     {   this.setFoglaloNev(foglaloNev);
         this.setFoglaloTSzam(foglaloTSzam);
+        this.setAsztal(asztal);
         this.setEmberSzam(emberSzam);
-        this.setAsztalId(asztalId);
         this.setIdopontKezd(LocalDateTime.parse(formattedIdopontKezd, dtf));
         this.setIdopontVeg(LocalDateTime.parse(formattedIdopontVeg, dtf));
     }
@@ -44,12 +45,12 @@ public class Foglalas implements iDateFormatting{
         this.foglaloTSzam = foglaloTSzam;
     }
 
-    public int getAsztalId() {
-        return asztalId;
+    public Asztal getAsztal() {
+        return asztal;
     }
 
-    public void setAsztalId(int asztalId) {
-        this.asztalId = asztalId;
+    public void setAsztal(Asztal asztal) {
+        this.asztal = asztal;
     }
 
     public String getIdopontKezdString() {
