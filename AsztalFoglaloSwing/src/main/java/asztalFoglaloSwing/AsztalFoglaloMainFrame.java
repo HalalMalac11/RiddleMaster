@@ -25,7 +25,7 @@ import javax.swing.JOptionPane;
  */
 public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private final FoglalasPanelGenerator fpg = new FoglalasPanelGenerator();
-    /*private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";*/
+    //private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
     private final String dbURL="jdbc:mysql://localhost:3306/foglalas",dbUser="foglalas_kezelo",dbPass="4N6jqhr7dnwCACRI";
     private DefaultListModel<Foglalas> foglalasokLista;
     private DefaultComboBoxModel<Asztal> asztalokDCBM;
