@@ -23,8 +23,11 @@ public class Foglalas implements iDateFormatting{
     }
 
     public void setEmberSzam(int emberszam) throws IllegalArgumentException{
+        int asztalKapacitas = asztal.getKapacitas();
         if (emberszam<1){
-            throw new IllegalArgumentException("Az fők száma nem lehet kisebb mint 1!");
+            throw new IllegalArgumentException("A csoport mérete nem lehet kisebb mint 1!");
+        }else if(emberszam>asztalKapacitas){
+            throw new IllegalArgumentException("A csoport mérete nem lehet nagyobb mint az asztal kapacitása: "+asztalKapacitas+" fő!");
         }
         this.emberSzam = emberszam;
     }

@@ -78,9 +78,13 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         idopontKezd = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList3 = new javax.swing.JList<Foglalas>();
-        jLabel7 = new javax.swing.JLabel();
+        kotojelLabel = new javax.swing.JLabel();
         idopontVeg = new javax.swing.JTextField();
         asztalokComboBox = new javax.swing.JComboBox<Asztal>();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenu2 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Asztal foglalas");
@@ -109,12 +113,34 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
 
         jList3.setModel(foglalasokLista);
         jList3.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jList3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jList3MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jList3);
 
-        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel7.setText("-");
+        kotojelLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        kotojelLabel.setText("-");
 
         asztalokComboBox.setModel(asztalokDCBM);
+
+        jMenu1.setText("File");
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Edit");
+
+        jMenuItem1.setText("jMenuItem1");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem1);
+
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -140,7 +166,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(idopontKezd, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(kotojelLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(idopontVeg, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(tSzam, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
@@ -156,7 +182,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(foglaloNev, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -181,14 +207,14 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(idopontLabel)
                             .addComponent(idopontKezd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel7)
-                            .addComponent(idopontVeg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(submitButton)
-                            .addComponent(feedBackLabel)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                            .addComponent(kotojelLabel)
+                            .addComponent(idopontVeg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(submitButton)
+                    .addComponent(feedBackLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -216,23 +242,34 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 feedBackLabel.setForeground(Color.red);
             }
         }catch (OldDateException ode){
-            feedBackLabel.setText(ode.toString());
+            feedBackLabel.setText(ode.getMessage());
             feedBackLabel.setForeground(Color.red);
         }catch (InvalidTimeException ite){
-            feedBackLabel.setText(ite.toString());
+            feedBackLabel.setText(ite.getMessage());
             feedBackLabel.setForeground(Color.red);
         }catch (IllegalArgumentException iae){
-            feedBackLabel.setText(iae.toString());
+            feedBackLabel.setText(iae.getMessage());
             feedBackLabel.setForeground(Color.red);
         } catch (SQLException sqle) {
             JOptionPane.showMessageDialog(errorFrame,sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         } catch (ClassNotFoundException cnfe) {
-            JOptionPane.showMessageDialog(errorFrame,"Sikertelen driver betöltés!\n"+cnfe,"Hiba!",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(errorFrame,"Sikertelen driver betöltés!\n"+cnfe.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
         
     }//GEN-LAST:event_submitButtonActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jList3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList3MouseClicked
+        if(evt.getClickCount()==2){
+            ReszletekFrame rf = new ReszletekFrame(jList3.getSelectedValue());
+            rf.setVisible(true);
+        }
+    }//GEN-LAST:event_jList3MouseClicked
 
     private void loadListFromDB() throws SQLException, ClassNotFoundException{
         foglalasokLista.clear();
@@ -249,7 +286,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             Asztal a;
             while(rs.next()){
                 try {
-                    a= new Asztal(rs.getInt(1),rs.getString(2),rs.getInt(3),rs.getInt(4),rs.getInt(5));
+                    a= new Asztal(rs.getInt(1),rs.getString(2),rs.getInt(3),rs.getInt(4),getAsztalKapacitas(rs.getInt(5)));
                     f= new Foglalas(rs.getString(6),rs.getString(7),a,rs.getInt(8),rs.getString(9),rs.getString(10));
                     foglalasokLista.addElement(f);
                 } catch (OldDateException | IllegalArgumentException | InvalidTimeException ex) {
@@ -309,7 +346,6 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     }
     
     private void loadAsztalokModel() throws SQLException{
-        String todaysDateTime=dtf.format(LocalDateTime.now());
         String sql="SELECT `nev`,`etterem_id`,`asztalok`.`id`,`tipus`,`szam` FROM `asztalok` "
                 + "INNER JOIN `ettermek` ON `ettermek`.`id`=`etterem_id` "
                 + "WHERE `etterem_id`='"+etteremId+"'";
@@ -318,10 +354,21 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             ResultSet rs = stmt.getResultSet();
             Asztal a;
             while(rs.next()){
-                a= new Asztal(rs.getInt(5),rs.getString(1),rs.getInt(2),rs.getInt(3),rs.getInt(4));
+                a= new Asztal(rs.getInt(5),rs.getString(1),rs.getInt(2),rs.getInt(3),getAsztalKapacitas(rs.getInt(4)));
                 asztalokDCBM.addElement(a);
             }
         }
+    }
+    
+    private int getAsztalKapacitas(int tipusId) throws SQLException{
+        String sql="SELECT `ferohely` FROM `asztal_tipusok` WHERE `id`='"+tipusId+"'";
+        Statement stmt= con.createStatement();
+        if(stmt.execute(sql)){
+            ResultSet rs = stmt.getResultSet();
+            rs.next();
+            return rs.getInt(1);
+        }
+        return 0;
     }
     
     public static void main(String args[]) {
@@ -369,9 +416,13 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private javax.swing.JTextField idopontKezd;
     private javax.swing.JLabel idopontLabel;
     private javax.swing.JTextField idopontVeg;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JList<Foglalas> jList3;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel kotojelLabel;
     private javax.swing.JButton submitButton;
     private javax.swing.JTextField tSzam;
     private javax.swing.JLabel tSzamLabel;
