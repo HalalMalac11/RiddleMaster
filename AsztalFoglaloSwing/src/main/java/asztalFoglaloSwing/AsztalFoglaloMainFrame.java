@@ -9,7 +9,9 @@ import asztalFoglaloSwing.OldDateException;
 import static asztalFoglaloSwing.iDateFormatting.dtf;
 import javax.swing.DefaultListModel;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
@@ -221,9 +223,14 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                
         if(!isUres()){
             Foglalas f;
-
+            LocalDate ld = LocalDate.parse(datum.getText());
+            int nap = ld.getDayOfWeek().getValue();
             try {
                 String[] idopontSplit= idopontKezd.getText().split(":");
+                if (Integer.parseInt(idopontSplit[0])>23||Integer.parseInt(idopontSplit[0])<0||Integer.parseInt(idopontSplit[1])>59||Integer.parseInt(idopontSplit[1])<0){
+                    throw new InvalidTimeException("Inavlid időpont");
+                }
+                idopontSplit= idopontVeg.getText().split(":");
                 if (Integer.parseInt(idopontSplit[0])>23||Integer.parseInt(idopontSplit[0])<0||Integer.parseInt(idopontSplit[1])>59||Integer.parseInt(idopontSplit[1])<0){
                     throw new InvalidTimeException("Inavlid időpont");
                 }

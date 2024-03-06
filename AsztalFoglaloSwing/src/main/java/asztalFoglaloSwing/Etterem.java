@@ -3,10 +3,12 @@ package asztalFoglaloSwing;
 public class Etterem {
     String nev;
     int id;
+    String[][] nyitvatartas;
 
-    public Etterem(String nev, int id) {
+    public Etterem(String nev, int id, String[][] nyitvatartas) {
         this.setNev(nev);
         this.setId(id);
+        this.setNyitvatartas(nyitvatartas);
     }
 
     public String getNev() {
@@ -23,6 +25,14 @@ public class Etterem {
 
     private void setId(int id) {
         this.id = id;
+    }
+
+    public String[][] getNyitvatartas() {
+        return nyitvatartas;
+    }
+
+    public void setNyitvatartas(String[][] nyitvatartas) {
+        this.nyitvatartas = nyitvatartas;
     }
 
     @Override

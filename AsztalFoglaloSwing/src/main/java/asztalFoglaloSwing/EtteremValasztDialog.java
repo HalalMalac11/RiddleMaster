@@ -21,10 +21,23 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
             String sql = "SELECT `nev`, `id` FROM `ettermek`;";
             Statement stmt = parent.con.createStatement();
             if (stmt.execute(sql)) {
-                ResultSet rs = stmt.getResultSet();
+                ResultSet rsEttermek = stmt.getResultSet();
+                ResultSet rsNyitvatartas;
+                String[][] nyitvatartasMatrix= new String[7][2];
                 Etterem etterem;
-                while (rs.next()) {
-                    etterem = new Etterem(rs.getString(1), rs.getInt(2));
+                while (rsEttermek.next()) {
+                    int etteremId=rsEttermek.getInt(2);
+                    sql="SELECT `nyitas`,`zaras` FROM `nyitvatartasok` WHERE `etterem_id`='"+etteremId+"' ORDER BY `nap`";
+                    stmt = parent.con.createStatement();
+                    stmt.execute(sql);
+                    rsNyitvatartas = stmt.getResultSet();
+                    
+                    for (int i = 0; i < nyitvatartasMatrix.length; i++) {
+                        rsNyitvatartas.next();
+                        nyitvatartasMatrix[i][0]=rsNyitvatartas.getString(1);
+                        nyitvatartasMatrix[i][1]=rsNyitvatartas.getString(2);
+                    }
+                    etterem = new Etterem(rsEttermek.getString(1), etteremId,nyitvatartasMatrix);
                     dcbm.addElement(etterem);
                 }
             }
