@@ -1,10 +1,11 @@
 package asztalFoglaloSwing;
 
+import javax.swing.JLabel;
+
 public class ReszletekFrame extends javax.swing.JFrame {
 
     public ReszletekFrame(Foglalas foglalas) {
         initComponents();
-        this.etteremNev.setText(foglalas.getAsztal().getEtteremNev());
         this.fogaloNevLabel.setText(foglalas.getFoglaloNev());
         this.tSzamLabel.setText(foglalas.getFoglaloTSzam());
         this.emberSzamLabel.setText(""+foglalas.getEmberSzam());
@@ -12,6 +13,11 @@ public class ReszletekFrame extends javax.swing.JFrame {
         this.asztalMaxKapacitasLabel.setText(""+foglalas.getAsztal().getKapacitas());
         setLocationRelativeTo(null);
     }
+
+    public void setEtteremNev(String etteremNev) {
+        this.etteremNev.setText(etteremNev);
+    }
+    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

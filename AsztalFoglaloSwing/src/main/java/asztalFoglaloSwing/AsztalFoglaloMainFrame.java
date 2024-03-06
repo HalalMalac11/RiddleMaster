@@ -9,21 +9,21 @@ import asztalFoglaloSwing.OldDateException;
 import static asztalFoglaloSwing.iDateFormatting.dtf;
 import javax.swing.DefaultListModel;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
-    private final FoglalasPanelGenerator fpg = new FoglalasPanelGenerator();
     //private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
     private final String dbURL="jdbc:mysql://localhost:3306/foglalas",dbUser="foglalas_kezelo",dbPass="4N6jqhr7dnwCACRI";
     private DefaultListModel<Foglalas> foglalasokLista;
     private DefaultComboBoxModel<Asztal> asztalokDCBM;
     private JFrame errorFrame= new JFrame();
-    private String etteremNev;
-    private int etteremId=1;
+    private Etterem etterem;
     public Connection con;
     
     public AsztalFoglaloMainFrame() {
@@ -31,6 +31,8 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         asztalokDCBM = new DefaultComboBoxModel<Asztal>();
         try {
             con = DriverManager.getConnection(dbURL,dbUser,dbPass);
+            EtteremValasztDialog evd = new EtteremValasztDialog(this,true);
+            evd.setVisible(true);
             loadAsztalokModel();
             loadListFromDB();
         } catch (SQLException sqle) {
@@ -43,6 +45,15 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
     }
+
+    public Etterem getEtterem() {
+        return etterem;
+    }
+
+    public void setEtterem(Etterem etterem) {
+        this.etterem = etterem;
+    }
+    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -251,6 +262,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private void jList3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList3MouseClicked
         if(evt.getClickCount()==2){
             ReszletekFrame rf = new ReszletekFrame(jList3.getSelectedValue());
+            rf.setEtteremNev(etterem.getNev());
             rf.setVisible(true);
         }
     }//GEN-LAST:event_jList3MouseClicked
@@ -258,11 +270,11 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private void loadListFromDB() throws SQLException, ClassNotFoundException{
         foglalasokLista.clear();
         String todaysDateTime=dtf.format(LocalDateTime.now());
-        String sql="SELECT `szam`,`ettermek`.`nev`,`etterem_id`,`asztal_id`,`tipus`,`foglalo_nev`,`foglalo_telszam`,`csoport_meret`,`idopont_kezd`,`idopont_veg` "
+        String sql="SELECT `szam`,`etterem_id`,`asztal_id`,`tipus`,`foglalo_nev`,`foglalo_telszam`,`csoport_meret`,`idopont_kezd`,`idopont_veg` "
                 + "FROM `foglalasok` "
                 + "INNER JOIN `asztalok` ON `asztalok`.`id`=`asztal_id` "
                 + "INNER JOIN `ettermek` ON `ettermek`.`id`=`etterem_id` "
-                + "WHERE `idopont_kezd`>'"+todaysDateTime+"' ORDER BY `idopont_kezd`";
+                + "WHERE `idopont_kezd`>'"+todaysDateTime+"' AND `etterem_id`="+etterem.getId()+" ORDER BY `idopont_kezd`";
         Statement stmt= con.createStatement();
         if(stmt.execute(sql)){
             ResultSet rs = stmt.getResultSet();
@@ -270,8 +282,8 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             Asztal a;
             while(rs.next()){
                 try {
-                    a= new Asztal(rs.getInt(1),rs.getString(2),rs.getInt(3),rs.getInt(4),getAsztalKapacitas(rs.getInt(5)));
-                    f= new Foglalas(rs.getString(6),rs.getString(7),a,rs.getInt(8),rs.getString(9),rs.getString(10));
+                    a= new Asztal(rs.getInt(1),etterem.getNev(),rs.getInt(3),getAsztalKapacitas(rs.getInt(4)));
+                    f= new Foglalas(rs.getString(5),rs.getString(6),a,rs.getInt(7),rs.getString(8),rs.getString(9));
                     foglalasokLista.addElement(f);
                 } catch (OldDateException | IllegalArgumentException | InvalidTimeException ex) {
                     JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
@@ -330,15 +342,15 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     }
     
     private void loadAsztalokModel() throws SQLException{
-        String sql="SELECT `nev`,`etterem_id`,`asztalok`.`id`,`tipus`,`szam` FROM `asztalok` "
+        String sql="SELECT `etterem_id`,`asztalok`.`id`,`tipus`,`szam` FROM `asztalok` "
                 + "INNER JOIN `ettermek` ON `ettermek`.`id`=`etterem_id` "
-                + "WHERE `etterem_id`='"+etteremId+"'";
+                + "WHERE `etterem_id`='"+etterem.getId()+"'";
         Statement stmt= con.createStatement();
         if(stmt.execute(sql)){
             ResultSet rs = stmt.getResultSet();
             Asztal a;
             while(rs.next()){
-                a= new Asztal(rs.getInt(5),rs.getString(1),rs.getInt(2),rs.getInt(3),getAsztalKapacitas(rs.getInt(4)));
+                a= new Asztal(rs.getInt(4),etterem.getNev(),rs.getInt(2),getAsztalKapacitas(rs.getInt(4)));
                 asztalokDCBM.addElement(a);
             }
         }
