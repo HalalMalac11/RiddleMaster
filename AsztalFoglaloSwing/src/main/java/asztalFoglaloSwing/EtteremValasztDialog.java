@@ -3,6 +3,8 @@ package asztalFoglaloSwing;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalTime;
+import java.util.StringTokenizer;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -23,10 +25,12 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
             if (stmt.execute(sql)) {
                 ResultSet rsEttermek = stmt.getResultSet();
                 ResultSet rsNyitvatartas;
-                String[][] nyitvatartasMatrix= new String[7][2];
+                LocalTime[][] nyitvatartasMatrix= new LocalTime[7][2];
                 Etterem etterem;
+                StringTokenizer st;
+                int etteremId;
                 while (rsEttermek.next()) {
-                    int etteremId=rsEttermek.getInt(2);
+                    etteremId=rsEttermek.getInt(2);
                     sql="SELECT `nyitas`,`zaras` FROM `nyitvatartasok` WHERE `etterem_id`='"+etteremId+"' ORDER BY `nap`";
                     stmt = parent.con.createStatement();
                     stmt.execute(sql);
@@ -34,10 +38,12 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
                     
                     for (int i = 0; i < nyitvatartasMatrix.length; i++) {
                         rsNyitvatartas.next();
-                        nyitvatartasMatrix[i][0]=rsNyitvatartas.getString(1);
-                        nyitvatartasMatrix[i][1]=rsNyitvatartas.getString(2);
+                        st = new StringTokenizer(rsNyitvatartas.getString(1),":");
+                        nyitvatartasMatrix[i][0]=LocalTime.of(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
+                        st = new StringTokenizer(rsNyitvatartas.getString(2),":");
+                        nyitvatartasMatrix[i][1]=LocalTime.of(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
                     }
-                    etterem = new Etterem(rsEttermek.getString(1), etteremId,nyitvatartasMatrix);
+                    etterem = new Etterem(rsEttermek.getString(1), etteremId, nyitvatartasMatrix);
                     dcbm.addElement(etterem);
                 }
             }
@@ -100,7 +106,7 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void submitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitActionPerformed
-        parent.setEtterem((Etterem) this.ettermekComboBox.getSelectedItem());
+        parent.etterem=((Etterem) this.ettermekComboBox.getSelectedItem());
         this.dispose();
     }//GEN-LAST:event_submitActionPerformed
 

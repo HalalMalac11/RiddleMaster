@@ -1,11 +1,14 @@
 package asztalFoglaloSwing;
 
+import java.time.LocalTime;
+
+
 public class Etterem {
     String nev;
     int id;
-    String[][] nyitvatartas;
+    LocalTime[][] nyitvatartas;
 
-    public Etterem(String nev, int id, String[][] nyitvatartas) {
+    public Etterem(String nev, int id, LocalTime[][] nyitvatartas) {
         this.setNev(nev);
         this.setId(id);
         this.setNyitvatartas(nyitvatartas);
@@ -27,11 +30,11 @@ public class Etterem {
         this.id = id;
     }
 
-    public String[][] getNyitvatartas() {
+    public LocalTime[][] getNyitvatartas() {
         return nyitvatartas;
     }
 
-    public void setNyitvatartas(String[][] nyitvatartas) {
+    public void setNyitvatartas(LocalTime[][] nyitvatartas) {
         this.nyitvatartas = nyitvatartas;
     }
 

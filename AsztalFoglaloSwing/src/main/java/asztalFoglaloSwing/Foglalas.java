@@ -56,8 +56,12 @@ public class Foglalas implements iDateFormatting{
         this.asztal = asztal;
     }
 
-    public String getIdopontKezdString() {
-        return dtf.format(idopontKezd);
+    public String getIdopontKezdString(boolean withSeconds) {
+        String idopont= dtf.format(idopontKezd);
+        if (withSeconds) {
+            return idopont;
+        }
+        return idopont.substring(0,idopont.length()-3);
     }
 
     public LocalDateTime getIdopontKezd() {
@@ -71,8 +75,12 @@ public class Foglalas implements iDateFormatting{
         this.idopontKezd = idopontKezd;
     }
     
-    public String getIdopontVegString() {
-        return dtf.format(idopontVeg);
+    public String getIdopontVegString(boolean withSeconds) {
+        String idopont= dtf.format(idopontVeg);
+        if (withSeconds) {
+            return idopont;
+        }
+        return idopont.substring(0,idopont.length()-3);
     }
     
     public LocalDateTime getIdopontVeg() {
@@ -87,7 +95,7 @@ public class Foglalas implements iDateFormatting{
     }
     
     public String getIdoIntervallumString(){
-        return ""+this.getIdopontKezdString()+" - "+this.getIdopontVeg().getHour()+":"+this.getIdopontVeg().getMinute()+":00";
+        return ""+this.getIdopontKezdString(false)+" - "+(this.getIdopontVeg().getHour()<10?"0"+this.getIdopontVeg().getHour():this.getIdopontVeg().getHour())+":"+(this.getIdopontVeg().getMinute()<10?"0"+this.getIdopontVeg().getMinute():this.getIdopontVeg().getMinute());
     }
 
     @Override
