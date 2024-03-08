@@ -62,6 +62,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         editMenu = new javax.swing.JMenu();
         hozzaAd = new javax.swing.JMenuItem();
         edit = new javax.swing.JMenuItem();
+        torol = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Asztal foglalas");
@@ -96,6 +97,14 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             }
         });
         editMenu.add(edit);
+
+        torol.setText("Törlés");
+        torol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                torolActionPerformed(evt);
+            }
+        });
+        editMenu.add(torol);
 
         menuSor.add(editMenu);
 
@@ -138,6 +147,24 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         AddFoglalasDialog afd = new AddFoglalasDialog(this,true,lista.getSelectedValue());
         afd.setVisible(true);
     }//GEN-LAST:event_editActionPerformed
+
+    private void torolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_torolActionPerformed
+        Foglalas f = lista.getSelectedValue();
+        int valasz=JOptionPane.showConfirmDialog(errorFrame,"Biztosan törölni szeretné?\n"+f,"Törlés",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+        if(valasz==JOptionPane.YES_OPTION){
+            String sql="DELETE FROM `foglalasok`  WHERE `foglalo_nev` LIKE '"+f.getFoglaloNev()+"' AND `foglalo_telszam` LIKE '"+f.getFoglaloTSzam()+"' AND `csoport_meret`='"+f.getEmberSzam()+"' AND `asztal_id`='"+f.getAsztal().getAsztalId()+"' AND `idopont_kezd`='"+f.getIdopontKezdString(true)+"' AND `idopont_veg`='"+f.getIdopontVegString(true)+"'";
+            try{
+                Statement stmt= con.createStatement();
+                stmt.execute(sql);
+                boolean success=stmt.getUpdateCount()==1;
+                if(success){
+                    loadListFromDB();
+                }
+            } catch (SQLException|ClassNotFoundException ex) {
+                JOptionPane.showMessageDialog(errorFrame,"Sikertelen törlés!\n"+ex,"Hiba!",JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_torolActionPerformed
 
     protected void loadListFromDB() throws SQLException, ClassNotFoundException{
         foglalasokLista.clear();
@@ -222,5 +249,6 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JList<Foglalas> lista;
     private javax.swing.JMenuBar menuSor;
+    private javax.swing.JMenuItem torol;
     // End of variables declaration//GEN-END:variables
 }
