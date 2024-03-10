@@ -24,103 +24,103 @@ SET time_zone = "+01:00";
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `asztalok`
+-- Tábla szerkezet ehhez a táblához `asztal`
 --
 
-CREATE TABLE `asztalok` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `tipus` tinyint(3) UNSIGNED NOT NULL,
-  `etterem_id` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Tábla szerkezet ehhez a táblához `asztal_tipusok`
---
-
-CREATE TABLE `asztal_tipusok` (
-  `id` tinyint(3) UNSIGNED NOT NULL,
-  `ferohely` tinyint(3) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Tábla szerkezet ehhez a táblához `ettermek`
---
-
-CREATE TABLE `ettermek` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `nev` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_swedish_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Tábla szerkezet ehhez a táblához `foglalasok`
---
-
-CREATE TABLE `foglalasok` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `foglalo_nev` varchar(40) NOT NULL,
-  `foglalo_telszam` varchar(12) NOT NULL,
-  `csoport_meret` tinyint(4) UNSIGNED NOT NULL,
+CREATE TABLE `asztal` (
   `asztal_id` int(10) UNSIGNED NOT NULL,
-  `idopont_kezd` datetime NOT NULL,
-  `idopont_veg` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `tipus_id` tinyint(3) UNSIGNED NOT NULL,
+  `etterem_id` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `nyitvatartasok`
+-- Tábla szerkezet ehhez a táblához `tipus`
 --
 
-CREATE TABLE `nyitvatartasok` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE `tipus` (
+  `tipus_id` tinyint(3) UNSIGNED NOT NULL,
+  `tipus_ferohely` tinyint(3) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `etterem`
+--
+
+CREATE TABLE `etterem` (
   `etterem_id` int(10) UNSIGNED NOT NULL,
-  `nap` tinyint(3) UNSIGNED NOT NULL,
-  `nyitas` time NOT NULL,
-  `zaras` time NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `etterem_nev` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_swedish_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `foglalas`
+--
+
+CREATE TABLE `foglalas` (
+  `foglalas_id` int(10) UNSIGNED NOT NULL,
+  `foglalas_nev` varchar(40) NOT NULL,
+  `foglalas_telszam` varchar(12) NOT NULL,
+  `foglalas_csoport_meret` tinyint(4) UNSIGNED NOT NULL,
+  `asztal_id` int(10) UNSIGNED NOT NULL,
+  `foglalas_idopont_kezd` datetime NOT NULL,
+  `foglalas_idopont_veg` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `nyitvatartas`
+--
+
+CREATE TABLE `nyitvatartas` (
+  `nyitvatartas_id` int(10) UNSIGNED NOT NULL,
+  `etterem_id` int(10) UNSIGNED NOT NULL,
+  `nyitvatartas_nap` tinyint(3) UNSIGNED NOT NULL,
+  `nyitvatartas_nyitas` time NOT NULL,
+  `nyitvatartas_zaras` time NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
 --
 -- Indexek a kiírt táblákhoz
 --
 
 --
--- A tábla indexei `asztalok`
+-- A tábla indexei `asztal`
 --
-ALTER TABLE `asztalok`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `tipus` (`tipus`),
-  ADD KEY `etterem` (`etterem_id`);
+ALTER TABLE `asztal`
+  ADD PRIMARY KEY (`asztal_id`),
+  ADD KEY `tipus_id` (`tipus_id`),
+  ADD KEY `etterem_id` (`etterem_id`);
 
 --
--- A tábla indexei `asztal_tipusok`
+-- A tábla indexei `tipus`
 --
-ALTER TABLE `asztal_tipusok`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `tipus`
+  ADD PRIMARY KEY (`tipus_id`);
 
 --
--- A tábla indexei `ettermek`
+-- A tábla indexei `etterem`
 --
-ALTER TABLE `ettermek`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `etterem`
+  ADD PRIMARY KEY (`etterem_id`);
 
 --
--- A tábla indexei `foglalasok`
+-- A tábla indexei `foglalas`
 --
-ALTER TABLE `foglalasok`
-  ADD PRIMARY KEY (`id`),
+ALTER TABLE `foglalas`
+  ADD PRIMARY KEY (`foglalas_id`),
   ADD KEY `asztal_id` (`asztal_id`);
 
 --
--- A tábla indexei `nyitvatartasok`
+-- A tábla indexei `nyitvatartas`
 --
-ALTER TABLE `nyitvatartasok`
-  ADD PRIMARY KEY (`id`),
+ALTER TABLE `nyitvatartas`
+  ADD PRIMARY KEY (`nyitvatartas_id`),
   ADD KEY `etterem_id` (`etterem_id`);
 
 --
@@ -128,57 +128,57 @@ ALTER TABLE `nyitvatartasok`
 --
 
 --
--- AUTO_INCREMENT a táblához `asztalok`
+-- AUTO_INCREMENT a táblához `asztal`
 --
-ALTER TABLE `asztalok`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+ALTER TABLE `asztal`
+  MODIFY `asztal_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT a táblához `asztal_tipusok`
+-- AUTO_INCREMENT a táblához `tipus`
 --
-ALTER TABLE `asztal_tipusok`
-  MODIFY `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT;
+ALTER TABLE `tipus`
+  MODIFY `tipus_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT a táblához `ettermek`
+-- AUTO_INCREMENT a táblához `etterem`
 --
-ALTER TABLE `ettermek`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+ALTER TABLE `etterem`
+  MODIFY `etterem_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT a táblához `foglalasok`
+-- AUTO_INCREMENT a táblához `foglalas`
 --
-ALTER TABLE `foglalasok`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+ALTER TABLE `foglalas`
+  MODIFY `foglalas_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT a táblához `nyitvatartasok`
+-- AUTO_INCREMENT a táblához `nyitvatartas`
 --
-ALTER TABLE `nyitvatartasok`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+ALTER TABLE `nyitvatartas`
+  MODIFY `nyitvatartas_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- Megkötések a kiírt táblákhoz
 --
 
 --
--- Megkötések a táblához `asztalok`
+-- Megkötések a táblához `asztal`
 --
-ALTER TABLE `asztalok`
-  ADD CONSTRAINT `asztalok_ibfk_1` FOREIGN KEY (`etterem_id`) REFERENCES `ettermek` (`id`),
-  ADD CONSTRAINT `asztalok_ibfk_2` FOREIGN KEY (`tipus`) REFERENCES `asztal_tipusok` (`id`);
+ALTER TABLE `asztal`
+  ADD CONSTRAINT `asztal_ibfk_1` FOREIGN KEY (`etterem_id`) REFERENCES `etterem` (`etterem_id`),
+  ADD CONSTRAINT `asztal_ibfk_2` FOREIGN KEY (`tipus_id`) REFERENCES `tipus` (`tipus_id`);
 
 --
--- Megkötések a táblához `foglalasok`
+-- Megkötések a táblához `foglalas`
 --
-ALTER TABLE `foglalasok`
-  ADD CONSTRAINT `foglalasok_ibfk_1` FOREIGN KEY (`asztal_id`) REFERENCES `asztalok` (`id`);
+ALTER TABLE `foglalas`
+  ADD CONSTRAINT `foglalas_ibfk_1` FOREIGN KEY (`asztal_id`) REFERENCES `asztal` (`asztal_id`);
 
 --
--- Megkötések a táblához `nyitvatartasok`
+-- Megkötések a táblához `nyitvatartas`
 --
-ALTER TABLE `nyitvatartasok`
-  ADD CONSTRAINT `nyitvatartasok_ibfk_1` FOREIGN KEY (`etterem_id`) REFERENCES `ettermek` (`id`);
+ALTER TABLE `nyitvatartas`
+  ADD CONSTRAINT `nyitvatartas_ibfk_1` FOREIGN KEY (`etterem_id`) REFERENCES `etterem` (`etterem_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
