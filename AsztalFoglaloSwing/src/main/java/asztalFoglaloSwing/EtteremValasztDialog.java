@@ -12,10 +12,12 @@ import javax.swing.JOptionPane;
 public class EtteremValasztDialog extends javax.swing.JDialog {
     private DefaultComboBoxModel<Etterem> dcbm;
     private AsztalFoglaloMainFrame parent;
+    public boolean etteremAdded;
 
     public EtteremValasztDialog(AsztalFoglaloMainFrame parent, boolean modal) {
         super(parent, modal);
         this.parent=parent;
+        etteremAdded=false;
         initComponents();
         setLocationRelativeTo(null);
         dcbm= new DefaultComboBoxModel<Etterem>();
@@ -62,6 +64,7 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
         valasszLabel = new javax.swing.JLabel();
         ettermekComboBox = new javax.swing.JComboBox<>();
         submit = new javax.swing.JButton();
+        ujEtterem = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -75,19 +78,27 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
             }
         });
 
+        ujEtterem.setText("Új étterem");
+        ujEtterem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ujEtteremActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(ettermekComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(valasszLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(submit)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(ettermekComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(valasszLabel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(submit)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(ujEtterem)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -98,7 +109,9 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addComponent(ettermekComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
-                .addComponent(submit)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(submit)
+                    .addComponent(ujEtterem))
                 .addGap(20, 20, 20))
         );
 
@@ -107,13 +120,23 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
 
     private void submitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitActionPerformed
         parent.etterem=((Etterem) this.ettermekComboBox.getSelectedItem());
+        parent.etteremIsSet=true;
         this.dispose();
     }//GEN-LAST:event_submitActionPerformed
+
+    private void ujEtteremActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ujEtteremActionPerformed
+        AddEtteremDialog aed = new AddEtteremDialog(parent,true,etteremAdded);
+        aed.setVisible(true);
+        if(etteremAdded){
+            this.dispose();
+        }
+    }//GEN-LAST:event_ujEtteremActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<Etterem> ettermekComboBox;
     private javax.swing.JButton submit;
+    private javax.swing.JButton ujEtterem;
     private javax.swing.JLabel valasszLabel;
     // End of variables declaration//GEN-END:variables
 }

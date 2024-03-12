@@ -29,10 +29,12 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private DefaultComboBoxModel<Asztal> asztalokDCBM;
     private JFrame errorFrame= new JFrame();
     protected Etterem etterem;
+    protected boolean etteremIsSet;
     public Connection con;
     
     public AsztalFoglaloMainFrame() {
         foglalasokLista= new DefaultListModel<Foglalas>();
+        etteremIsSet = false;
         try {
             con = DriverManager.getConnection(dbURL,dbUser,dbPass);
             EtteremValasztDialog evd = new EtteremValasztDialog(this,true);
