@@ -1,5 +1,6 @@
 package asztalFoglaloSwing;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -11,18 +12,20 @@ import javax.swing.JOptionPane;
 
 public class EtteremValasztDialog extends javax.swing.JDialog {
     private DefaultComboBoxModel<Etterem> dcbm;
-    private AsztalFoglaloMainFrame parent;
+    protected AsztalFoglaloMainFrame MainFrame;
+    protected Connection con;
     public boolean etteremAdded;
 
     public EtteremValasztDialog(AsztalFoglaloMainFrame parent, boolean modal) {
         super(parent, modal);
-        this.parent=parent;
+        this.MainFrame=parent;
+        this.con=parent.con;
         etteremAdded=false;
         initComponents();
         setLocationRelativeTo(null);
         dcbm= new DefaultComboBoxModel<Etterem>();
         try {
-            String sql = "SELECT `nev`, `id` FROM `ettermek`;";
+            String sql = "SELECT `etterem_nev`, `etterem_id` FROM `etterem`;";
             Statement stmt = parent.con.createStatement();
             if (stmt.execute(sql)) {
                 ResultSet rsEttermek = stmt.getResultSet();
@@ -31,9 +34,11 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
                 Etterem etterem;
                 StringTokenizer st;
                 int etteremId;
+                System.out.println("dtfujhnk");
                 while (rsEttermek.next()) {
                     etteremId=rsEttermek.getInt(2);
-                    sql="SELECT `nyitas`,`zaras` FROM `nyitvatartasok` WHERE `etterem_id`='"+etteremId+"' ORDER BY `nap`";
+                    System.out.println("élkj");
+                    sql="SELECT `nyitvatartas_nyitas`,`nyitvatartas_zaras` FROM `nyitvatartas` WHERE `etterem_id`='"+etteremId+"' ORDER BY `nyitvatartas_nap`";
                     stmt = parent.con.createStatement();
                     stmt.execute(sql);
                     rsNyitvatartas = stmt.getResultSet();
@@ -47,12 +52,17 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
                     }
                     etterem = new Etterem(rsEttermek.getString(1), etteremId, nyitvatartasMatrix);
                     dcbm.addElement(etterem);
+                    System.out.println("sdfj");
                 }
             }
-            this.ettermekComboBox.setModel(dcbm);
-            this.ettermekComboBox.setSelectedIndex(0);
+            if(dcbm.getSize()!=0){
+                this.ettermekComboBox.setModel(dcbm);
+                this.ettermekComboBox.setSelectedIndex(0);
+            }else{
+                this.submit.setEnabled(false);
+            }
         } catch (SQLException sqle) {
-            JOptionPane.showMessageDialog(new JFrame(), "Adatbázis csatlakozás hiba!","HIBA!",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(new JFrame(), "Adatbázis csatlakozás hiba!\n"+sqle.getMessage(),"HIBA!",JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
     }
@@ -119,13 +129,12 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void submitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitActionPerformed
-        parent.etterem=((Etterem) this.ettermekComboBox.getSelectedItem());
-        parent.etteremIsSet=true;
+        MainFrame.etterem=((Etterem) this.ettermekComboBox.getSelectedItem());
         this.dispose();
     }//GEN-LAST:event_submitActionPerformed
 
     private void ujEtteremActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ujEtteremActionPerformed
-        AddEtteremDialog aed = new AddEtteremDialog(parent,true,etteremAdded);
+        AddEtteremDialog aed = new AddEtteremDialog(this,true);
         aed.setVisible(true);
         if(etteremAdded){
             this.dispose();

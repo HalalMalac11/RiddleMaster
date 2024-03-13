@@ -1,17 +1,29 @@
 package asztalFoglaloSwing;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalTime;
+import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 public class AddEtteremDialog extends javax.swing.JDialog {
     
     private boolean alreadyFilled;
+    private EtteremValasztDialog parent;
+    private JTextField[][] nyitvatartasMezok;
 
-    public AddEtteremDialog(AsztalFoglaloMainFrame parent, boolean modal, boolean etteremAdded) {
+    public AddEtteremDialog(EtteremValasztDialog parent, boolean modal) {
         super(parent, modal);
+        this.parent=parent;
         this.alreadyFilled=false;
         initComponents();
         setLocationRelativeTo(null);
+        fillNyitvatartasMezok();
     }
 
     @SuppressWarnings("unchecked")
@@ -274,7 +286,56 @@ public class AddEtteremDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_fillActionPerformed
 
     private void submitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitActionPerformed
-        
+        boolean allFilled= true;
+        if(!this.etteremNev.getText().isEmpty()){
+            for (int i = 0; i < nyitvatartasMezok.length; i++) {
+                for (int j = 0; j < nyitvatartasMezok[i].length; j++) {
+                    if(nyitvatartasMezok[i][j].getText().isEmpty()){
+                    allFilled=false;
+                    }
+                }
+            }
+            if (allFilled) {
+                try {
+                    String sql ="SELECT * FROM `etterem` WHERE `etterem_nev` LIKE '"+this.etteremNev.getText()+"'";
+                    Statement stmt =parent.con.createStatement();
+                    stmt.execute(sql);
+                    boolean vanMar= stmt.getResultSet().isBeforeFirst();
+                    if(!vanMar){
+                        sql ="INSERT INTO `etterem`(`etterem_nev`) VALUES ('"+this.etteremNev.getText()+"')";
+                        stmt =parent.con.createStatement();
+                        stmt.execute(sql);
+                        
+                        sql ="SELECT `etterem_id` FROM `etterem` WHERE `etterem_nev` LIKE '"+this.etteremNev.getText()+"'";
+                        stmt =parent.con.createStatement();
+                        stmt.execute(sql);
+                        ResultSet ujEtterem = stmt.getResultSet();
+                        ujEtterem.next();
+                        int ujEtteremId=ujEtterem.getInt(1);
+                        LocalTime[][] nyitvatartas= new LocalTime[7][2];
+                        for (int i = 0; i < nyitvatartasMezok.length; i++) {
+                            StringTokenizer st = new StringTokenizer(nyitvatartasMezok[i][0].getText(),":");
+                            nyitvatartas[i][0]=LocalTime.of(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
+                            st = new StringTokenizer(nyitvatartasMezok[i][1].getText(),":");
+                            nyitvatartas[i][1]=LocalTime.of(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
+                            sql ="INSERT INTO `nyitvatartas`(`etterem_id`, `nyitvatartas_nap`, `nyitvatartas_nyitas`, `nyitvatartas_zaras`) VALUES ('"+ujEtteremId+"','"+i+"','"+nyitvatartasMezok[i][0].getText()+":00"+"','"+nyitvatartasMezok[i][1].getText()+":00"+"')";
+                            stmt.execute(sql);
+                        }
+                        parent.MainFrame.etterem= new Etterem(this.etteremNev.getText(),ujEtteremId,nyitvatartas);
+                        parent.etteremAdded=true;
+                        this.dispose();
+                    }else{
+                        JOptionPane.showMessageDialog(new JFrame(),"Létezik már ilyen nevű étterem!","Hiba!",JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(new JFrame(),"Adatbázis hiba!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+                }
+            }else{
+                JOptionPane.showMessageDialog(new JFrame(),"Töltse ki az összes mezőt!","Hiba!",JOptionPane.ERROR_MESSAGE);
+            }
+        }else{
+            JOptionPane.showMessageDialog(new JFrame(),"Töltse ki az összes mezőt!","Hiba!",JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_submitActionPerformed
 
     private void fillNyitvatartas(){
@@ -282,22 +343,27 @@ public class AddEtteremDialog extends javax.swing.JDialog {
             if(!hNyitas.getText().trim().isEmpty()&&!hZaras.getText().trim().isEmpty()){
                 int valasz = JOptionPane.showConfirmDialog(new JFrame(),"Szeretné kitölteni a többi napot is a hétfői nyitvtartással?","Üzenet",JOptionPane.YES_NO_OPTION);
                 if(valasz==JOptionPane.YES_OPTION){
-                    kNyitas.setText(hNyitas.getText());
-                    szeNyitas.setText(hNyitas.getText());
-                    csNyitas.setText(hNyitas.getText());
-                    pNyitas.setText(hNyitas.getText());
-                    szoNyitas.setText(hNyitas.getText());
-                    vNyitas.setText(hNyitas.getText());
-                    kZaras.setText(hZaras.getText());
-                    szeZaras.setText(hZaras.getText());
-                    csZaras.setText(hZaras.getText());
-                    pZaras.setText(hZaras.getText());
-                    szoZaras.setText(hZaras.getText());
-                    vZaras.setText(hZaras.getText());
+                    for (int i = 0; i < nyitvatartasMezok.length; i++) {
+                        for (int j = 0; j < nyitvatartasMezok[i].length; j++) {
+                            nyitvatartasMezok[i][j].setText(nyitvatartasMezok[0][j].getText());
+                        }
+                    }
                     this.alreadyFilled=true;
                 }
             }
         }
+    }
+    
+    private void fillNyitvatartasMezok(){
+        this.nyitvatartasMezok=new JTextField[][]{
+            {this.hNyitas,this.hZaras},
+            {this.kNyitas,this.kZaras},
+            {this.szeNyitas,this.szeZaras},
+            {this.csNyitas,this.csZaras},
+            {this.pNyitas,this.pZaras},
+            {this.szoNyitas,this.szoZaras},
+            {this.vNyitas,this.vZaras}
+        };
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

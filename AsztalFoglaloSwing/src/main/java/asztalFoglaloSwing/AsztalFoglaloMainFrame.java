@@ -24,17 +24,15 @@ import javax.swing.KeyStroke;
 
 public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     //private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
-    private final String dbURL="jdbc:mysql://localhost:3306/foglalas",dbUser="foglalas_kezelo",dbPass="4N6jqhr7dnwCACRI";
+    private final String dbURL="jdbc:mysql://localhost:3306/asztalfoglalo",dbUser="foglalas_kezelo",dbPass="4N6jqhr7dnwCACRI";
     protected DefaultListModel<Foglalas> foglalasokLista;
     private DefaultComboBoxModel<Asztal> asztalokDCBM;
     private JFrame errorFrame= new JFrame();
     protected Etterem etterem;
-    protected boolean etteremIsSet;
     public Connection con;
     
     public AsztalFoglaloMainFrame() {
         foglalasokLista= new DefaultListModel<Foglalas>();
-        etteremIsSet = false;
         try {
             con = DriverManager.getConnection(dbURL,dbUser,dbPass);
             EtteremValasztDialog evd = new EtteremValasztDialog(this,true);
@@ -154,7 +152,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         Foglalas f = lista.getSelectedValue();
         int valasz=JOptionPane.showConfirmDialog(errorFrame,"Biztosan törölni szeretné?\n"+f,"Törlés",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
         if(valasz==JOptionPane.YES_OPTION){
-            String sql="DELETE FROM `foglalasok`  WHERE `foglalo_nev` LIKE '"+f.getFoglaloNev()+"' AND `foglalo_telszam` LIKE '"+f.getFoglaloTSzam()+"' AND `csoport_meret`='"+f.getEmberSzam()+"' AND `asztal_id`='"+f.getAsztal().getAsztalId()+"' AND `idopont_kezd`='"+f.getIdopontKezdString(true)+"' AND `idopont_veg`='"+f.getIdopontVegString(true)+"'";
+            String sql="DELETE FROM `foglalas`  WHERE `foglalas_nev` LIKE '"+f.getFoglaloNev()+"' AND `foglalas_telszam` LIKE '"+f.getFoglaloTSzam()+"' AND `foglalas_csoport_meret`='"+f.getEmberSzam()+"' AND `asztal_id`='"+f.getAsztal().getAsztalId()+"' AND `foglalas_idopont_kezd`='"+f.getIdopontKezdString(true)+"' AND `foglalas_idopont_veg`='"+f.getIdopontVegString(true)+"'";
             try{
                 Statement stmt= con.createStatement();
                 stmt.execute(sql);
@@ -171,11 +169,11 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     protected void loadListFromDB() throws SQLException, ClassNotFoundException{
         foglalasokLista.clear();
         String todaysDateTime=dtf.format(LocalDateTime.now());
-        String sql="SELECT `szam`,`etterem_id`,`asztal_id`,`tipus`,`foglalo_nev`,`foglalo_telszam`,`csoport_meret`,`idopont_kezd`,`idopont_veg` "
-                + "FROM `foglalasok` "
-                + "INNER JOIN `asztalok` ON `asztalok`.`id`=`asztal_id` "
-                + "INNER JOIN `ettermek` ON `ettermek`.`id`=`etterem_id` "
-                + "WHERE `idopont_kezd`>'"+todaysDateTime+"' AND `etterem_id`="+etterem.getId()+" ORDER BY `idopont_kezd`";
+        String sql="SELECT `asztal_szam`,`asztal`.`etterem_id`,`foglalas`.`asztal_id`,`tipus_id`,`foglalas_nev`,`foglalas_telszam`,`foglalas_csoport_meret`,`foglalas_idopont_kezd`,`foglalas_idopont_veg` "
+                + "FROM `foglalas` "
+                + "INNER JOIN `asztal` ON `asztal`.`asztal_id`=`foglalas`.`asztal_id` "
+                + "INNER JOIN `etterem` ON `etterem`.`etterem_id`=`asztal`.`etterem_id` "
+                + "WHERE `foglalas_idopont_kezd`>'"+todaysDateTime+"' AND `asztal`.`etterem_id`="+etterem.getId()+" ORDER BY `foglalas_idopont_kezd`";
         Statement stmt= con.createStatement();
         if(stmt.execute(sql)){
             ResultSet rs = stmt.getResultSet();
@@ -195,7 +193,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     }
     
     protected int getAsztalKapacitas(int tipusId) throws SQLException{
-        String sql="SELECT `ferohely` FROM `asztal_tipusok` WHERE `id`='"+tipusId+"'";
+        String sql="SELECT `tipus_ferohely` FROM `tipus` WHERE `tipus_id`='"+tipusId+"'";
         Statement stmt= con.createStatement();
         if(stmt.execute(sql)){
             ResultSet rs = stmt.getResultSet();

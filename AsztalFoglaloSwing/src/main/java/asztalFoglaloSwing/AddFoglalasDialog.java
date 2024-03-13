@@ -215,7 +215,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         if (canBeReserved(f)) {
             
             String sql="INSERT INTO "+
-                    "`foglalasok` (`id`, `foglalo_nev`, `foglalo_telszam`, `csoport_meret`, `asztal_id`, `idopont_kezd`, `idopont_veg`) "+
+                    "`foglalas` (`foglalas_id`, `foglalas_nev`, `foglalas_telszam`, `foglalas_csoport_meret`, `asztal_id`, `foglalas_idopont_kezd`, `foglalas_idopont_veg`) "+
                     "VALUES "+
                     "(NULL, '"+f.getFoglaloNev()+"', '"+f.getFoglaloTSzam()+"', '"+f.getEmberSzam()+"', '"+f.getAsztal().getAsztalId()+"', '"+f.getIdopontKezdString(true)+"', '"+f.getIdopontVegString(true)+"');";
             Statement stmt= parent.con.createStatement();
@@ -232,7 +232,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
     public boolean updateFoglalas(Foglalas f) throws SQLException, ClassNotFoundException{
         if (canBeReserved(f)) {
             
-            String sql="UPDATE `foglalasok` SET `foglalo_nev`='"+f.getFoglaloNev()+"',`foglalo_telszam`='"+f.getFoglaloTSzam()+"',`csoport_meret`='"+f.getEmberSzam()+"',`asztal_id`='"+f.getAsztal().getAsztalId()+"',`idopont_kezd`='"+f.getIdopontKezdString(true)+"',`idopont_veg`='"+f.getIdopontVegString(true)+"' WHERE `foglalo_nev` LIKE '"+eredeti.getFoglaloNev()+"' AND `foglalo_telszam` LIKE '"+eredeti.getFoglaloTSzam()+"' AND `csoport_meret`='"+eredeti.getEmberSzam()+"' AND `asztal_id`='"+eredeti.getAsztal().getAsztalId()+"' AND `idopont_kezd`='"+eredeti.getIdopontKezdString(true)+"' AND `idopont_veg`='"+eredeti.getIdopontVegString(true)+"'";
+            String sql="UPDATE `foglalas` SET `foglalas_nev`='"+f.getFoglaloNev()+"',`foglalas_telszam`='"+f.getFoglaloTSzam()+"',`foglalas_csoport_meret`='"+f.getEmberSzam()+"',`asztal_id`='"+f.getAsztal().getAsztalId()+"',`foglalas_idopont_kezd`='"+f.getIdopontKezdString(true)+"',`foglalas_idopont_veg`='"+f.getIdopontVegString(true)+"' WHERE `foglalas_nev` LIKE '"+eredeti.getFoglaloNev()+"' AND `foglalas_telszam` LIKE '"+eredeti.getFoglaloTSzam()+"' AND `foglalas_csoport_meret`='"+eredeti.getEmberSzam()+"' AND `asztal_id`='"+eredeti.getAsztal().getAsztalId()+"' AND `foglalas_idopont_kezd`='"+eredeti.getIdopontKezdString(true)+"' AND `foglalas_idopont_veg`='"+eredeti.getIdopontVegString(true)+"'";
             Statement stmt= parent.con.createStatement();
             stmt.execute(sql);
             boolean success=stmt.getUpdateCount()==1;
@@ -277,9 +277,9 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
     }
     
     private void loadAsztalokModel() throws SQLException{
-        String sql="SELECT `etterem_id`,`asztalok`.`id`,`tipus`,`szam` FROM `asztalok` "
-                + "INNER JOIN `ettermek` ON `ettermek`.`id`=`etterem_id` "
-                + "WHERE `etterem_id`='"+parent.etterem.getId()+"'";
+        String sql="SELECT `asztal`.`etterem_id`,`asztal`.`asztal_id`,`tipus_id`,`asztal_szam` FROM `asztal` "
+                + "INNER JOIN `etterem` ON `etterem`.`etterem_id`=`asztal`.`etterem_id` "
+                + "WHERE `asztal`.`etterem_id`='"+parent.etterem.getId()+"'";
         Statement stmt= parent.con.createStatement();
         if(stmt.execute(sql)){
             ResultSet rs = stmt.getResultSet();

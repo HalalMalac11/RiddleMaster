@@ -1,15 +1,16 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 4.9.0.1
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2024. Jan 25. 17:03
--- Kiszolgáló verziója: 10.4.32-MariaDB
--- PHP verzió: 8.2.12
+-- Létrehozás ideje: 2024. Már 13. 11:56
+-- Kiszolgáló verziója: 10.3.16-MariaDB
+-- PHP verzió: 7.3.8
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
-SET time_zone = "+01:00";
+SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -18,7 +19,7 @@ SET time_zone = "+01:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Adatbázis: `zghjbn_asztalfoglalo`
+-- Adatbázis: `asztalfoglalo`
 --
 
 -- --------------------------------------------------------
@@ -30,19 +31,17 @@ SET time_zone = "+01:00";
 CREATE TABLE `asztal` (
   `asztal_id` int(10) UNSIGNED NOT NULL,
   `tipus_id` tinyint(3) UNSIGNED NOT NULL,
+  `asztal_szam` tinyint(3) UNSIGNED NOT NULL,
   `etterem_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
--- --------------------------------------------------------
-
 --
--- Tábla szerkezet ehhez a táblához `tipus`
+-- A tábla adatainak kiíratása `asztal`
 --
 
-CREATE TABLE `tipus` (
-  `tipus_id` tinyint(3) UNSIGNED NOT NULL,
-  `tipus_ferohely` tinyint(3) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+INSERT INTO `asztal` (`asztal_id`, `tipus_id`, `asztal_szam`, `etterem_id`) VALUES
+(3, 1, 1, 1),
+(4, 2, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -55,6 +54,14 @@ CREATE TABLE `etterem` (
   `etterem_nev` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_swedish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
+--
+-- A tábla adatainak kiíratása `etterem`
+--
+
+INSERT INTO `etterem` (`etterem_id`, `etterem_nev`) VALUES
+(1, 'Krusty Crab'),
+(3, 'Chum Bucket');
+
 -- --------------------------------------------------------
 
 --
@@ -63,8 +70,8 @@ CREATE TABLE `etterem` (
 
 CREATE TABLE `foglalas` (
   `foglalas_id` int(10) UNSIGNED NOT NULL,
-  `foglalas_nev` varchar(40) NOT NULL,
-  `foglalas_telszam` varchar(12) NOT NULL,
+  `foglalas_nev` varchar(40) COLLATE utf8_hungarian_ci NOT NULL,
+  `foglalas_telszam` varchar(12) COLLATE utf8_hungarian_ci NOT NULL,
   `foglalas_csoport_meret` tinyint(4) UNSIGNED NOT NULL,
   `asztal_id` int(10) UNSIGNED NOT NULL,
   `foglalas_idopont_kezd` datetime NOT NULL,
@@ -86,6 +93,45 @@ CREATE TABLE `nyitvatartas` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
 --
+-- A tábla adatainak kiíratása `nyitvatartas`
+--
+
+INSERT INTO `nyitvatartas` (`nyitvatartas_id`, `etterem_id`, `nyitvatartas_nap`, `nyitvatartas_nyitas`, `nyitvatartas_zaras`) VALUES
+(1, 1, 1, '08:00:00', '22:00:00'),
+(2, 1, 2, '08:00:00', '22:00:00'),
+(3, 1, 3, '08:00:00', '22:00:00'),
+(4, 1, 4, '08:00:00', '22:00:00'),
+(5, 1, 5, '08:00:00', '22:00:00'),
+(6, 1, 6, '08:00:00', '22:00:00'),
+(7, 1, 7, '08:00:00', '20:00:00'),
+(8, 3, 0, '08:00:00', '21:00:00'),
+(9, 3, 1, '08:00:00', '21:00:00'),
+(10, 3, 2, '08:00:00', '21:00:00'),
+(11, 3, 3, '08:00:00', '21:00:00'),
+(12, 3, 4, '08:00:00', '21:00:00'),
+(13, 3, 5, '08:00:00', '21:00:00'),
+(14, 3, 6, '08:00:00', '21:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Tábla szerkezet ehhez a táblához `tipus`
+--
+
+CREATE TABLE `tipus` (
+  `tipus_id` tinyint(3) UNSIGNED NOT NULL,
+  `tipus_ferohely` tinyint(3) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+
+--
+-- A tábla adatainak kiíratása `tipus`
+--
+
+INSERT INTO `tipus` (`tipus_id`, `tipus_ferohely`) VALUES
+(1, 12),
+(2, 6);
+
+--
 -- Indexek a kiírt táblákhoz
 --
 
@@ -96,12 +142,6 @@ ALTER TABLE `asztal`
   ADD PRIMARY KEY (`asztal_id`),
   ADD KEY `tipus_id` (`tipus_id`),
   ADD KEY `etterem_id` (`etterem_id`);
-
---
--- A tábla indexei `tipus`
---
-ALTER TABLE `tipus`
-  ADD PRIMARY KEY (`tipus_id`);
 
 --
 -- A tábla indexei `etterem`
@@ -124,6 +164,12 @@ ALTER TABLE `nyitvatartas`
   ADD KEY `etterem_id` (`etterem_id`);
 
 --
+-- A tábla indexei `tipus`
+--
+ALTER TABLE `tipus`
+  ADD PRIMARY KEY (`tipus_id`);
+
+--
 -- A kiírt táblák AUTO_INCREMENT értéke
 --
 
@@ -131,31 +177,31 @@ ALTER TABLE `nyitvatartas`
 -- AUTO_INCREMENT a táblához `asztal`
 --
 ALTER TABLE `asztal`
-  MODIFY `asztal_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT a táblához `tipus`
---
-ALTER TABLE `tipus`
-  MODIFY `tipus_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `asztal_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT a táblához `etterem`
 --
 ALTER TABLE `etterem`
-  MODIFY `etterem_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `etterem_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT a táblához `foglalas`
 --
 ALTER TABLE `foglalas`
-  MODIFY `foglalas_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `foglalas_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT a táblához `nyitvatartas`
 --
 ALTER TABLE `nyitvatartas`
-  MODIFY `nyitvatartas_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `nyitvatartas_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT a táblához `tipus`
+--
+ALTER TABLE `tipus`
+  MODIFY `tipus_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Megkötések a kiírt táblákhoz
