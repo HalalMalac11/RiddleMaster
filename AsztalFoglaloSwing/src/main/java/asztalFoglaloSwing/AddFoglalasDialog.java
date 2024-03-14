@@ -209,7 +209,6 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         }else{
             JOptionPane.showMessageDialog(errorFrame,"Kérem töltse ki az összes mezőt!","Hiba!",JOptionPane.ERROR_MESSAGE);
         }
-        dispose();
     }//GEN-LAST:event_submitButtonActionPerformed
     public boolean addFoglalas(Foglalas f) throws SQLException, ClassNotFoundException{
         if (canBeReserved(f)) {
@@ -224,6 +223,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
             System.out.println(success);
             if(success){
                 parent.loadListFromDB();
+                parent.loadTreeFromDB();
             }
             return success;
         }
@@ -238,6 +238,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
             boolean success=stmt.getUpdateCount()==1;
             if(success){
                 parent.loadListFromDB();
+                parent.loadTreeFromDB();
             }
             return success;
         }
@@ -253,7 +254,6 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
                             marFoglaltIdoVeg = parent.foglalasokLista.get(i).getIdopontVeg();
                 
                 if(ujFoglalas.getIdopontKezd().isBefore(marFoglaltIdoVeg)&&ujFoglalas.getIdopontKezd().isAfter(marFoglaltIdoKezd)){
-                    System.out.println("false1");
                     return false;
                     
                 }
@@ -267,7 +267,6 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
                             marFoglaltIdoVeg = parent.foglalasokLista.get(i).getIdopontVeg();
                 
                 if(ujFoglalas.getIdopontVeg().isAfter(marFoglaltIdoKezd)&&ujFoglalas.getIdopontKezd().isBefore(marFoglaltIdoKezd)){
-                    System.out.println("false2");
                     return false;
                 }
             }

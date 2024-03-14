@@ -34,10 +34,8 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
                 Etterem etterem;
                 StringTokenizer st;
                 int etteremId;
-                System.out.println("dtfujhnk");
                 while (rsEttermek.next()) {
                     etteremId=rsEttermek.getInt(2);
-                    System.out.println("élkj");
                     sql="SELECT `nyitvatartas_nyitas`,`nyitvatartas_zaras` FROM `nyitvatartas` WHERE `etterem_id`='"+etteremId+"' ORDER BY `nyitvatartas_nap`";
                     stmt = parent.con.createStatement();
                     stmt.execute(sql);
@@ -52,7 +50,6 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
                     }
                     etterem = new Etterem(rsEttermek.getString(1), etteremId, nyitvatartasMatrix);
                     dcbm.addElement(etterem);
-                    System.out.println("sdfj");
                 }
             }
             if(dcbm.getSize()!=0){
