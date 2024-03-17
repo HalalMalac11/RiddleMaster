@@ -253,7 +253,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
                             marFoglaltIdoKezd = parent.foglalasokLista.get(i).getIdopontKezd(),
                             marFoglaltIdoVeg = parent.foglalasokLista.get(i).getIdopontVeg();
                 
-                if(ujFoglalas.getIdopontKezd().isBefore(marFoglaltIdoVeg)&&ujFoglalas.getIdopontKezd().isAfter(marFoglaltIdoKezd)){
+                if((ujFoglalas.getIdopontKezd().isBefore(marFoglaltIdoVeg)&&ujFoglalas.getIdopontKezd().isAfter(marFoglaltIdoKezd))||ujFoglalas.getIdopontKezd().equals(marFoglaltIdoKezd)){
                     return false;
                     
                 }
