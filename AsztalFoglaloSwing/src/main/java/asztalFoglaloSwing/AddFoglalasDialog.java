@@ -10,6 +10,7 @@ import java.time.LocalTime;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 public class AddFoglalasDialog extends javax.swing.JDialog {
     private DefaultComboBoxModel<Asztal> asztalokDCBM;
@@ -32,18 +33,18 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         }
         setLocationRelativeTo(null);
     }
-    public AddFoglalasDialog(AsztalFoglaloMainFrame parent, boolean modal, Foglalas f) {
+    public AddFoglalasDialog(AsztalFoglaloMainFrame parent, boolean modal, DefaultMutableTreeNode treeNode) {
         this(parent,modal);
         update=true;
-        eredeti=f;
-        parent.foglalasokLista.removeElement(f);
-        foglaloNev.setText(f.getFoglaloNev());
-        tSzam.setText(f.getFoglaloTSzam());
-        emberSzam.setText(""+f.getEmberSzam());
-        datum.setText(f.getIdopontKezdString(false).substring(0,10));
-        idopontKezd.setText(f.getIdopontKezdString(false).substring(11));
-        idopontVeg.setText(f.getIdopontVegString(false).substring(11));
-        asztalokComboBox.setSelectedItem(f.getAsztal());
+        eredeti=(Foglalas) treeNode.getUserObject();
+        parent.foglalasokLista.remove(eredeti);
+        foglaloNev.setText(eredeti.getFoglaloNev());
+        tSzam.setText(eredeti.getFoglaloTSzam());
+        emberSzam.setText(""+eredeti.getEmberSzam());
+        datum.setText(eredeti.getIdopontKezdString(false).substring(0,10));
+        idopontKezd.setText(eredeti.getIdopontKezdString(false).substring(11));
+        idopontVeg.setText(eredeti.getIdopontVegString(false).substring(11));
+        asztalokComboBox.setSelectedItem(eredeti.getAsztal());
     }
 
     @SuppressWarnings("unchecked")
@@ -246,7 +247,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
     }
     public boolean canBeReserved(Foglalas ujFoglalas)
     {
-        for (int i = 0; i < parent.foglalasokLista.getSize(); i++) {
+        for (int i = 0; i < parent.foglalasokLista.size(); i++) {
             Foglalas f = parent.foglalasokLista.get(i);
             if(f.getAsztal().getAsztalId()==ujFoglalas.getAsztal().getAsztalId()){
                 LocalDateTime 
@@ -259,7 +260,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
                 }
             }
         }
-        for (int i = parent.foglalasokLista.getSize()-1; i > 0; i--) {
+        for (int i = parent.foglalasokLista.size()-1; i > 0; i--) {
             Foglalas f = parent.foglalasokLista.get(i);
             if(f.getAsztal().getAsztalId()==ujFoglalas.getAsztal().getAsztalId()){
                 LocalDateTime 

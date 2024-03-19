@@ -27,17 +27,16 @@ import javax.swing.tree.DefaultTreeModel;
 public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     //private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
     private final String dbURL="jdbc:mysql://localhost:3306/asztalfoglalo",dbUser="foglalas_kezelo",dbPass="4N6jqhr7dnwCACRI";
-    protected DefaultListModel<Foglalas> foglalasokLista;
+    protected ArrayList<Foglalas> foglalasokLista;
     protected DefaultTreeModel foglalasFa;
-    protected DefaultMutableTreeNode rootNode;
     private JFrame errorFrame= new JFrame();
     protected Etterem etterem;
     public Connection con;
     
     public AsztalFoglaloMainFrame() {
-        foglalasokLista= new DefaultListModel<Foglalas>();
-        rootNode = new DefaultMutableTreeNode("root");
+        foglalasokLista= new ArrayList<Foglalas>();
         
+        initComponents();
         try {
             con = DriverManager.getConnection(dbURL,dbUser,dbPass);
             EtteremValasztDialog evd = new EtteremValasztDialog(this,true);
@@ -52,11 +51,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(errorFrame,"Sikertelen driver betöltés!\n"+cnfe,"Hiba!",JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
-        foglalasFa = new DefaultTreeModel(rootNode);
-        initComponents();
-        jTree1.setModel(foglalasFa);
-        jTree1.expandRow(0);
-        jTree1.setRootVisible(false);
+        
         this.kivalasztottEtteremLabel.setText(etterem.getNev());
         setLocationRelativeTo(null);
         createShortcuts();
@@ -67,8 +62,6 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        lista = new javax.swing.JList<Foglalas>();
         kivalasztottEtteremLabel = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
@@ -83,15 +76,6 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Asztal foglalas");
         setResizable(false);
-
-        lista.setModel(foglalasokLista);
-        lista.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        lista.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                listaMouseClicked(evt);
-            }
-        });
-        jScrollPane1.setViewportView(lista);
 
         kivalasztottEtteremLabel.setFont(new java.awt.Font("Calibri", 1, 24)); // NOI18N
         kivalasztottEtteremLabel.setText("jLabel1");
@@ -148,8 +132,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
+                        .addGap(0, 199, Short.MAX_VALUE)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(kivalasztottEtteremLabel)
@@ -162,9 +145,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(kivalasztottEtteremLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -176,21 +157,13 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         afd.setVisible(true);
     }//GEN-LAST:event_hozzaAdActionPerformed
 
-    private void listaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listaMouseClicked
-        if(evt.getClickCount()==2){
-            ReszletekFrame rf = new ReszletekFrame(lista.getSelectedValue());
-            rf.setEtteremNev(etterem.getNev());
-            rf.setVisible(true);
-        }
-    }//GEN-LAST:event_listaMouseClicked
-
     private void editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editActionPerformed
-        AddFoglalasDialog afd = new AddFoglalasDialog(this,true,lista.getSelectedValue());
+        AddFoglalasDialog afd = new AddFoglalasDialog(this,true, (DefaultMutableTreeNode) jTree1.getLastSelectedPathComponent());
         afd.setVisible(true);
     }//GEN-LAST:event_editActionPerformed
 
     private void torolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_torolActionPerformed
-        Foglalas f = lista.getSelectedValue();
+        Foglalas f = (Foglalas) jTree1.getLastSelectedPathComponent();
         int valasz=JOptionPane.showConfirmDialog(errorFrame,"Biztosan törölni szeretné?\n"+f,"Törlés",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
         if(valasz==JOptionPane.YES_OPTION){
             String sql="DELETE FROM `foglalas`  WHERE `foglalas_nev` LIKE '"+f.getFoglaloNev()+"' AND `foglalas_telszam` LIKE '"+f.getFoglaloTSzam()+"' AND `foglalas_csoport_meret`='"+f.getEmberSzam()+"' AND `asztal_id`='"+f.getAsztal().getAsztalId()+"' AND `foglalas_idopont_kezd`='"+f.getIdopontKezdString(true)+"' AND `foglalas_idopont_veg`='"+f.getIdopontVegString(true)+"'";
@@ -200,6 +173,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 boolean success=stmt.getUpdateCount()==1;
                 if(success){
                     loadListFromDB();
+                    loadTreeFromDB();
                 }
             } catch (SQLException|ClassNotFoundException ex) {
                 JOptionPane.showMessageDialog(errorFrame,"Sikertelen törlés!\n"+ex,"Hiba!",JOptionPane.ERROR_MESSAGE);
@@ -228,7 +202,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             try {
                 a= new Asztal(rs.getInt(1),etterem.getNev(),rs.getInt(3),getAsztalKapacitas(rs.getInt(4)));
                 f= new Foglalas(rs.getString(5),rs.getString(6),a,rs.getInt(7),rs.getString(8),rs.getString(9));
-                foglalasokLista.addElement(f);
+                foglalasokLista.add(f);
             } catch (OldDateException | IllegalArgumentException | InvalidTimeException ex) {
                 JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
             System.exit(0);
@@ -238,6 +212,9 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     }
     
     protected void loadTreeFromDB() throws SQLException {
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("root");
+        foglalasFa = new DefaultTreeModel(rootNode);
+        
         String todaysDateTime=dtf.format(LocalDateTime.now());
         String sql = "SELECT * FROM `asztal` WHERE `etterem_id`='"+etterem.getId()+"'";
         Statement stmt= con.createStatement();
@@ -269,8 +246,10 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             }
         }
         
-        
-        while(rs.next()){
+        jTree1.setModel(foglalasFa);
+        jTree1.expandRow(0);
+        jTree1.setRootVisible(false);
+        /*while(rs.next()){
             try {
                 a= new Asztal(rs.getInt(1),etterem.getNev(),rs.getInt(3),getAsztalKapacitas(rs.getInt(4)));
                 f= new Foglalas(rs.getString(5),rs.getString(6),a,rs.getInt(7),rs.getString(8),rs.getString(9));
@@ -279,7 +258,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
             System.exit(0);
             }
-        }
+        }*/
     }
     
     protected int getAsztalKapacitas(int tipusId) throws SQLException{
@@ -336,12 +315,10 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem hozzaAd;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTree jTree1;
     private javax.swing.JMenuItem kilepes;
     private javax.swing.JLabel kivalasztottEtteremLabel;
-    private javax.swing.JList<Foglalas> lista;
     private javax.swing.JMenuBar menuSor;
     private javax.swing.JMenuItem torol;
     // End of variables declaration//GEN-END:variables
