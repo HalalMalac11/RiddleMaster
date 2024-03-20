@@ -6,11 +6,11 @@ public class ReszletekFrame extends javax.swing.JFrame {
 
     public ReszletekFrame(Foglalas foglalas) {
         initComponents();
-        this.fogaloNevLabel.setText(foglalas.getFoglaloNev());
-        this.tSzamLabel.setText(foglalas.getFoglaloTSzam());
-        this.emberSzamLabel.setText(""+foglalas.getEmberSzam());
-        this.asztalIdLabel.setText(""+foglalas.getAsztal().getAsztalId());
-        this.asztalMaxKapacitasLabel.setText(""+foglalas.getAsztal().getKapacitas());
+        this.fogaloNevLabel.setText(foglalas.getFoglalas_nev());
+        this.tSzamLabel.setText(foglalas.getFoglalas_telszam());
+        this.emberSzamLabel.setText(""+foglalas.getFoglalas_csoport_meret());
+        this.asztalIdLabel.setText(""+foglalas.getAsztal().getAsztal_id());
+        this.asztalMaxKapacitasLabel.setText(""+foglalas.getAsztal().getTipus_ferohely());
         setLocationRelativeTo(null);
     }
 

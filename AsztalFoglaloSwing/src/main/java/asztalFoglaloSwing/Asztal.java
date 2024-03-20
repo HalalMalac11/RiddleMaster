@@ -2,12 +2,12 @@ package asztalFoglaloSwing;
 
 public class Asztal {
     private String asztalNev;
-    private int etteremId, asztalId, kapacitas;
+    private int asztal_id, tipus_ferohely;
 
-    public Asztal(int index, String etteremNev, int asztalId, int kapacitas) {
-        this.asztalNev = etteremNev+"_"+index;
-        this.asztalId = asztalId;
-        this.kapacitas =kapacitas;
+    public Asztal(int index, String etterem_nev, int asztal_id, int tipus_ferohely) {
+        this.asztalNev = etterem_nev+"_"+index;
+        this.asztal_id = asztal_id;
+        this.tipus_ferohely =tipus_ferohely;
     }
 
 
@@ -19,20 +19,20 @@ public class Asztal {
         this.asztalNev = asztalNev;
     }
 
-    public int getAsztalId() {
-        return asztalId;
+    public int getAsztal_id() {
+        return asztal_id;
     }
 
-    private void setAsztalId(int asztalId) {
-        this.asztalId = asztalId;
+    private void setAsztal_id(int asztal_id) {
+        this.asztal_id = asztal_id;
     }
 
-    public int getKapacitas() {
-        return kapacitas;
+    public int getTipus_ferohely() {
+        return tipus_ferohely;
     }
 
-    private void setKapacitas(int kapacitas) {
-        this.kapacitas = kapacitas;
+    private void setTipus_ferohely(int tipus_ferohely) {
+        this.tipus_ferohely = tipus_ferohely;
     }
 
     

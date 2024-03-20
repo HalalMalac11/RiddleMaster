@@ -131,12 +131,10 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 199, Short.MAX_VALUE)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(kivalasztottEtteremLabel)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 257, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -163,19 +161,19 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_editActionPerformed
 
     private void torolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_torolActionPerformed
-        Foglalas f = (Foglalas) jTree1.getLastSelectedPathComponent();
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) jTree1.getLastSelectedPathComponent();
+        Foglalas f = (Foglalas) selectedNode.getUserObject();
         int valasz=JOptionPane.showConfirmDialog(errorFrame,"Biztosan törölni szeretné?\n"+f,"Törlés",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
         if(valasz==JOptionPane.YES_OPTION){
-            String sql="DELETE FROM `foglalas`  WHERE `foglalas_nev` LIKE '"+f.getFoglaloNev()+"' AND `foglalas_telszam` LIKE '"+f.getFoglaloTSzam()+"' AND `foglalas_csoport_meret`='"+f.getEmberSzam()+"' AND `asztal_id`='"+f.getAsztal().getAsztalId()+"' AND `foglalas_idopont_kezd`='"+f.getIdopontKezdString(true)+"' AND `foglalas_idopont_veg`='"+f.getIdopontVegString(true)+"'";
+            String sql="DELETE FROM `foglalas`  WHERE `foglalas_id`='"+f.getFoglalas_id()+"'";
             try{
                 Statement stmt= con.createStatement();
                 stmt.execute(sql);
                 boolean success=stmt.getUpdateCount()==1;
                 if(success){
-                    loadListFromDB();
-                    loadTreeFromDB();
+                    jTree1.removeSelectionPath(jTree1.getSelectionPath());
                 }
-            } catch (SQLException|ClassNotFoundException ex) {
+            } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(errorFrame,"Sikertelen törlés!\n"+ex,"Hiba!",JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -188,7 +186,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     protected void loadListFromDB() throws SQLException, ClassNotFoundException{
         foglalasokLista.clear();
         String todaysDateTime=dtf.format(LocalDateTime.now());
-        String sql="SELECT `asztal_szam`,`asztal`.`etterem_id`,`foglalas`.`asztal_id`,`tipus_id`,`foglalas_nev`,`foglalas_telszam`,`foglalas_csoport_meret`,`foglalas_idopont_kezd`,`foglalas_idopont_veg` "
+        String sql="SELECT `asztal_szam`,`asztal`.`etterem_id`,`foglalas`.`asztal_id`,`tipus_id`, `foglalas_id`, `foglalas_nev`,`foglalas_telszam`,`foglalas_csoport_meret`,`foglalas_idopont_kezd`,`foglalas_idopont_veg` "
                 + "FROM `foglalas` "
                 + "INNER JOIN `asztal` ON `asztal`.`asztal_id`=`foglalas`.`asztal_id` "
                 + "INNER JOIN `etterem` ON `etterem`.`etterem_id`=`asztal`.`etterem_id` "
@@ -200,8 +198,8 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         Asztal a;
         while(rs.next()){
             try {
-                a= new Asztal(rs.getInt(1),etterem.getNev(),rs.getInt(3),getAsztalKapacitas(rs.getInt(4)));
-                f= new Foglalas(rs.getString(5),rs.getString(6),a,rs.getInt(7),rs.getString(8),rs.getString(9));
+                a= new Asztal(rs.getInt("asztal_szam"),etterem.getNev(),rs.getInt("asztal_id"),getTipus_ferohely(rs.getInt("tipus_id")));
+                f= new Foglalas(rs.getInt("foglalas_id"),rs.getString("foglalas_nev"),rs.getString("foglalas_telszam"),rs.getInt("foglalas_csoport_meret"),a,rs.getString("foglalas_idopont_kezd"),rs.getString("foglalas_idopont_veg"));
                 foglalasokLista.add(f);
             } catch (OldDateException | IllegalArgumentException | InvalidTimeException ex) {
                 JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
@@ -225,9 +223,9 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         Foglalas f;
         while(rs.next()){
             try {
-                a= new Asztal(rs.getInt(3),etterem.getNev(),rs.getInt(1),getAsztalKapacitas(rs.getInt(2)));
+                a= new Asztal(rs.getInt(3),etterem.getNev(),rs.getInt(1),getTipus_ferohely(rs.getInt(2)));
                 DefaultMutableTreeNode asztalNode = new DefaultMutableTreeNode(a);
-                sql="SELECT `asztal`.`etterem_id`,`foglalas`.`asztal_id`,`foglalas_nev`,`foglalas_telszam`,`foglalas_csoport_meret`,`foglalas_idopont_kezd`,`foglalas_idopont_veg` "
+                sql="SELECT `asztal`.`etterem_id`,`foglalas`.`asztal_id`, `foglalas_id`, `foglalas_nev`,`foglalas_telszam`,`foglalas_csoport_meret`,`foglalas_idopont_kezd`,`foglalas_idopont_veg` "
                 + "FROM `foglalas` "
                 + "INNER JOIN `asztal` ON `asztal`.`asztal_id`=`foglalas`.`asztal_id` "
                 + "WHERE `foglalas_idopont_kezd`>'"+todaysDateTime+"' AND `foglalas`.`asztal_id`="+rs.getInt(1)+" ORDER BY `foglalas_idopont_kezd`";
@@ -235,7 +233,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 stmt.execute(sql);
                 ResultSet foglalasRs = stmt.getResultSet();
                 while(foglalasRs.next()){
-                    f= new Foglalas(foglalasRs.getString(3),foglalasRs.getString(4),a,foglalasRs.getInt(5),foglalasRs.getString(6),foglalasRs.getString(7));
+                    f= new Foglalas(foglalasRs.getInt("foglalas_id"),foglalasRs.getString("foglalas_nev"),foglalasRs.getString("foglalas_telszam"),foglalasRs.getInt("foglalas_csoport_meret"),a,foglalasRs.getString("foglalas_idopont_kezd"),foglalasRs.getString("foglalas_idopont_veg"));
                     DefaultMutableTreeNode foglalasNode = new DefaultMutableTreeNode(f);
                     asztalNode.add(foglalasNode);
                 }
@@ -251,7 +249,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         jTree1.setRootVisible(false);
         /*while(rs.next()){
             try {
-                a= new Asztal(rs.getInt(1),etterem.getNev(),rs.getInt(3),getAsztalKapacitas(rs.getInt(4)));
+                a= new Asztal(rs.getInt(1),etterem.getNev(),rs.getInt(3),getTipus_ferohely(rs.getInt(4)));
                 f= new Foglalas(rs.getString(5),rs.getString(6),a,rs.getInt(7),rs.getString(8),rs.getString(9));
                 foglalasokLista.addElement(f);
             } catch (OldDateException | IllegalArgumentException | InvalidTimeException ex) {
@@ -261,7 +259,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         }*/
     }
     
-    protected int getAsztalKapacitas(int tipusId) throws SQLException{
+    protected int getTipus_ferohely(int tipusId) throws SQLException{
         String sql="SELECT `tipus_ferohely` FROM `tipus` WHERE `tipus_id`='"+tipusId+"'";
         Statement stmt= con.createStatement();
         if(stmt.execute(sql)){

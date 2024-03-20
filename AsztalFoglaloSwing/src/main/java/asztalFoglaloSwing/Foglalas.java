@@ -4,48 +4,58 @@ import java.time.*;
 import java.time.format.DateTimeParseException;
 
 public class Foglalas implements iDateFormatting{
-    private String foglaloNev, foglaloTSzam;
-    private int emberSzam;
-    private LocalDateTime idopontKezd, idopontVeg;
+    private String foglalas_nev, foglalas_telszam;
+    private int foglalas_id, foglalas_csoport_meret;
+    private LocalDateTime foglalas_idopont_kezd, foglalas_idopont_veg;
     private Asztal asztal;
 
-    public Foglalas(String foglaloNev, String foglaloTSzam, Asztal asztal,int emberSzam, String formattedIdopontKezd, String formattedIdopontVeg) throws OldDateException, IllegalArgumentException, InvalidTimeException
-    {   this.setFoglaloNev(foglaloNev);
-        this.setFoglaloTSzam(foglaloTSzam);
+    public Foglalas(int foglalas_id, String foglalas_nev, String foglalas_telszam, int foglalas_csoport_meret, Asztal asztal, String formattedIdopontKezd, String formattedIdopontVeg) throws OldDateException, IllegalArgumentException, InvalidTimeException {   
+        this.setFoglalas_id(foglalas_id);
+        this.setFoglalas_nev(foglalas_nev);
+        this.setFoglalas_telszam(foglalas_telszam);
         this.setAsztal(asztal);
-        this.setEmberSzam(emberSzam);
-        this.setIdopontKezd(LocalDateTime.parse(formattedIdopontKezd, dtf));
-        this.setIdopontVeg(LocalDateTime.parse(formattedIdopontVeg, dtf));
+        this.setFoglalas_csoport_meret(foglalas_csoport_meret);
+        this.setFoglalas_idopont_kezd(LocalDateTime.parse(formattedIdopontKezd, dtf));
+        this.setFoglalas_idopont_veg(LocalDateTime.parse(formattedIdopontVeg, dtf));
     }
 
-    public int getEmberSzam() {
-        return emberSzam;
+    public int getFoglalas_id() {
+        return foglalas_id;
     }
 
-    public void setEmberSzam(int emberszam) throws IllegalArgumentException{
-        int asztalKapacitas = asztal.getKapacitas();
+    public void setFoglalas_id(int foglalas_id) {
+        this.foglalas_id = foglalas_id;
+    }
+    
+
+    public String getFoglalas_nev() {
+        return foglalas_nev;
+    }
+
+    public void setFoglalas_nev(String foglalas_nev) {
+        this.foglalas_nev = foglalas_nev;
+    }
+
+    public String getFoglalas_telszam() {
+        return foglalas_telszam;
+    }
+
+    public void setFoglalas_telszam(String foglalas_telszam) {
+        this.foglalas_telszam = foglalas_telszam;
+    }
+    
+    public int getFoglalas_csoport_meret() {
+        return foglalas_csoport_meret;
+    }
+
+    public void setFoglalas_csoport_meret(int emberszam) throws IllegalArgumentException{
+        int asztalKapacitas = asztal.getTipus_ferohely();
         if (emberszam<1){
             throw new IllegalArgumentException("A csoport mérete nem lehet kisebb mint 1!");
         }else if(emberszam>asztalKapacitas){
             throw new IllegalArgumentException("A csoport mérete nem lehet nagyobb mint az asztal kapacitása: "+asztalKapacitas+" fő!");
         }
-        this.emberSzam = emberszam;
-    }
-
-    public String getFoglaloNev() {
-        return foglaloNev;
-    }
-
-    public void setFoglaloNev(String foglaloNev) {
-        this.foglaloNev = foglaloNev;
-    }
-
-    public String getFoglaloTSzam() {
-        return foglaloTSzam;
-    }
-
-    public void setFoglaloTSzam(String foglaloTSzam) {
-        this.foglaloTSzam = foglaloTSzam;
+        this.foglalas_csoport_meret = emberszam;
     }
 
     public Asztal getAsztal() {
@@ -57,49 +67,49 @@ public class Foglalas implements iDateFormatting{
     }
 
     public String getIdopontKezdString(boolean withSeconds) {
-        String idopont= dtf.format(idopontKezd);
+        String idopont= dtf.format(foglalas_idopont_kezd);
         if (withSeconds) {
             return idopont;
         }
         return idopont.substring(0,idopont.length()-3);
     }
 
-    public LocalDateTime getIdopontKezd() {
-        return idopontKezd;
+    public LocalDateTime getFoglalas_idopont_kezd() {
+        return foglalas_idopont_kezd;
     }
     
-    public void setIdopontKezd(LocalDateTime idopontKezd) throws OldDateException{
-        if (idopontKezd.isBefore(LocalDateTime.now())){
+    public void setFoglalas_idopont_kezd(LocalDateTime foglalas_idopont_kezd) throws OldDateException{
+        if (foglalas_idopont_kezd.isBefore(LocalDateTime.now())){
             throw new OldDateException("Egy múltbéli dátumra nem lehet foglalni!");
         }
-        this.idopontKezd = idopontKezd;
+        this.foglalas_idopont_kezd = foglalas_idopont_kezd;
     }
     
     public String getIdopontVegString(boolean withSeconds) {
-        String idopont= dtf.format(idopontVeg);
+        String idopont= dtf.format(foglalas_idopont_veg);
         if (withSeconds) {
             return idopont;
         }
         return idopont.substring(0,idopont.length()-3);
     }
     
-    public LocalDateTime getIdopontVeg() {
-        return idopontVeg;
+    public LocalDateTime getFoglalas_idopont_veg() {
+        return foglalas_idopont_veg;
     }
 
-    public void setIdopontVeg(LocalDateTime idopontVeg) throws OldDateException{
-        if (idopontVeg.isBefore(this.getIdopontKezd())){
+    public void setFoglalas_idopont_veg(LocalDateTime foglalas_idopont_veg) throws OldDateException{
+        if (foglalas_idopont_veg.isBefore(this.getFoglalas_idopont_kezd())){
             throw new OldDateException("Az időpontnak nem lehet vége mielőtt elkezdődik!");
         }
-        this.idopontVeg = idopontVeg;
+        this.foglalas_idopont_veg = foglalas_idopont_veg;
     }
     
     public String getIdoIntervallumString(){
-        return ""+this.getIdopontKezdString(false)+" - "+(this.getIdopontVeg().getHour()<10?"0"+this.getIdopontVeg().getHour():this.getIdopontVeg().getHour())+":"+(this.getIdopontVeg().getMinute()<10?"0"+this.getIdopontVeg().getMinute():this.getIdopontVeg().getMinute());
+        return ""+this.getIdopontKezdString(false)+" - "+(this.getFoglalas_idopont_veg().getHour()<10?"0"+this.getFoglalas_idopont_veg().getHour():this.getFoglalas_idopont_veg().getHour())+":"+(this.getFoglalas_idopont_veg().getMinute()<10?"0"+this.getFoglalas_idopont_veg().getMinute():this.getFoglalas_idopont_veg().getMinute());
     }
 
     @Override
     public String toString() {
-        return this.getFoglaloNev()+" "+this.getIdoIntervallumString();
+        return this.getFoglalas_nev()+" "+this.getIdoIntervallumString();
     }
 }
