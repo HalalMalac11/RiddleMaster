@@ -17,6 +17,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
     private JFrame errorFrame= new JFrame();
     private Foglalas eredeti;
     private boolean update;
+    private DefaultMutableTreeNode updatableNode;
 
     AsztalFoglaloMainFrame parent;
     public AddFoglalasDialog(AsztalFoglaloMainFrame parent, boolean modal) {
@@ -36,6 +37,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
     public AddFoglalasDialog(AsztalFoglaloMainFrame parent, boolean modal, DefaultMutableTreeNode treeNode) {
         this(parent,modal);
         update=true;
+        updatableNode=treeNode;
         eredeti=(Foglalas) treeNode.getUserObject();
         parent.foglalasokLista.remove(eredeti);
         foglaloNev.setText(eredeti.getFoglalas_nev());
@@ -218,9 +220,8 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
                     "`foglalas` (`foglalas_id`, `foglalas_nev`, `foglalas_telszam`, `foglalas_csoport_meret`, `asztal_id`, `foglalas_idopont_kezd`, `foglalas_idopont_veg`) "+
                     "VALUES "+
                     "(NULL, '"+f.getFoglalas_nev()+"', '"+f.getFoglalas_telszam()+"', '"+f.getFoglalas_csoport_meret()+"', '"+f.getAsztal().getAsztal_id()+"', '"+f.getIdopontKezdString(true)+"', '"+f.getIdopontVegString(true)+"');";
-            Statement stmt= parent.con.createStatement();
-            stmt.execute(sql);
-            boolean success=stmt.getUpdateCount()==1;
+            AsztalFoglaloMainFrame.stmt.execute(sql);
+            boolean success=AsztalFoglaloMainFrame.stmt.getUpdateCount()==1;
             System.out.println(success);
             if(success){
                 parent.loadListFromDB();
@@ -234,9 +235,8 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         if (canBeReserved(f)) {
             
             String sql="UPDATE `foglalas` SET `foglalas_nev`='"+f.getFoglalas_nev()+"',`foglalas_telszam`='"+f.getFoglalas_telszam()+"',`foglalas_csoport_meret`='"+f.getFoglalas_csoport_meret()+"',`asztal_id`='"+f.getAsztal().getAsztal_id()+"',`foglalas_idopont_kezd`='"+f.getIdopontKezdString(true)+"',`foglalas_idopont_veg`='"+f.getIdopontVegString(true)+"' WHERE `foglalas_id`='"+eredeti.getFoglalas_id()+"'";
-            Statement stmt= parent.con.createStatement();
-            stmt.execute(sql);
-            boolean success=stmt.getUpdateCount()==1;
+            AsztalFoglaloMainFrame.stmt.execute(sql);
+            boolean success=AsztalFoglaloMainFrame.stmt.getUpdateCount()==1;
             if(success){
                 parent.loadListFromDB();
                 parent.loadTreeFromDB();
@@ -245,9 +245,17 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         }
         return false;
     }
-    public boolean canBeReserved(Foglalas ujFoglalas)
+    public boolean canBeReserved(Foglalas ujFoglalas) throws SQLException
     {
-        for (int i = 0; i < parent.foglalasokLista.size(); i++) {
+        String sql ="SELECT `foglalas_id`,`asztal_id` FROM `foglalas` WHERE (((`foglalas_idopont_veg`>'"+ujFoglalas.getIdopontKezdString(true)+"' AND `foglalas_idopont_kezd`<'"+ujFoglalas.getIdopontVegString(true)+"') OR (`foglalas_idopont_kezd`='"+ujFoglalas.getIdopontKezdString(true)+"')) OR (`foglalas_idopont_kezd`<'"+ujFoglalas.getIdopontVegString(true)+"' AND `foglalas_idopont_kezd`>'"+ujFoglalas.getIdopontKezdString(true)+"')) AND `asztal_id`='"+ujFoglalas.getAsztal().getAsztal_id()+"';";
+        AsztalFoglaloMainFrame.stmt.execute(sql);
+        ResultSet rs = AsztalFoglaloMainFrame.stmt.getResultSet();
+        while(rs.next()){
+            if(rs.getInt("foglalas_id")!=ujFoglalas.getFoglalas_id()){
+                return false;
+            }
+        }
+        /*for (int i = 0; i < parent.foglalasokLista.size(); i++) {
             Foglalas f = parent.foglalasokLista.get(i);
             if(f.getAsztal().getAsztal_id()==ujFoglalas.getAsztal().getAsztal_id()){
                 LocalDateTime 
@@ -271,7 +279,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
                     return false;
                 }
             }
-        }
+        }*/
         System.out.println("true");
         return true;
     }
@@ -280,9 +288,8 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         String sql="SELECT `asztal`.`etterem_id`,`asztal`.`asztal_id`,`tipus_id`,`asztal_szam` FROM `asztal` "
                 + "INNER JOIN `etterem` ON `etterem`.`etterem_id`=`asztal`.`etterem_id` "
                 + "WHERE `asztal`.`etterem_id`='"+parent.etterem.getId()+"'";
-        Statement stmt= parent.con.createStatement();
-        if(stmt.execute(sql)){
-            ResultSet rs = stmt.getResultSet();
+        if(AsztalFoglaloMainFrame.stmt.execute(sql)){
+            ResultSet rs = AsztalFoglaloMainFrame.stmt.getResultSet();
             Asztal a;
             while(rs.next()){
                 a= new Asztal(rs.getInt(4),parent.etterem.getNev(),rs.getInt(2),parent.getTipus_ferohely(rs.getInt(4)));

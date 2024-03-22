@@ -32,13 +32,14 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private JFrame errorFrame= new JFrame();
     protected Etterem etterem;
     public Connection con;
+    public static Statement stmt;
     
     public AsztalFoglaloMainFrame() {
         foglalasokLista= new ArrayList<Foglalas>();
-        
         initComponents();
         try {
             con = DriverManager.getConnection(dbURL,dbUser,dbPass);
+            stmt= con.createStatement();
             EtteremValasztDialog evd = new EtteremValasztDialog(this,true);
             evd.setVisible(true);
             loadListFromDB();
@@ -191,7 +192,6 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 + "INNER JOIN `asztal` ON `asztal`.`asztal_id`=`foglalas`.`asztal_id` "
                 + "INNER JOIN `etterem` ON `etterem`.`etterem_id`=`asztal`.`etterem_id` "
                 + "WHERE `foglalas_idopont_kezd`>'"+todaysDateTime+"' AND `asztal`.`etterem_id`="+etterem.getId()+" ORDER BY `foglalas_idopont_kezd`";
-        Statement stmt= con.createStatement();
         stmt.execute(sql);
         ResultSet rs = stmt.getResultSet();
         Foglalas f;
@@ -215,7 +215,6 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         
         String todaysDateTime=dtf.format(LocalDateTime.now());
         String sql = "SELECT * FROM `asztal` WHERE `etterem_id`='"+etterem.getId()+"'";
-        Statement stmt= con.createStatement();
         stmt.execute(sql);
         ResultSet rs = stmt.getResultSet();
         Asztal a;
@@ -229,7 +228,6 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 + "FROM `foglalas` "
                 + "INNER JOIN `asztal` ON `asztal`.`asztal_id`=`foglalas`.`asztal_id` "
                 + "WHERE `foglalas_idopont_kezd`>'"+todaysDateTime+"' AND `foglalas`.`asztal_id`="+rs.getInt(1)+" ORDER BY `foglalas_idopont_kezd`";
-                stmt= con.createStatement();
                 stmt.execute(sql);
                 ResultSet foglalasRs = stmt.getResultSet();
                 while(foglalasRs.next()){
@@ -261,7 +259,6 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     
     protected int getTipus_ferohely(int tipusId) throws SQLException{
         String sql="SELECT `tipus_ferohely` FROM `tipus` WHERE `tipus_id`='"+tipusId+"'";
-        Statement stmt= con.createStatement();
         if(stmt.execute(sql)){
             ResultSet rs = stmt.getResultSet();
             rs.next();
