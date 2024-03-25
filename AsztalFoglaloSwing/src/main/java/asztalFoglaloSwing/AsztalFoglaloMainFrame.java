@@ -25,21 +25,19 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
-    private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
-    //private final String dbURL="jdbc:mysql://localhost:3306/asztalfoglalo",dbUser="foglalas_kezelo",dbPass="4N6jqhr7dnwCACRI";
+    //private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
+    private final String dbURL="jdbc:mysql://localhost:3306/asztalfoglalo",dbUser="foglalas_kezelo",dbPass="4N6jqhr7dnwCACRI";
     protected ArrayList<Foglalas> foglalasokLista;
     protected DefaultTreeModel foglalasFa;
     private JFrame errorFrame= new JFrame();
-    protected Etterem etterem;
-    public Connection con;
-    public static Statement stmt;
+    private Etterem etterem;
+    public static Connection con;
     
     public AsztalFoglaloMainFrame() {
         foglalasokLista= new ArrayList<Foglalas>();
         initComponents();
         try {
             con = DriverManager.getConnection(dbURL,dbUser,dbPass);
-            stmt= con.createStatement();
             EtteremValasztDialog evd = new EtteremValasztDialog(this,true);
             evd.setVisible(true);
             loadListFromDB();
@@ -57,6 +55,15 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         createShortcuts();
     }
+
+    public void setEtterem(Etterem etterem) {
+        this.etterem = etterem;
+    }
+
+    public Etterem getEtterem() {
+        return etterem;
+    }
+    
     
     
     @SuppressWarnings("unchecked")
@@ -192,8 +199,8 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 + "INNER JOIN `asztal` ON `asztal`.`asztal_id`=`foglalas`.`asztal_id` "
                 + "INNER JOIN `etterem` ON `etterem`.`etterem_id`=`asztal`.`etterem_id` "
                 + "WHERE `foglalas_idopont_kezd`>'"+todaysDateTime+"' AND `asztal`.`etterem_id`="+etterem.getId()+" ORDER BY `foglalas_idopont_kezd`";
-        stmt.execute(sql);
-        ResultSet rs = stmt.getResultSet();
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
         Foglalas f;
         Asztal a;
         while(rs.next()){
@@ -206,7 +213,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             System.exit(0);
             }
         }
-        
+        rs.close();
     }
     
     protected void loadTreeFromDB() throws SQLException {
@@ -215,21 +222,21 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         
         String todaysDateTime=dtf.format(LocalDateTime.now());
         String sql = "SELECT * FROM `asztal` WHERE `etterem_id`='"+etterem.getId()+"'";
-        stmt.execute(sql);
-        ResultSet rs = stmt.getResultSet();
+        Statement etteremStmt = con.createStatement();
+        ResultSet etteremRs = etteremStmt.executeQuery(sql);
         Asztal a;
         
         Foglalas f;
-        while(rs.next()){
+        while(etteremRs.next()){
             try {
-                a= new Asztal(rs.getInt(3),etterem.getNev(),rs.getInt(1),getTipus_ferohely(rs.getInt(2)));
+                a= new Asztal(etteremRs.getInt(3),etterem.getNev(),etteremRs.getInt(1),getTipus_ferohely(etteremRs.getInt(2)));
                 DefaultMutableTreeNode asztalNode = new DefaultMutableTreeNode(a);
                 sql="SELECT `asztal`.`etterem_id`,`foglalas`.`asztal_id`, `foglalas_id`, `foglalas_nev`,`foglalas_telszam`,`foglalas_csoport_meret`,`foglalas_idopont_kezd`,`foglalas_idopont_veg` "
                 + "FROM `foglalas` "
                 + "INNER JOIN `asztal` ON `asztal`.`asztal_id`=`foglalas`.`asztal_id` "
-                + "WHERE `foglalas_idopont_kezd`>'"+todaysDateTime+"' AND `foglalas`.`asztal_id`="+rs.getInt(1)+" ORDER BY `foglalas_idopont_kezd`";
-                stmt.execute(sql);
-                ResultSet foglalasRs = stmt.getResultSet();
+                + "WHERE `foglalas_idopont_kezd`>'"+todaysDateTime+"' AND `foglalas`.`asztal_id`="+etteremRs.getInt(1)+" ORDER BY `foglalas_idopont_kezd`";
+                Statement foglalasStmt = con.createStatement();
+                ResultSet foglalasRs =foglalasStmt.executeQuery(sql);
                 while(foglalasRs.next()){
                     f= new Foglalas(foglalasRs.getInt("foglalas_id"),foglalasRs.getString("foglalas_nev"),foglalasRs.getString("foglalas_telszam"),foglalasRs.getInt("foglalas_csoport_meret"),a,foglalasRs.getString("foglalas_idopont_kezd"),foglalasRs.getString("foglalas_idopont_veg"));
                     DefaultMutableTreeNode foglalasNode = new DefaultMutableTreeNode(f);
@@ -241,7 +248,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             System.exit(0);
             }
         }
-        
+        etteremRs.close();
         jTree1.setModel(foglalasFa);
         jTree1.expandRow(0);
         jTree1.setRootVisible(false);
@@ -259,10 +266,13 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     
     protected int getTipus_ferohely(int tipusId) throws SQLException{
         String sql="SELECT `tipus_ferohely` FROM `tipus` WHERE `tipus_id`='"+tipusId+"'";
+        Statement stmt = con.createStatement();
         if(stmt.execute(sql)){
-            ResultSet rs = stmt.getResultSet();
+            ResultSet rs = stmt.executeQuery(sql);
             rs.next();
-            return rs.getInt(1);
+            int ferohely= rs.getInt("tipus_ferohely");
+            rs.close();
+            return ferohely;
         }
         return 0;
     }

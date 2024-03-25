@@ -190,6 +190,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
                         feedBackLabel.setForeground(Color.red);
                     }
                 }else{
+                    f.setFoglalas_id(eredeti.getFoglalas_id());
                     if(updateFoglalas(f)){
                     feedBackLabel.setText("Sikeres szerkesztés!");
                     feedBackLabel.setForeground(Color.green);
@@ -214,14 +215,15 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_submitButtonActionPerformed
     public boolean addFoglalas(Foglalas f) throws SQLException, ClassNotFoundException{
-        if (canBeReserved(f)) {
+        if (lefoglalhato(f)) {
             
             String sql="INSERT INTO "+
                     "`foglalas` (`foglalas_id`, `foglalas_nev`, `foglalas_telszam`, `foglalas_csoport_meret`, `asztal_id`, `foglalas_idopont_kezd`, `foglalas_idopont_veg`) "+
                     "VALUES "+
                     "(NULL, '"+f.getFoglalas_nev()+"', '"+f.getFoglalas_telszam()+"', '"+f.getFoglalas_csoport_meret()+"', '"+f.getAsztal().getAsztal_id()+"', '"+f.getIdopontKezdString(true)+"', '"+f.getIdopontVegString(true)+"');";
-            AsztalFoglaloMainFrame.stmt.execute(sql);
-            boolean success=AsztalFoglaloMainFrame.stmt.getUpdateCount()==1;
+            Statement stmt = AsztalFoglaloMainFrame.con.createStatement();
+            stmt.execute(sql);
+            boolean success=stmt.getUpdateCount()==1;
             System.out.println(success);
             if(success){
                 parent.loadListFromDB();
@@ -232,11 +234,12 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         return false;
     }
     public boolean updateFoglalas(Foglalas f) throws SQLException, ClassNotFoundException{
-        if (canBeReserved(f)) {
+        if (lefoglalhato(f)) {
             
             String sql="UPDATE `foglalas` SET `foglalas_nev`='"+f.getFoglalas_nev()+"',`foglalas_telszam`='"+f.getFoglalas_telszam()+"',`foglalas_csoport_meret`='"+f.getFoglalas_csoport_meret()+"',`asztal_id`='"+f.getAsztal().getAsztal_id()+"',`foglalas_idopont_kezd`='"+f.getIdopontKezdString(true)+"',`foglalas_idopont_veg`='"+f.getIdopontVegString(true)+"' WHERE `foglalas_id`='"+eredeti.getFoglalas_id()+"'";
-            AsztalFoglaloMainFrame.stmt.execute(sql);
-            boolean success=AsztalFoglaloMainFrame.stmt.getUpdateCount()==1;
+            Statement stmt =AsztalFoglaloMainFrame.con.createStatement();
+            stmt.execute(sql);
+            boolean success=stmt.getUpdateCount()==1;
             if(success){
                 parent.loadListFromDB();
                 parent.loadTreeFromDB();
@@ -245,16 +248,16 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         }
         return false;
     }
-    public boolean canBeReserved(Foglalas ujFoglalas) throws SQLException
+    public boolean lefoglalhato(Foglalas ujFoglalas) throws SQLException
     {
-        String sql ="SELECT `foglalas_id`,`asztal_id` FROM `foglalas` WHERE (((`foglalas_idopont_veg`>'"+ujFoglalas.getIdopontKezdString(true)+"' AND `foglalas_idopont_kezd`<'"+ujFoglalas.getIdopontVegString(true)+"') OR (`foglalas_idopont_kezd`='"+ujFoglalas.getIdopontKezdString(true)+"')) OR (`foglalas_idopont_kezd`<'"+ujFoglalas.getIdopontVegString(true)+"' AND `foglalas_idopont_kezd`>'"+ujFoglalas.getIdopontKezdString(true)+"')) AND `asztal_id`='"+ujFoglalas.getAsztal().getAsztal_id()+"';";
-        AsztalFoglaloMainFrame.stmt.execute(sql);
-        ResultSet rs = AsztalFoglaloMainFrame.stmt.getResultSet();
-        while(rs.next()){
-            if(rs.getInt("foglalas_id")!=ujFoglalas.getFoglalas_id()){
-                return false;
-            }
-        }
+        String sql ="SELECT `foglalas_id`,`asztal_id` FROM `foglalas` WHERE (((`foglalas_idopont_veg`>'"+ujFoglalas.getIdopontKezdString(true)+"' AND `foglalas_idopont_kezd`<'"+ujFoglalas.getIdopontVegString(true)+"') OR (`foglalas_idopont_kezd`='"+ujFoglalas.getIdopontKezdString(true)+"')) OR (`foglalas_idopont_kezd`<'"+ujFoglalas.getIdopontVegString(true)+"' AND `foglalas_idopont_kezd`>'"+ujFoglalas.getIdopontKezdString(true)+"')) AND `asztal_id`='"+ujFoglalas.getAsztal().getAsztal_id()+"' AND `foglalas`.`foglalas_id`!='"+ujFoglalas.getFoglalas_id()+"';";
+        Statement stmt =AsztalFoglaloMainFrame.con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        boolean foglalhato=!rs.next();
+        rs.close();
+        return foglalhato;
+            
+        
         /*for (int i = 0; i < parent.foglalasokLista.size(); i++) {
             Foglalas f = parent.foglalasokLista.get(i);
             if(f.getAsztal().getAsztal_id()==ujFoglalas.getAsztal().getAsztal_id()){
@@ -280,21 +283,18 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
                 }
             }
         }*/
-        System.out.println("true");
-        return true;
     }
     
     private void loadAsztalokModel() throws SQLException{
         String sql="SELECT `asztal`.`etterem_id`,`asztal`.`asztal_id`,`tipus_id`,`asztal_szam` FROM `asztal` "
                 + "INNER JOIN `etterem` ON `etterem`.`etterem_id`=`asztal`.`etterem_id` "
-                + "WHERE `asztal`.`etterem_id`='"+parent.etterem.getId()+"'";
-        if(AsztalFoglaloMainFrame.stmt.execute(sql)){
-            ResultSet rs = AsztalFoglaloMainFrame.stmt.getResultSet();
-            Asztal a;
-            while(rs.next()){
-                a= new Asztal(rs.getInt(4),parent.etterem.getNev(),rs.getInt(2),parent.getTipus_ferohely(rs.getInt(4)));
-                asztalokDCBM.addElement(a);
-            }
+                + "WHERE `asztal`.`etterem_id`='"+parent.getEtterem().getId()+"'";
+        Statement stmt = AsztalFoglaloMainFrame.con.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        Asztal a;
+        while(rs.next()){
+            a= new Asztal(rs.getInt(4),parent.getEtterem().getNev(),rs.getInt(2),parent.getTipus_ferohely(rs.getInt(4)));
+            asztalokDCBM.addElement(a);
         }
     }
     
@@ -303,7 +303,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
     private void validateIdopont(String[] idopont) throws InvalidTimeException{
         LocalDate ld = LocalDate.parse(datum.getText());
         int nap = ld.getDayOfWeek().getValue();
-        LocalTime[][] nyitvatartas=parent.etterem.getNyitvatartas();
+        LocalTime[][] nyitvatartas=parent.getEtterem().getNyitvatartas();
         for (int i = 0; i < 2; i++) {
             
             String[] idopontSplit= idopont[i].split(":");

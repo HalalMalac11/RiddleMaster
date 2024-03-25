@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -14,13 +15,15 @@ import javax.swing.JTextField;
 public class AddEtteremDialog extends javax.swing.JDialog {
     
     private boolean alreadyFilled;
+    private AsztalFoglaloMainFrame mainFrame;
     private EtteremValasztDialog parent;
     private JTextField[][] nyitvatartasMezok;
 
-    public AddEtteremDialog(EtteremValasztDialog parent, boolean modal) {
+    public AddEtteremDialog(EtteremValasztDialog parent, boolean modal,AsztalFoglaloMainFrame mainFrame) {
         super(parent, modal);
-        this.parent=parent;
+        this.mainFrame=mainFrame;
         this.alreadyFilled=false;
+        this.parent=parent;
         initComponents();
         setLocationRelativeTo(null);
         fillNyitvatartasMezok();
@@ -297,17 +300,12 @@ public class AddEtteremDialog extends javax.swing.JDialog {
             }
             if (allFilled) {
                 try {
-                    String sql ="SELECT * FROM `etterem` WHERE `etterem_nev` LIKE '"+this.etteremNev.getText()+"'";
-                    Statement stmt =parent.con.createStatement();
-                    stmt.execute(sql);
-                    boolean vanMar= stmt.getResultSet().isBeforeFirst();
-                    if(!vanMar){
-                        sql ="INSERT INTO `etterem`(`etterem_nev`) VALUES ('"+this.etteremNev.getText()+"')";
-                        stmt =parent.con.createStatement();
+                    
+                        String sql ="INSERT INTO `etterem`(`etterem_nev`) VALUES ('"+this.etteremNev.getText()+"')";
+                        Statement stmt =AsztalFoglaloMainFrame.con.createStatement();
                         stmt.execute(sql);
                         
                         sql ="SELECT `etterem_id` FROM `etterem` WHERE `etterem_nev` LIKE '"+this.etteremNev.getText()+"'";
-                        stmt =parent.con.createStatement();
                         stmt.execute(sql);
                         ResultSet ujEtterem = stmt.getResultSet();
                         ujEtterem.next();
@@ -321,14 +319,13 @@ public class AddEtteremDialog extends javax.swing.JDialog {
                             sql ="INSERT INTO `nyitvatartas`(`etterem_id`, `nyitvatartas_nap`, `nyitvatartas_nyitas`, `nyitvatartas_zaras`) VALUES ('"+ujEtteremId+"','"+i+"','"+nyitvatartasMezok[i][0].getText()+":00"+"','"+nyitvatartasMezok[i][1].getText()+":00"+"')";
                             stmt.execute(sql);
                         }
-                        parent.MainFrame.etterem= new Etterem(this.etteremNev.getText(),ujEtteremId,nyitvatartas);
+                        mainFrame.setEtterem(new Etterem(this.etteremNev.getText(),ujEtteremId,nyitvatartas));
                         parent.etteremAdded=true;
                         this.dispose();
-                    }else{
-                        JOptionPane.showMessageDialog(new JFrame(),"Létezik már ilyen nevű étterem!","Hiba!",JOptionPane.ERROR_MESSAGE);
-                    }
+                    
+                        
                 } catch (SQLException ex) {
-                    JOptionPane.showMessageDialog(new JFrame(),"Adatbázis hiba!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(new JFrame(),"Létezik már ilyen nevű étterem!","Hiba!",JOptionPane.ERROR_MESSAGE);
                 }
             }else{
                 JOptionPane.showMessageDialog(new JFrame(),"Töltse ki az összes mezőt!","Hiba!",JOptionPane.ERROR_MESSAGE);

@@ -13,20 +13,18 @@ import javax.swing.JOptionPane;
 public class EtteremValasztDialog extends javax.swing.JDialog {
     private DefaultComboBoxModel<Etterem> dcbm;
     protected AsztalFoglaloMainFrame MainFrame;
-    protected Connection con;
     public boolean etteremAdded;
 
     public EtteremValasztDialog(AsztalFoglaloMainFrame parent, boolean modal) {
         super(parent, modal);
         this.MainFrame=parent;
-        this.con=parent.con;
         etteremAdded=false;
         initComponents();
         setLocationRelativeTo(null);
         dcbm= new DefaultComboBoxModel<Etterem>();
         try {
             String sql = "SELECT `etterem_nev`, `etterem_id` FROM `etterem`;";
-            Statement stmt = parent.con.createStatement();
+            Statement stmt = AsztalFoglaloMainFrame.con.createStatement();
             if (stmt.execute(sql)) {
                 ResultSet rsEttermek = stmt.getResultSet();
                 ResultSet rsNyitvatartas;
@@ -37,9 +35,9 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
                 while (rsEttermek.next()) {
                     etteremId=rsEttermek.getInt(2);
                     sql="SELECT `nyitvatartas_nyitas`,`nyitvatartas_zaras` FROM `nyitvatartas` WHERE `etterem_id`='"+etteremId+"' ORDER BY `nyitvatartas_nap`";
-                    stmt = parent.con.createStatement();
-                    stmt.execute(sql);
-                    rsNyitvatartas = stmt.getResultSet();
+                    Statement nyitvaStmt = AsztalFoglaloMainFrame.con.createStatement();
+                    
+                    rsNyitvatartas = nyitvaStmt.executeQuery(sql);
                     
                     for (int i = 0; i < nyitvatartasMatrix.length; i++) {
                         rsNyitvatartas.next();
@@ -50,6 +48,7 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
                     }
                     etterem = new Etterem(rsEttermek.getString(1), etteremId, nyitvatartasMatrix);
                     dcbm.addElement(etterem);
+                    rsNyitvatartas.close();
                 }
             }
             if(dcbm.getSize()!=0){
@@ -126,12 +125,12 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void submitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitActionPerformed
-        MainFrame.etterem=((Etterem) this.ettermekComboBox.getSelectedItem());
+        MainFrame.setEtterem((Etterem) this.ettermekComboBox.getSelectedItem());
         this.dispose();
     }//GEN-LAST:event_submitActionPerformed
 
     private void ujEtteremActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ujEtteremActionPerformed
-        AddEtteremDialog aed = new AddEtteremDialog(this,true);
+        AddEtteremDialog aed = new AddEtteremDialog(this,true,MainFrame);
         aed.setVisible(true);
         if(etteremAdded){
             this.dispose();
