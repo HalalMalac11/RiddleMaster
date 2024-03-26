@@ -19,9 +19,32 @@
             </MenuItem>
           </SubComponents>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="editMenu">
+        <Menu class="javax.swing.JMenu" name="etteremMenu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Edit"/>
+            <Property name="text" type="java.lang.String" value="&#xc9;tterem"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="etteremValt">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="&#xc9;tterem v&#xe1;lt&#xe1;sa"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="etteremValtActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="ujAsztal">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="&#xda;j asztal"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ujAsztalActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="foglalasMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Foglal&#xe1;s"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="hozzaAd">

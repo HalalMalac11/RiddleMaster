@@ -10,7 +10,7 @@ public class ReszletekFrame extends javax.swing.JFrame {
         this.tSzamLabel.setText(foglalas.getFoglalas_telszam());
         this.emberSzamLabel.setText(""+foglalas.getFoglalas_csoport_meret());
         this.asztalIdLabel.setText(""+foglalas.getAsztal().getAsztal_id());
-        this.asztalMaxKapacitasLabel.setText(""+foglalas.getAsztal().getTipus_ferohely());
+        this.asztalMaxKapacitasLabel.setText(""+foglalas.getAsztal().getTipus().getTipus_ferohely());
         setLocationRelativeTo(null);
     }
 

@@ -2,12 +2,13 @@ package asztalFoglaloSwing;
 
 public class Asztal {
     private String asztalNev;
-    private int asztal_id, tipus_ferohely;
+    private int asztal_id;
+    private Tipus tipus;
 
-    public Asztal(int index, String etterem_nev, int asztal_id, int tipus_ferohely) {
+    public Asztal(int index, String etterem_nev, int asztal_id, Tipus tipus) {
         this.asztalNev = etterem_nev+"_"+index;
         this.asztal_id = asztal_id;
-        this.tipus_ferohely =tipus_ferohely;
+        this.tipus =tipus;
     }
 
 
@@ -27,15 +28,13 @@ public class Asztal {
         this.asztal_id = asztal_id;
     }
 
-    public int getTipus_ferohely() {
-        return tipus_ferohely;
+    public Tipus getTipus() {
+        return tipus;
     }
 
-    private void setTipus_ferohely(int tipus_ferohely) {
-        this.tipus_ferohely = tipus_ferohely;
+    public void setTipus(Tipus tipus) {
+        this.tipus = tipus;
     }
-
-    
 
     @Override
     public String toString() {

@@ -49,7 +49,7 @@ public class Foglalas implements iDateFormatting{
     }
 
     public void setFoglalas_csoport_meret(int emberszam) throws IllegalArgumentException{
-        int asztalKapacitas = asztal.getTipus_ferohely();
+        int asztalKapacitas = asztal.getTipus().getTipus_ferohely();
         if (emberszam<1){
             throw new IllegalArgumentException("A csoport mérete nem lehet kisebb mint 1!");
         }else if(emberszam>asztalKapacitas){

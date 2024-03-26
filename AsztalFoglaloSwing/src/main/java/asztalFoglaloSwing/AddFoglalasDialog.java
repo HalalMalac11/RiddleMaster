@@ -293,7 +293,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         ResultSet rs = stmt.executeQuery(sql);
         Asztal a;
         while(rs.next()){
-            a= new Asztal(rs.getInt(4),parent.getEtterem().getNev(),rs.getInt(2),parent.getTipus_ferohely(rs.getInt(4)));
+            a= new Asztal(rs.getInt(4),parent.getEtterem().getNev(),rs.getInt(2),parent.getTipus(rs.getInt(4)));
             asztalokDCBM.addElement(a);
         }
     }

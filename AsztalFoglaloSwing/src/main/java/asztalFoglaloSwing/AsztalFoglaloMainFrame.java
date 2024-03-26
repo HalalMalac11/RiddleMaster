@@ -25,8 +25,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
-    //private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
-    private final String dbURL="jdbc:mysql://localhost:3306/asztalfoglalo",dbUser="foglalas_kezelo",dbPass="4N6jqhr7dnwCACRI";
+    private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
+    //private final String dbURL="jdbc:mysql://localhost:3306/asztalfoglalo",dbUser="foglalas_kezelo",dbPass="4N6jqhr7dnwCACRI";
     protected ArrayList<Foglalas> foglalasokLista;
     protected DefaultTreeModel foglalasFa;
     private JFrame errorFrame= new JFrame();
@@ -76,7 +76,10 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         menuSor = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         kilepes = new javax.swing.JMenuItem();
-        editMenu = new javax.swing.JMenu();
+        etteremMenu = new javax.swing.JMenu();
+        etteremValt = new javax.swing.JMenuItem();
+        ujAsztal = new javax.swing.JMenuItem();
+        foglalasMenu = new javax.swing.JMenu();
         hozzaAd = new javax.swing.JMenuItem();
         edit = new javax.swing.JMenuItem();
         torol = new javax.swing.JMenuItem();
@@ -102,7 +105,27 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
 
         menuSor.add(fileMenu);
 
-        editMenu.setText("Edit");
+        etteremMenu.setText("Étterem");
+
+        etteremValt.setText("Étterem váltása");
+        etteremValt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                etteremValtActionPerformed(evt);
+            }
+        });
+        etteremMenu.add(etteremValt);
+
+        ujAsztal.setText("Új asztal");
+        ujAsztal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ujAsztalActionPerformed(evt);
+            }
+        });
+        etteremMenu.add(ujAsztal);
+
+        menuSor.add(etteremMenu);
+
+        foglalasMenu.setText("Foglalás");
 
         hozzaAd.setText("Foglalas felvétele");
         hozzaAd.addActionListener(new java.awt.event.ActionListener() {
@@ -110,7 +133,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 hozzaAdActionPerformed(evt);
             }
         });
-        editMenu.add(hozzaAd);
+        foglalasMenu.add(hozzaAd);
 
         edit.setText("Szerkesztés");
         edit.addActionListener(new java.awt.event.ActionListener() {
@@ -118,7 +141,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 editActionPerformed(evt);
             }
         });
-        editMenu.add(edit);
+        foglalasMenu.add(edit);
 
         torol.setText("Törlés");
         torol.addActionListener(new java.awt.event.ActionListener() {
@@ -126,9 +149,9 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 torolActionPerformed(evt);
             }
         });
-        editMenu.add(torol);
+        foglalasMenu.add(torol);
 
-        menuSor.add(editMenu);
+        menuSor.add(foglalasMenu);
 
         setJMenuBar(menuSor);
 
@@ -191,6 +214,27 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_kilepesActionPerformed
 
+    private void etteremValtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_etteremValtActionPerformed
+        try {
+            EtteremValasztDialog evd = new EtteremValasztDialog(this,true);
+            evd.setVisible(true);
+            loadListFromDB();
+            loadTreeFromDB();
+            this.kivalasztottEtteremLabel.setText(etterem.getNev());
+        } catch (SQLException sqle) {
+            JOptionPane.showMessageDialog(errorFrame,"Sikertelen adatbázis kapcsolódás!\n"+sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        } catch (ClassNotFoundException cnfe) {
+            JOptionPane.showMessageDialog(errorFrame,"Sikertelen driver betöltés!\n"+cnfe,"Hiba!",JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        }
+    }//GEN-LAST:event_etteremValtActionPerformed
+
+    private void ujAsztalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ujAsztalActionPerformed
+        AddAsztalDialog aad= new  AddAsztalDialog(this,true);
+        aad.setVisible(true);
+    }//GEN-LAST:event_ujAsztalActionPerformed
+
     protected void loadListFromDB() throws SQLException, ClassNotFoundException{
         foglalasokLista.clear();
         String todaysDateTime=dtf.format(LocalDateTime.now());
@@ -205,7 +249,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         Asztal a;
         while(rs.next()){
             try {
-                a= new Asztal(rs.getInt("asztal_szam"),etterem.getNev(),rs.getInt("asztal_id"),getTipus_ferohely(rs.getInt("tipus_id")));
+                a= new Asztal(rs.getInt("asztal_szam"),etterem.getNev(),rs.getInt("asztal_id"),getTipus(rs.getInt("tipus_id")));
                 f= new Foglalas(rs.getInt("foglalas_id"),rs.getString("foglalas_nev"),rs.getString("foglalas_telszam"),rs.getInt("foglalas_csoport_meret"),a,rs.getString("foglalas_idopont_kezd"),rs.getString("foglalas_idopont_veg"));
                 foglalasokLista.add(f);
             } catch (OldDateException | IllegalArgumentException | InvalidTimeException ex) {
@@ -229,7 +273,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         Foglalas f;
         while(etteremRs.next()){
             try {
-                a= new Asztal(etteremRs.getInt(3),etterem.getNev(),etteremRs.getInt(1),getTipus_ferohely(etteremRs.getInt(2)));
+                a= new Asztal(etteremRs.getInt(3),etterem.getNev(),etteremRs.getInt(1),getTipus(etteremRs.getInt(2)));
                 DefaultMutableTreeNode asztalNode = new DefaultMutableTreeNode(a);
                 sql="SELECT `asztal`.`etterem_id`,`foglalas`.`asztal_id`, `foglalas_id`, `foglalas_nev`,`foglalas_telszam`,`foglalas_csoport_meret`,`foglalas_idopont_kezd`,`foglalas_idopont_veg` "
                 + "FROM `foglalas` "
@@ -264,7 +308,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         }*/
     }
     
-    protected int getTipus_ferohely(int tipusId) throws SQLException{
+    protected Tipus getTipus(int tipusId) throws SQLException{
         String sql="SELECT `tipus_ferohely` FROM `tipus` WHERE `tipus_id`='"+tipusId+"'";
         Statement stmt = con.createStatement();
         if(stmt.execute(sql)){
@@ -272,9 +316,10 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             rs.next();
             int ferohely= rs.getInt("tipus_ferohely");
             rs.close();
-            return ferohely;
+            Tipus t = new Tipus(tipusId,ferohely);
+            return t;
         }
-        return 0;
+        return new Tipus(0,0);
     }
     
     private void createShortcuts(){
@@ -317,8 +362,10 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem edit;
-    private javax.swing.JMenu editMenu;
+    private javax.swing.JMenu etteremMenu;
+    private javax.swing.JMenuItem etteremValt;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenu foglalasMenu;
     private javax.swing.JMenuItem hozzaAd;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTree jTree1;
@@ -326,6 +373,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel kivalasztottEtteremLabel;
     private javax.swing.JMenuBar menuSor;
     private javax.swing.JMenuItem torol;
+    private javax.swing.JMenuItem ujAsztal;
     // End of variables declaration//GEN-END:variables
 
     
