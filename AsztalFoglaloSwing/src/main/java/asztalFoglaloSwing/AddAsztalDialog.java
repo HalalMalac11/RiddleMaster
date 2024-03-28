@@ -8,9 +8,11 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class AddAsztalDialog extends javax.swing.JDialog {
+    AsztalFoglaloMainFrame mf;
 
     public AddAsztalDialog(AsztalFoglaloMainFrame parent, boolean modal) {
         super(parent, modal);
+        mf=parent;
         DefaultComboBoxModel<Tipus> ferohelyModel= new DefaultComboBoxModel<Tipus>();
         try{
             String sql = "SELECT * FROM `tipus` ORDER BY `tipus_ferohely` ASC";
@@ -27,6 +29,7 @@ public class AddAsztalDialog extends javax.swing.JDialog {
         initComponents();
         setLocationRelativeTo(null);
         ferohelyCB.setModel(ferohelyModel);
+        etteremNev.setText(mf.getEtterem().getNev());
     }
 
     @SuppressWarnings("unchecked")
@@ -55,6 +58,11 @@ public class AddAsztalDialog extends javax.swing.JDialog {
         ferohelyLabel.setText("Férőhelyek:");
 
         submit.setText("Hozzáadás");
+        submit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                submitActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -102,6 +110,36 @@ public class AddAsztalDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void submitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitActionPerformed
+        String szam=asztalSzam.getText();
+        boolean ok = true;
+        if(!szam.isBlank()){
+            for (int i = 0; i < szam.length(); i++) {
+                if (!Character.isDigit(szam.charAt(i))) {
+                    JOptionPane.showMessageDialog(new JFrame(),"Az asztal száma csak szám lehet!","Hiba!",JOptionPane.ERROR_MESSAGE);
+                    ok=false;
+                }
+            }
+            if(ok){
+                try{
+                    Tipus selected = (Tipus) ferohelyCB.getSelectedItem();
+                    String sql = "INSERT INTO `asztal`(`tipus_id`, `asztal_szam`, `etterem_id`) VALUES ('"+selected.getTipus_id()+"','"+asztalSzam.getText()+"','"+mf.getEtterem().getId()+"')";
+                    Statement stmt=AsztalFoglaloMainFrame.con.createStatement();
+                    stmt.execute(sql);
+                    this.dispose();
+                    mf.loadListFromDB();
+                    mf.loadTreeFromDB();
+                } catch (SQLException sqle) {
+                    JOptionPane.showMessageDialog(new JFrame(),"Ennél az éttermenél ilyen számú asztal már létezik!\n"+sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+                } catch (ClassNotFoundException ex) {
+                    JOptionPane.showMessageDialog(new JFrame(),"Driver nem található!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }else{
+            JOptionPane.showMessageDialog(new JFrame(),"Az asztal száma mező nem lehet üres!","Hiba!",JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_submitActionPerformed
 
     
 
