@@ -47,6 +47,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         idopontKezd.setText(eredeti.getIdopontKezdString(false).substring(11));
         idopontVeg.setText(eredeti.getIdopontVegString(false).substring(11));
         asztalokComboBox.setSelectedItem(eredeti.getAsztal());
+        this.setTitle("Foglalás szerkesztése");
     }
 
     @SuppressWarnings("unchecked")
@@ -71,6 +72,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         feedBackLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Foglalas felvétele");
 
         asztalIdLabel.setText("Asztal ID:");
 
