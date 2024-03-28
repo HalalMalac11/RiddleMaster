@@ -78,7 +78,9 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         kilepes = new javax.swing.JMenuItem();
         etteremMenu = new javax.swing.JMenu();
         etteremValt = new javax.swing.JMenuItem();
+        jMenu1 = new javax.swing.JMenu();
         ujAsztal = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
         foglalasMenu = new javax.swing.JMenu();
         hozzaAd = new javax.swing.JMenuItem();
         edit = new javax.swing.JMenuItem();
@@ -115,13 +117,20 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         });
         etteremMenu.add(etteremValt);
 
+        jMenu1.setText("Asztal");
+
         ujAsztal.setText("Új asztal");
         ujAsztal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ujAsztalActionPerformed(evt);
             }
         });
-        etteremMenu.add(ujAsztal);
+        jMenu1.add(ujAsztal);
+
+        jMenuItem1.setText("Új típus");
+        jMenu1.add(jMenuItem1);
+
+        etteremMenu.add(jMenu1);
 
         menuSor.add(etteremMenu);
 
@@ -367,6 +376,8 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu foglalasMenu;
     private javax.swing.JMenuItem hozzaAd;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTree jTree1;
     private javax.swing.JMenuItem kilepes;
