@@ -48,7 +48,7 @@ public class AddAsztalDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Új asztal");
 
-        ujAsztalLabel.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        ujAsztalLabel.setFont(new java.awt.Font("Calibri", 1, 24)); // NOI18N
         ujAsztalLabel.setText("Új asztal");
 
         etteremNevLabel.setText("Étterem:");

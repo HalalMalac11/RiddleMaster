@@ -128,6 +128,11 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         jMenu1.add(ujAsztal);
 
         jMenuItem1.setText("Új típus");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem1);
 
         etteremMenu.add(jMenu1);
@@ -240,9 +245,14 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_etteremValtActionPerformed
 
     private void ujAsztalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ujAsztalActionPerformed
-        AddAsztalDialog aad= new  AddAsztalDialog(this,true);
+        AddAsztalDialog aad= new AddAsztalDialog(this,true);
         aad.setVisible(true);
     }//GEN-LAST:event_ujAsztalActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        AddTipusDialog atd= new AddTipusDialog(this,true);
+        atd.setVisible(true);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     protected void loadListFromDB() throws SQLException, ClassNotFoundException{
         foglalasokLista.clear();
