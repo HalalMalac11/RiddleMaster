@@ -128,12 +128,9 @@ public class AddAsztalDialog extends javax.swing.JDialog {
                     Statement stmt=AsztalFoglaloMainFrame.con.createStatement();
                     stmt.execute(sql);
                     this.dispose();
-                    mf.loadListFromDB();
                     mf.loadTreeFromDB();
                 } catch (SQLException sqle) {
                     JOptionPane.showMessageDialog(new JFrame(),"Ennél az éttermenél ilyen számú asztal már létezik!\n"+sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
-                } catch (ClassNotFoundException ex) {
-                    JOptionPane.showMessageDialog(new JFrame(),"Driver nem található!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
                 }
             }
         }else{

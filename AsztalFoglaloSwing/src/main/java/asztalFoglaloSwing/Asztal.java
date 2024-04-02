@@ -5,8 +5,8 @@ public class Asztal {
     private int asztal_id;
     private Tipus tipus;
 
-    public Asztal(int index, String etterem_nev, int asztal_id, Tipus tipus) {
-        this.asztalNev = etterem_nev+"_"+index;
+    public Asztal(int asztal_szam, String etterem_nev, int asztal_id, Tipus tipus) {
+        this.asztalNev = etterem_nev+"_"+asztal_szam;
         this.asztal_id = asztal_id;
         this.tipus =tipus;
     }

@@ -1,53 +1,31 @@
 package asztalFoglaloSwing;
 
-import java.awt.Color;
-import java.time.DateTimeException;
 import java.time.LocalDateTime;
-import javax.swing.JPanel;
-import asztalFoglaloSwing.InvalidTimeException;
-import asztalFoglaloSwing.OldDateException;
 import static asztalFoglaloSwing.iDateFormatting.dtf;
 import java.awt.event.KeyEvent;
-import javax.swing.DefaultListModel;
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     //private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
     private final String dbURL="jdbc:mysql://localhost:3306/asztalfoglalo",dbUser="foglalas_kezelo",dbPass="4N6jqhr7dnwCACRI";
-    protected ArrayList<Foglalas> foglalasokLista;
     protected DefaultTreeModel foglalasFa;
     private JFrame errorFrame= new JFrame();
     private Etterem etterem;
     public static Connection con;
     
     public AsztalFoglaloMainFrame() {
-        foglalasokLista= new ArrayList<Foglalas>();
         initComponents();
         try {
             con = DriverManager.getConnection(dbURL,dbUser,dbPass);
             EtteremValasztDialog evd = new EtteremValasztDialog(this,true);
             evd.setVisible(true);
-            loadListFromDB();
             loadTreeFromDB();
             
         } catch (SQLException sqle) {
             JOptionPane.showMessageDialog(errorFrame,"Sikertelen adatbázis kapcsolódás!\n"+sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
-        } catch (ClassNotFoundException cnfe) {
-            JOptionPane.showMessageDialog(errorFrame,"Sikertelen driver betöltés!\n"+cnfe,"Hiba!",JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
         
@@ -80,6 +58,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         etteremValt = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         ujAsztal = new javax.swing.JMenuItem();
+        asztalTorol = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         foglalasMenu = new javax.swing.JMenu();
         hozzaAd = new javax.swing.JMenuItem();
@@ -126,6 +105,14 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             }
         });
         jMenu1.add(ujAsztal);
+
+        asztalTorol.setText("Asztal törlése");
+        asztalTorol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                asztalTorolActionPerformed(evt);
+            }
+        });
+        jMenu1.add(asztalTorol);
 
         jMenuItem1.setText("Új típus");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
@@ -201,27 +188,36 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_hozzaAdActionPerformed
 
     private void editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editActionPerformed
-        AddFoglalasDialog afd = new AddFoglalasDialog(this,true, (DefaultMutableTreeNode) jTree1.getLastSelectedPathComponent());
-        afd.setVisible(true);
+        if(jTree1.getLastSelectedPathComponent()!=null){
+            AddFoglalasDialog afd = new AddFoglalasDialog(this,true, (DefaultMutableTreeNode) jTree1.getLastSelectedPathComponent());
+            afd.setVisible(true);
+        }else{
+            JOptionPane.showMessageDialog(errorFrame,"Nincs kiválasztva foglalás!","Hiba!",JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_editActionPerformed
 
     private void torolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_torolActionPerformed
-        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) jTree1.getLastSelectedPathComponent();
-        Foglalas f = (Foglalas) selectedNode.getUserObject();
-        int valasz=JOptionPane.showConfirmDialog(errorFrame,"Biztosan törölni szeretné?\n"+f,"Törlés",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
-        if(valasz==JOptionPane.YES_OPTION){
-            String sql="DELETE FROM `foglalas`  WHERE `foglalas_id`='"+f.getFoglalas_id()+"'";
-            try{
-                Statement stmt= con.createStatement();
-                stmt.execute(sql);
-                boolean success=stmt.getUpdateCount()==1;
-                if(success){
-                    jTree1.removeSelectionPath(jTree1.getSelectionPath());
+        if(jTree1.getLastSelectedPathComponent()!=null){
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) jTree1.getLastSelectedPathComponent();
+            Foglalas f = (Foglalas) selectedNode.getUserObject();
+            int valasz=JOptionPane.showConfirmDialog(errorFrame,"Biztosan törölni szeretné?\n"+f,"Törlés",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+            if(valasz==JOptionPane.YES_OPTION){
+                String sql="DELETE FROM `foglalas`  WHERE `foglalas_id`='"+f.getFoglalas_id()+"'";
+                try{
+                    Statement stmt= con.createStatement();
+                    stmt.execute(sql);
+                    boolean success=stmt.getUpdateCount()==1;
+                    if(success){
+                        jTree1.removeSelectionPath(jTree1.getSelectionPath());
+                    }
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(errorFrame,"Sikertelen törlés!\n"+ex,"Hiba!",JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(errorFrame,"Sikertelen törlés!\n"+ex,"Hiba!",JOptionPane.ERROR_MESSAGE);
             }
+        }else{
+            JOptionPane.showMessageDialog(errorFrame,"Nincs kiválasztva foglalás!","Hiba!",JOptionPane.ERROR_MESSAGE);
         }
+        
     }//GEN-LAST:event_torolActionPerformed
 
     private void kilepesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kilepesActionPerformed
@@ -232,14 +228,10 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         try {
             EtteremValasztDialog evd = new EtteremValasztDialog(this,true);
             evd.setVisible(true);
-            loadListFromDB();
             loadTreeFromDB();
             this.kivalasztottEtteremLabel.setText(etterem.getNev());
         } catch (SQLException sqle) {
             JOptionPane.showMessageDialog(errorFrame,"Sikertelen adatbázis kapcsolódás!\n"+sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
-        } catch (ClassNotFoundException cnfe) {
-            JOptionPane.showMessageDialog(errorFrame,"Sikertelen driver betöltés!\n"+cnfe,"Hiba!",JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
     }//GEN-LAST:event_etteremValtActionPerformed
@@ -254,31 +246,36 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         atd.setVisible(true);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
-    protected void loadListFromDB() throws SQLException, ClassNotFoundException{
-        foglalasokLista.clear();
-        String todaysDateTime=dtf.format(LocalDateTime.now());
-        String sql="SELECT `asztal_szam`,`asztal`.`etterem_id`,`foglalas`.`asztal_id`,`tipus_id`, `foglalas_id`, `foglalas_nev`,`foglalas_telszam`,`foglalas_csoport_meret`,`foglalas_idopont_kezd`,`foglalas_idopont_veg` "
-                + "FROM `foglalas` "
-                + "INNER JOIN `asztal` ON `asztal`.`asztal_id`=`foglalas`.`asztal_id` "
-                + "INNER JOIN `etterem` ON `etterem`.`etterem_id`=`asztal`.`etterem_id` "
-                + "WHERE `foglalas_idopont_kezd`>'"+todaysDateTime+"' AND `asztal`.`etterem_id`="+etterem.getId()+" ORDER BY `foglalas_idopont_kezd`";
-        Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery(sql);
-        Foglalas f;
-        Asztal a;
-        while(rs.next()){
-            try {
-                a= new Asztal(rs.getInt("asztal_szam"),etterem.getNev(),rs.getInt("asztal_id"),getTipus(rs.getInt("tipus_id")));
-                f= new Foglalas(rs.getInt("foglalas_id"),rs.getString("foglalas_nev"),rs.getString("foglalas_telszam"),rs.getInt("foglalas_csoport_meret"),a,rs.getString("foglalas_idopont_kezd"),rs.getString("foglalas_idopont_veg"));
-                foglalasokLista.add(f);
-            } catch (OldDateException | IllegalArgumentException | InvalidTimeException ex) {
-                JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
+    private void asztalTorolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_asztalTorolActionPerformed
+        if(jTree1.getLastSelectedPathComponent()!=null){
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) jTree1.getLastSelectedPathComponent();
+            if (selectedNode.getUserObject() instanceof Asztal) {
+                Asztal a = (Asztal) selectedNode.getUserObject();
+                int biztos=JOptionPane.showConfirmDialog(errorFrame,"Az asztal tölésével az össze hozzátartozó foglalás elveszik!\nBiztosan törölni szeretné ezt az asztalt?","Törlés!",JOptionPane.WARNING_MESSAGE);
+                if(biztos==JOptionPane.YES_OPTION){
+                    String input="alapertek";
+                    while(input!=null&&!input.equals(a.getAsztalNev()))
+                     input=JOptionPane.showInputDialog(errorFrame,"A törléshez írja be az asztal nevét: "+a.getAsztalNev(),"Törlés!",JOptionPane.WARNING_MESSAGE);
+                    if(input!=null){
+                        try {
+                            String sql = "DELETE FROM `foglalas` WHERE `asztal_id`='"+a.getAsztal_id()+"'";
+                            Statement stmt = con.createStatement();
+                            stmt.execute(sql);
+                            sql="DELETE FROM `asztal` WHERE `asztal_id`='"+a.getAsztal_id()+"'";
+                            stmt.execute(sql);
+                            loadTreeFromDB();
+                        } catch (SQLException sQLException) {
+                        }
+                    }
+                }
+            }else{
+                JOptionPane.showMessageDialog(errorFrame,"A kiválasztott elem nem asztal!","Hiba!",JOptionPane.ERROR_MESSAGE);
             }
+        }else{
+            JOptionPane.showMessageDialog(errorFrame,"Nincs kiválasztva asztal!","Hiba!",JOptionPane.ERROR_MESSAGE);
         }
-        rs.close();
-    }
-    
+    }//GEN-LAST:event_asztalTorolActionPerformed
+
     protected void loadTreeFromDB() throws SQLException {
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("root");
         foglalasFa = new DefaultTreeModel(rootNode);
@@ -315,16 +312,6 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         jTree1.setModel(foglalasFa);
         jTree1.expandRow(0);
         jTree1.setRootVisible(false);
-        /*while(rs.next()){
-            try {
-                a= new Asztal(rs.getInt(1),etterem.getNev(),rs.getInt(3),getTipus_ferohely(rs.getInt(4)));
-                f= new Foglalas(rs.getString(5),rs.getString(6),a,rs.getInt(7),rs.getString(8),rs.getString(9));
-                foglalasokLista.addElement(f);
-            } catch (OldDateException | IllegalArgumentException | InvalidTimeException ex) {
-                JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
-            }
-        }*/
     }
     
     protected Tipus getTipus(int tipusId) throws SQLException{
@@ -353,21 +340,11 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AsztalFoglaloMainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AsztalFoglaloMainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AsztalFoglaloMainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AsztalFoglaloMainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        try
+        {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         //</editor-fold>
 
@@ -378,8 +355,9 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             }
         });
     }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem asztalTorol;
     private javax.swing.JMenuItem edit;
     private javax.swing.JMenu etteremMenu;
     private javax.swing.JMenuItem etteremValt;
@@ -396,6 +374,8 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem torol;
     private javax.swing.JMenuItem ujAsztal;
     // End of variables declaration//GEN-END:variables
+
+    
 
     
 }

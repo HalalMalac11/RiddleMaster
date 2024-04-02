@@ -39,7 +39,6 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         update=true;
         updatableNode=treeNode;
         eredeti=(Foglalas) treeNode.getUserObject();
-        parent.foglalasokLista.remove(eredeti);
         foglaloNev.setText(eredeti.getFoglalas_nev());
         tSzam.setText(eredeti.getFoglalas_telszam());
         emberSzam.setText(""+eredeti.getFoglalas_csoport_meret());
@@ -67,7 +66,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         emberSzam = new javax.swing.JTextField();
         foglaloNevLabel = new javax.swing.JLabel();
         tSzamLabel = new javax.swing.JLabel();
-        asztalokComboBox = new javax.swing.JComboBox<Asztal>();
+        asztalokComboBox = new javax.swing.JComboBox<>();
         emberSzamLabel = new javax.swing.JLabel();
         feedBackLabel = new javax.swing.JLabel();
 
@@ -226,9 +225,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
             Statement stmt = AsztalFoglaloMainFrame.con.createStatement();
             stmt.execute(sql);
             boolean success=stmt.getUpdateCount()==1;
-            System.out.println(success);
             if(success){
-                parent.loadListFromDB();
                 parent.loadTreeFromDB();
             }
             return success;
@@ -243,7 +240,6 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
             stmt.execute(sql);
             boolean success=stmt.getUpdateCount()==1;
             if(success){
-                parent.loadListFromDB();
                 parent.loadTreeFromDB();
             }
             return success;
@@ -258,44 +254,15 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         boolean foglalhato=!rs.next();
         rs.close();
         return foglalhato;
-            
-        
-        /*for (int i = 0; i < parent.foglalasokLista.size(); i++) {
-            Foglalas f = parent.foglalasokLista.get(i);
-            if(f.getAsztal().getAsztal_id()==ujFoglalas.getAsztal().getAsztal_id()){
-                LocalDateTime 
-                            marFoglaltIdoKezd = parent.foglalasokLista.get(i).getFoglalas_idopont_kezd(),
-                            marFoglaltIdoVeg = parent.foglalasokLista.get(i).getFoglalas_idopont_veg();
-                
-                if((ujFoglalas.getFoglalas_idopont_kezd().isBefore(marFoglaltIdoVeg)&&ujFoglalas.getFoglalas_idopont_kezd().isAfter(marFoglaltIdoKezd))||ujFoglalas.getFoglalas_idopont_kezd().equals(marFoglaltIdoKezd)){
-                    return false;
-                    
-                }
-            }
-        }
-        for (int i = parent.foglalasokLista.size()-1; i > 0; i--) {
-            Foglalas f = parent.foglalasokLista.get(i);
-            if(f.getAsztal().getAsztal_id()==ujFoglalas.getAsztal().getAsztal_id()){
-                LocalDateTime 
-                            marFoglaltIdoKezd = parent.foglalasokLista.get(i).getFoglalas_idopont_kezd(),
-                            marFoglaltIdoVeg = parent.foglalasokLista.get(i).getFoglalas_idopont_veg();
-                
-                if(ujFoglalas.getFoglalas_idopont_veg().isAfter(marFoglaltIdoKezd)&&ujFoglalas.getFoglalas_idopont_kezd().isBefore(marFoglaltIdoKezd)){
-                    return false;
-                }
-            }
-        }*/
     }
     
     private void loadAsztalokModel() throws SQLException{
-        String sql="SELECT `asztal`.`etterem_id`,`asztal`.`asztal_id`,`tipus_id`,`asztal_szam` FROM `asztal` "
-                + "INNER JOIN `etterem` ON `etterem`.`etterem_id`=`asztal`.`etterem_id` "
-                + "WHERE `asztal`.`etterem_id`='"+parent.getEtterem().getId()+"'";
+        String sql="SELECT * FROM `asztal` WHERE `etterem_id`='"+parent.getEtterem().getId()+"'";
         Statement stmt = AsztalFoglaloMainFrame.con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         Asztal a;
         while(rs.next()){
-            a= new Asztal(rs.getInt(4),parent.getEtterem().getNev(),rs.getInt(2),parent.getTipus(rs.getInt(4)));
+            a= new Asztal(rs.getInt("asztal_szam"),parent.getEtterem().getNev(),rs.getInt("asztal_id"),parent.getTipus(rs.getInt("tipus_id")));
             asztalokDCBM.addElement(a);
         }
     }
