@@ -4,7 +4,7 @@
   <NonVisualComponents>
     <Menu class="javax.swing.JMenuBar" name="menuSor">
       <SubComponents>
-        <Menu class="javax.swing.JMenu" name="fileMenu">
+        <Menu class="javax.swing.JMenu" name="fajlMenu">
           <Properties>
             <Property name="text" type="java.lang.String" value="F&#xe1;jl"/>
           </Properties>
@@ -32,7 +32,15 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="etteremValtActionPerformed"/>
               </Events>
             </MenuItem>
-            <Menu class="javax.swing.JMenu" name="jMenu1">
+            <MenuItem class="javax.swing.JMenuItem" name="etteremTorol">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="&#xc9;tterem t&#xf6;rl&#xe9;se"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="etteremTorolActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <Menu class="javax.swing.JMenu" name="asztalMenu">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Asztal"/>
               </Properties>
@@ -165,7 +173,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTree" name="jTree1">
+        <Component class="javax.swing.JTree" name="foglalasFa">
         </Component>
       </SubComponents>
     </Container>
