@@ -4,6 +4,7 @@
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
     <Property name="title" type="java.lang.String" value="Foglalas felv&#xe9;tele"/>
+    <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -31,18 +32,18 @@
                       <Component id="submitButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="feedBackLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="foglaloNevLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="tSzamLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="emberSzamLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="datumLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="idopontLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="asztalIdLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="emberSzamLabel" alignment="0" min="-2" pref="140" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="idopontKezd" min="-2" pref="50" max="-2" attributes="0"/>
@@ -57,9 +58,9 @@
                           <Component id="datum" alignment="0" max="32767" attributes="0"/>
                           <Component id="asztalokComboBox" alignment="0" min="-2" pref="121" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
