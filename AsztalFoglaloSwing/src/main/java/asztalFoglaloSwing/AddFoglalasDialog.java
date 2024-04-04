@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -173,14 +174,14 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
+        int hibakod=0;
 
-        if(!isUres()){
+        hibakod=uresCheck();
+        if(hibakod==0){
             Foglalas f;
 
             try {
-                validateIdopont(new String[]{idopontKezd.getText(),idopontVeg.getText()});
                 Asztal a = (Asztal) asztalokComboBox.getSelectedItem();
-
                 f = new Foglalas(0,foglaloNev.getText(),tSzam.getText(),Integer.parseInt(emberSzam.getText()),a,new String(datum.getText()+" "+idopontKezd.getText()+":00"),new String(datum.getText()+" "+idopontVeg.getText()+":00"));
                 if (!update){
                     if(addFoglalas(f)){
@@ -200,20 +201,37 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
                         feedBackLabel.setForeground(Color.red);
                     }
                 }
-            }catch (OldDateException | InvalidTimeException | IllegalArgumentException ex){
-                JOptionPane.showMessageDialog(errorFrame,ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+            }catch (OldDateException | InvalidTimeException | IllegalArgumentException | ParseException ex){
+                hibakod=10;
+                if(ex instanceof ParseException){
+                    hibakod+=6;
+                }
+                hibakod+=Integer.parseInt(ex.getMessage());
                 feedBackLabel.setText("A hozzáadás sikertelen!");
                 feedBackLabel.setForeground(Color.red);
             } catch (SQLException sqle) {
-                JOptionPane.showMessageDialog(errorFrame,sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(errorFrame,"Adatbázis hiba!\n"+sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
                 System.exit(0);
             } catch (ClassNotFoundException cnfe) {
                 JOptionPane.showMessageDialog(errorFrame,"Sikertelen driver betöltés!\n"+cnfe.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
                 System.exit(0);
             }
-        }else{
-            JOptionPane.showMessageDialog(errorFrame,"Kérem töltse ki az összes mezőt!","Hiba!",JOptionPane.ERROR_MESSAGE);
         }
+        if(hibakod!=0){
+            String[] mezok={"Név","Telefonszám","Asztal","Csoport mérete","Dátum","Időpont"};
+            String[] hibaFoTipus={"A * mező nem lehet üres! ","Hiba a(z) * megadásánál!"};
+            String[] hibaAlTipus={"","A csoport mérete nem lehet kisebb mint 1!","A csoport mérete nem lehet nagyobb mint az asztal kapacitása!","Nem értelmezhető időpont","Az időpont vége nem lehet az időpont kezdete előtt!","A foglalás nem lehet múltbéli időponton!","Nem várt dátum vagy idő formátum!"};
+            String hibaUzenet="";
+            if(hibakod>10){
+                hibaUzenet=hibaFoTipus[0].replace("*",mezok[hibakod]);
+            }else{
+                hibaUzenet=hibaFoTipus[1].replace("*",mezok[((hibakod>12)?3:5)])+"\n"+hibaAlTipus[hibakod-10];
+            }
+            JOptionPane.showMessageDialog(errorFrame,hibaUzenet,"Hiba!",JOptionPane.ERROR_MESSAGE);
+        }   
+        /*}else{
+            JOptionPane.showMessageDialog(errorFrame,"Kérem töltse ki az összes mezőt!","Hiba!",JOptionPane.ERROR_MESSAGE);
+        }*/
     }//GEN-LAST:event_submitButtonActionPerformed
     public boolean addFoglalas(Foglalas f) throws SQLException, ClassNotFoundException{
         if (lefoglalhato(f)) {
@@ -274,31 +292,44 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         int nap = ld.getDayOfWeek().getValue();
         LocalTime[][] nyitvatartas=parent.getEtterem().getNyitvatartas();
         for (int i = 0; i < 2; i++) {
-            
             String[] idopontSplit= idopont[i].split(":");
             LocalTime idopontTimeInstance = LocalTime.of(Integer.parseInt(idopontSplit[0]),Integer.parseInt(idopontSplit[1]));
-            if (Integer.parseInt(idopontSplit[0])>23||Integer.parseInt(idopontSplit[0])<0||Integer.parseInt(idopontSplit[1])>59||Integer.parseInt(idopontSplit[1])<0){
-                throw new InvalidTimeException("Inavlid időpont");
-            }else if(nyitvatartas[nap-1][0].isAfter(idopontTimeInstance)||nyitvatartas[nap-1][1].isBefore(idopontTimeInstance)){
-                throw new InvalidTimeException("Nyitvatartáson kívüli időpont");
+            if(nyitvatartas[nap-1][0].isAfter(idopontTimeInstance)||nyitvatartas[nap-1][1].isBefore(idopontTimeInstance)){
+                throw new InvalidTimeException("0");
             }
         }
-        String[] idopontKezdSplit= idopont[0].split(":");
-        String[] idopontVegSplit= idopont[0].split(":");
-
-        LocalTime idopontKezdTimeInstance = LocalTime.of(Integer.parseInt(idopontKezdSplit[0]),Integer.parseInt(idopontKezdSplit[1])),
-                idopontVegTimeInstance = LocalTime.of(Integer.parseInt(idopontVegSplit[0]),Integer.parseInt(idopontVegSplit[1]));
         
-        if (idopontKezdTimeInstance.isAfter(idopontVegTimeInstance)) {
-            throw new InvalidTimeException("Az időpont vége nem lehet az időpont kezdete előtt");
-        }
     }
     
-    private boolean isUres(){
-        if(this.foglaloNev.getText().trim().isEmpty()||this.tSzam.getText().trim().isEmpty()||this.asztalokComboBox.getSelectedIndex()==-1||this.emberSzam.getText().trim().isEmpty()||this.datum.getText().trim().isEmpty()||this.idopontKezd.getText().trim().isEmpty()||this.idopontVeg.getText().trim().isEmpty()){
-            return true;
+    private int uresCheck(){
+        int hibakod=1;
+        if(this.foglaloNev.getText().trim().isEmpty()){
+            return hibakod;
         }
-        return false;
+        hibakod++;
+        if(this.tSzam.getText().trim().isEmpty()){
+            return hibakod;
+        }
+        hibakod++;
+        if(this.asztalokComboBox.getSelectedIndex()==-1){
+            return hibakod;
+        }
+        hibakod++;
+        if(this.emberSzam.getText().trim().isEmpty()){
+            return hibakod;
+        }
+        hibakod++;
+        if(this.datum.getText().trim().isEmpty()){
+            return hibakod;
+        }
+        hibakod++;
+        if(this.idopontKezd.getText().trim().isEmpty()){
+            return hibakod;
+        }
+        if(this.idopontVeg.getText().trim().isEmpty()){
+            return hibakod;
+        }
+        return 0;
     }
 
 
