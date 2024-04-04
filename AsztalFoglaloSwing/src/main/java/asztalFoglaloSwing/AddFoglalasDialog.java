@@ -8,6 +8,8 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
+import java.util.regex.Pattern;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -17,7 +19,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
     private DefaultComboBoxModel<Asztal> asztalokDCBM;
     private JFrame errorFrame= new JFrame();
     private Foglalas eredeti;
-    private boolean update;
+    private boolean update, asztalBetoltve;
     private DefaultMutableTreeNode updatableNode;
 
     AsztalFoglaloMainFrame parent;
@@ -28,12 +30,15 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         asztalokDCBM = new DefaultComboBoxModel<Asztal>();
         initComponents();
         try{
+            asztalBetoltve=false;
             loadAsztalokModel();
+            asztalBetoltve=true;
         }catch (SQLException sqle) {
             JOptionPane.showMessageDialog(errorFrame,"Sikertelen adatbázis művelet!\n"+sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
         setLocationRelativeTo(null);
+        ferohelySegitsegValtas();
     }
     public AddFoglalasDialog(AsztalFoglaloMainFrame parent, boolean modal, DefaultMutableTreeNode treeNode) {
         this(parent,modal);
@@ -97,8 +102,13 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         tSzamLabel.setText("Telefonszám:");
 
         asztalokComboBox.setModel(asztalokDCBM);
+        asztalokComboBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                asztalokComboBoxItemStateChanged(evt);
+            }
+        });
 
-        emberSzamLabel.setText("Csoport mérete:");
+        emberSzamLabel.setText("Csoport mérete: (max  fő)");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -110,7 +120,8 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(submitButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(feedBackLabel))
+                        .addComponent(feedBackLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(foglaloNevLabel)
@@ -119,7 +130,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
                             .addComponent(datumLabel)
                             .addComponent(idopontLabel)
                             .addComponent(asztalIdLabel))
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(idopontKezd, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -132,7 +143,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
                             .addComponent(emberSzam)
                             .addComponent(datum)
                             .addComponent(asztalokComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -183,30 +194,35 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
             try {
                 Asztal a = (Asztal) asztalokComboBox.getSelectedItem();
                 f = new Foglalas(0,foglaloNev.getText(),tSzam.getText(),Integer.parseInt(emberSzam.getText()),a,new String(datum.getText()+" "+idopontKezd.getText()+":00"),new String(datum.getText()+" "+idopontVeg.getText()+":00"));
-                if (!update){
-                    if(addFoglalas(f)){
-                        feedBackLabel.setText("Sikeres hozzáadás!");
-                        feedBackLabel.setForeground(Color.green);
+                if(lefoglalhato(f)){
+                    if (!update){
+                        if(addFoglalas(f)){
+                            feedBackLabel.setText("Sikeres hozzáadás!");
+                            feedBackLabel.setForeground(Color.green);
+                        }else{
+                            feedBackLabel.setText("A hozzáadás sikertelen!");
+                            feedBackLabel.setForeground(Color.red);
+                        }
                     }else{
-                        feedBackLabel.setText("A hozzáadás sikertelen!");
-                        feedBackLabel.setForeground(Color.red);
+                        f.setFoglalas_id(eredeti.getFoglalas_id());
+                        if(updateFoglalas(f)){
+                        feedBackLabel.setText("Sikeres szerkesztés!");
+                        feedBackLabel.setForeground(Color.green);
+                        }else{
+                            feedBackLabel.setText("A szerkesztés sikertelen!");
+                            feedBackLabel.setForeground(Color.red);
+                        }
                     }
                 }else{
-                    f.setFoglalas_id(eredeti.getFoglalas_id());
-                    if(updateFoglalas(f)){
-                    feedBackLabel.setText("Sikeres szerkesztés!");
-                    feedBackLabel.setForeground(Color.green);
-                    }else{
-                        feedBackLabel.setText("A szerkesztés sikertelen!");
-                        feedBackLabel.setForeground(Color.red);
-                    }
+                    hibakod=17;
                 }
-            }catch (OldDateException | InvalidTimeException | IllegalArgumentException | ParseException ex){
+            }catch (OldDateException | InvalidTimeException | IllegalArgumentException | DateTimeParseException ex){
                 hibakod=10;
-                if(ex instanceof ParseException){
+                if(ex instanceof DateTimeParseException){
                     hibakod+=6;
+                }else{
+                    hibakod+=Integer.parseInt(ex.getMessage());
                 }
-                hibakod+=Integer.parseInt(ex.getMessage());
                 feedBackLabel.setText("A hozzáadás sikertelen!");
                 feedBackLabel.setForeground(Color.red);
             } catch (SQLException sqle) {
@@ -218,51 +234,45 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
             }
         }
         if(hibakod!=0){
-            String[] mezok={"Név","Telefonszám","Asztal","Csoport mérete","Dátum","Időpont"};
+            String[] mezok={"","Név","Telefonszám","Asztal","Csoport mérete","Dátum","Időpont"};
             String[] hibaFoTipus={"A * mező nem lehet üres! ","Hiba a(z) * megadásánál!"};
-            String[] hibaAlTipus={"","A csoport mérete nem lehet kisebb mint 1!","A csoport mérete nem lehet nagyobb mint az asztal kapacitása!","Nem értelmezhető időpont","Az időpont vége nem lehet az időpont kezdete előtt!","A foglalás nem lehet múltbéli időponton!","Nem várt dátum vagy idő formátum!"};
+            String[] hibaAlTipus={"","A csoport mérete nem lehet kisebb mint 1!","A csoport mérete nem lehet nagyobb mint az asztal kapacitása!","Nem értelmezhető időpont","Az időpont vége nem lehet az időpont kezdete előtt!","A foglalás nem lehet múltbéli időponton!","Nem várt dátum vagy idő formátum!","A foglalás időpontja nem eshet egybe egy másikéval ugyanannál az asztalnál!"};
             String hibaUzenet="";
-            if(hibakod>10){
+            if(hibakod<10){
                 hibaUzenet=hibaFoTipus[0].replace("*",mezok[hibakod]);
             }else{
-                hibaUzenet=hibaFoTipus[1].replace("*",mezok[((hibakod>12)?3:5)])+"\n"+hibaAlTipus[hibakod-10];
+                hibaUzenet=hibaFoTipus[1].replace("*",mezok[((hibakod>12)?6:4)])+"\n"+hibaAlTipus[hibakod-10];
             }
             JOptionPane.showMessageDialog(errorFrame,hibaUzenet,"Hiba!",JOptionPane.ERROR_MESSAGE);
-        }   
-        /*}else{
-            JOptionPane.showMessageDialog(errorFrame,"Kérem töltse ki az összes mezőt!","Hiba!",JOptionPane.ERROR_MESSAGE);
-        }*/
-    }//GEN-LAST:event_submitButtonActionPerformed
-    public boolean addFoglalas(Foglalas f) throws SQLException, ClassNotFoundException{
-        if (lefoglalhato(f)) {
-            
-            String sql="INSERT INTO "+
-                    "`foglalas` (`foglalas_id`, `foglalas_nev`, `foglalas_telszam`, `foglalas_csoport_meret`, `asztal_id`, `foglalas_idopont_kezd`, `foglalas_idopont_veg`) "+
-                    "VALUES "+
-                    "(NULL, '"+f.getFoglalas_nev()+"', '"+f.getFoglalas_telszam()+"', '"+f.getFoglalas_csoport_meret()+"', '"+f.getAsztal().getAsztal_id()+"', '"+f.getIdopontKezdString(true)+"', '"+f.getIdopontVegString(true)+"');";
-            Statement stmt = AsztalFoglaloMainFrame.con.createStatement();
-            stmt.execute(sql);
-            boolean success=stmt.getUpdateCount()==1;
-            if(success){
-                parent.loadTreeFromDB();
-            }
-            return success;
         }
-        return false;
+    }//GEN-LAST:event_submitButtonActionPerformed
+
+    private void asztalokComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_asztalokComboBoxItemStateChanged
+        if(asztalBetoltve)
+            ferohelySegitsegValtas();
+    }//GEN-LAST:event_asztalokComboBoxItemStateChanged
+    public boolean addFoglalas(Foglalas f) throws SQLException, ClassNotFoundException{
+        String sql="INSERT INTO "+
+            "`foglalas` (`foglalas_id`, `foglalas_nev`, `foglalas_telszam`, `foglalas_csoport_meret`, `asztal_id`, `foglalas_idopont_kezd`, `foglalas_idopont_veg`) "+
+            "VALUES "+
+            "(NULL, '"+f.getFoglalas_nev()+"', '"+f.getFoglalas_telszam()+"', '"+f.getFoglalas_csoport_meret()+"', '"+f.getAsztal().getAsztal_id()+"', '"+f.getIdopontKezdString(true)+"', '"+f.getIdopontVegString(true)+"');";
+        Statement stmt = AsztalFoglaloMainFrame.con.createStatement();
+        stmt.execute(sql);
+        boolean success=stmt.getUpdateCount()==1;
+        if(success){
+            parent.loadTreeFromDB();
+        }
+        return success;
     }
     public boolean updateFoglalas(Foglalas f) throws SQLException, ClassNotFoundException{
-        if (lefoglalhato(f)) {
-            
-            String sql="UPDATE `foglalas` SET `foglalas_nev`='"+f.getFoglalas_nev()+"',`foglalas_telszam`='"+f.getFoglalas_telszam()+"',`foglalas_csoport_meret`='"+f.getFoglalas_csoport_meret()+"',`asztal_id`='"+f.getAsztal().getAsztal_id()+"',`foglalas_idopont_kezd`='"+f.getIdopontKezdString(true)+"',`foglalas_idopont_veg`='"+f.getIdopontVegString(true)+"' WHERE `foglalas_id`='"+eredeti.getFoglalas_id()+"'";
-            Statement stmt =AsztalFoglaloMainFrame.con.createStatement();
-            stmt.execute(sql);
-            boolean success=stmt.getUpdateCount()==1;
-            if(success){
-                parent.loadTreeFromDB();
-            }
-            return success;
+        String sql="UPDATE `foglalas` SET `foglalas_nev`='"+f.getFoglalas_nev()+"',`foglalas_telszam`='"+f.getFoglalas_telszam()+"',`foglalas_csoport_meret`='"+f.getFoglalas_csoport_meret()+"',`asztal_id`='"+f.getAsztal().getAsztal_id()+"',`foglalas_idopont_kezd`='"+f.getIdopontKezdString(true)+"',`foglalas_idopont_veg`='"+f.getIdopontVegString(true)+"' WHERE `foglalas_id`='"+eredeti.getFoglalas_id()+"'";
+        Statement stmt =AsztalFoglaloMainFrame.con.createStatement();
+        stmt.execute(sql);
+        boolean success=stmt.getUpdateCount()==1;
+        if(success){
+            parent.loadTreeFromDB();
         }
-        return false;
+        return success;
     }
     public boolean lefoglalhato(Foglalas ujFoglalas) throws SQLException
     {
@@ -283,6 +293,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
             a= new Asztal(rs.getInt("asztal_szam"),parent.getEtterem().getNev(),rs.getInt("asztal_id"),parent.getTipus(rs.getInt("tipus_id")));
             asztalokDCBM.addElement(a);
         }
+        asztalokComboBox.setSelectedIndex(0);
     }
     
     
@@ -332,6 +343,10 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         return 0;
     }
 
+    private void ferohelySegitsegValtas(){
+        Asztal a = (Asztal) asztalokComboBox.getSelectedItem();
+        emberSzamLabel.setText(emberSzamLabel.getText().replaceAll("(?:\\s{1}\\d*\\s{1})",(" "+a.getTipus().getTipus_ferohely()+" ")));
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel asztalIdLabel;

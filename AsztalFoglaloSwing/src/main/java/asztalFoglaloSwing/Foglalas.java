@@ -1,6 +1,5 @@
 package asztalFoglaloSwing;
 
-import java.text.ParseException;
 import java.time.*;
 import java.time.format.DateTimeParseException;
 
@@ -10,7 +9,7 @@ public class Foglalas implements iDateFormatting{
     private LocalDateTime foglalas_idopont_kezd, foglalas_idopont_veg;
     private Asztal asztal;
 
-    public Foglalas(int foglalas_id, String foglalas_nev, String foglalas_telszam, int foglalas_csoport_meret, Asztal asztal, String formattedIdopontKezd, String formattedIdopontVeg) throws OldDateException, IllegalArgumentException, InvalidTimeException, ParseException {   
+    public Foglalas(int foglalas_id, String foglalas_nev, String foglalas_telszam, int foglalas_csoport_meret, Asztal asztal, String formattedIdopontKezd, String formattedIdopontVeg) throws OldDateException, IllegalArgumentException, InvalidTimeException, DateTimeParseException {   
         this.setFoglalas_id(foglalas_id);
         this.setFoglalas_nev(foglalas_nev);
         this.setFoglalas_telszam(foglalas_telszam);
