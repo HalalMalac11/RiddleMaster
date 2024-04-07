@@ -4,18 +4,16 @@ import javax.swing.JLabel;
 
 public class ReszletekFrame extends javax.swing.JFrame {
 
-    public ReszletekFrame(Foglalas foglalas) {
+    public ReszletekFrame(AsztalFoglaloMainFrame mainFrame, Foglalas foglalas) {
         initComponents();
         this.fogaloNevLabel.setText(foglalas.getFoglalas_nev());
         this.tSzamLabel.setText(foglalas.getFoglalas_telszam());
         this.emberSzamLabel.setText(""+foglalas.getFoglalas_csoport_meret());
         this.asztalIdLabel.setText(""+foglalas.getAsztal().getAsztal_id());
         this.asztalMaxKapacitasLabel.setText(""+foglalas.getAsztal().getTipus().getTipus_ferohely());
+        this.etteremNev.setText(mainFrame.getEtterem().getNev());
+        this.idopontLabel.setText(foglalas.getIdoIntervallumString());
         setLocationRelativeTo(null);
-    }
-
-    public void setEtteremNev(String etteremNev) {
-        this.etteremNev.setText(etteremNev);
     }
     
 
@@ -55,6 +53,7 @@ public class ReszletekFrame extends javax.swing.JFrame {
 
         foLabel.setText("fő");
 
+        asztalLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         asztalLabel.setText("Asztal:");
 
         idLabel.setText("Azonosító:");

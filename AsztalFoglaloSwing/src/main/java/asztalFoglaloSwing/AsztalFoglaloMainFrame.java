@@ -65,6 +65,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         hozzaAd = new javax.swing.JMenuItem();
         edit = new javax.swing.JMenuItem();
         torol = new javax.swing.JMenuItem();
+        reszletek = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Asztal foglalas");
@@ -73,6 +74,11 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         kivalasztottEtteremLabel.setFont(new java.awt.Font("Calibri", 1, 24)); // NOI18N
         kivalasztottEtteremLabel.setText("jLabel1");
 
+        foglalasFa.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                foglalasFaMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(foglalasFa);
 
         fajlMenu.setText("Fájl");
@@ -160,6 +166,14 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             }
         });
         foglalasMenu.add(torol);
+
+        reszletek.setText("Részletek megtekintése");
+        reszletek.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reszletekActionPerformed(evt);
+            }
+        });
+        foglalasMenu.add(reszletek);
 
         menuSor.add(foglalasMenu);
 
@@ -310,6 +324,16 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 }
     }//GEN-LAST:event_etteremTorolActionPerformed
 
+    private void foglalasFaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_foglalasFaMouseClicked
+        if(evt.getClickCount()==2){
+            reszletekMegjelenit();
+        }
+    }//GEN-LAST:event_foglalasFaMouseClicked
+
+    private void reszletekActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reszletekActionPerformed
+        reszletekMegjelenit();
+    }//GEN-LAST:event_reszletekActionPerformed
+
     protected void loadTreeFromDB() throws SQLException {
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("root");
         foglalasFaModel = new DefaultTreeModel(rootNode);
@@ -379,6 +403,15 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             System.exit(0);
         }
     }
+    private void reszletekMegjelenit(){
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) foglalasFa.getLastSelectedPathComponent();
+        if (selectedNode.getUserObject() instanceof Foglalas) {
+            Foglalas f=(Foglalas) selectedNode.getUserObject();
+        
+            ReszletekFrame rf = new ReszletekFrame(this,f);
+            rf.setVisible(true);
+        }
+    }
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -417,6 +450,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem kilepes;
     private javax.swing.JLabel kivalasztottEtteremLabel;
     private javax.swing.JMenuBar menuSor;
+    private javax.swing.JMenuItem reszletek;
     private javax.swing.JMenuItem torol;
     private javax.swing.JMenuItem ujAsztal;
     // End of variables declaration//GEN-END:variables
