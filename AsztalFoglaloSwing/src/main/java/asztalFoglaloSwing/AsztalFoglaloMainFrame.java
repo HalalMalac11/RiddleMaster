@@ -2,8 +2,15 @@ package asztalFoglaloSwing;
 
 import java.time.LocalDateTime;
 import static asztalFoglaloSwing.iDateFormatting.dtf;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
 import java.awt.event.KeyEvent;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -344,7 +351,8 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_reszletekActionPerformed
 
     private void exportPdfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPdfActionPerformed
-        // TODO add your handling code here:
+        MentesDialog md = new MentesDialog(this,true);
+        md.setVisible(true);
     }//GEN-LAST:event_exportPdfActionPerformed
 
     protected void loadTreeFromDB() throws SQLException {

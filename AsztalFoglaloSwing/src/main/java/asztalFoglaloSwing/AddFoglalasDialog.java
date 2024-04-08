@@ -21,11 +21,11 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
     private Foglalas eredeti;
     private boolean update, asztalBetoltve;
     private DefaultMutableTreeNode updatableNode;
-
-    AsztalFoglaloMainFrame parent;
+    private AsztalFoglaloMainFrame mainFrame;
+    
     public AddFoglalasDialog(AsztalFoglaloMainFrame parent, boolean modal) {
         super(parent, modal);
-        this.parent=parent;
+        this.mainFrame=parent;
         update=false;
         asztalokDCBM = new DefaultComboBoxModel<Asztal>();
         initComponents();
@@ -261,7 +261,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         stmt.execute(sql);
         boolean success=stmt.getUpdateCount()==1;
         if(success){
-            parent.loadTreeFromDB();
+            mainFrame.loadTreeFromDB();
         }
         return success;
     }
@@ -271,7 +271,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         stmt.execute(sql);
         boolean success=stmt.getUpdateCount()==1;
         if(success){
-            parent.loadTreeFromDB();
+            mainFrame.loadTreeFromDB();
         }
         return success;
     }
@@ -286,12 +286,12 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
     }
     
     private void loadAsztalokModel() throws SQLException{
-        String sql="SELECT * FROM `asztal` WHERE `etterem_id`='"+parent.getEtterem().getId()+"'";
+        String sql="SELECT * FROM `asztal` WHERE `etterem_id`='"+mainFrame.getEtterem().getId()+"'";
         Statement stmt = AsztalFoglaloMainFrame.con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         Asztal a;
         while(rs.next()){
-            a= new Asztal(rs.getInt("asztal_szam"),parent.getEtterem().getNev(),rs.getInt("asztal_id"),parent.getTipus(rs.getInt("tipus_id")));
+            a= new Asztal(rs.getInt("asztal_szam"),mainFrame.getEtterem().getNev(),rs.getInt("asztal_id"),mainFrame.getTipus(rs.getInt("tipus_id")));
             asztalokDCBM.addElement(a);
         }
         asztalokComboBox.setSelectedIndex(0);
@@ -302,7 +302,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
     private void validateIdopont(String[] idopont) throws InvalidTimeException{
         LocalDate ld = LocalDate.parse(datum.getText());
         int nap = ld.getDayOfWeek().getValue();
-        LocalTime[][] nyitvatartas=parent.getEtterem().getNyitvatartas();
+        LocalTime[][] nyitvatartas=mainFrame.getEtterem().getNyitvatartas();
         for (int i = 0; i < 2; i++) {
             String[] idopontSplit= idopont[i].split(":");
             LocalTime idopontTimeInstance = LocalTime.of(Integer.parseInt(idopontSplit[0]),Integer.parseInt(idopontSplit[1]));
