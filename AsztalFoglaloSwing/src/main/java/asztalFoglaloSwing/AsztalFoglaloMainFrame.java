@@ -53,6 +53,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         foglalasFa = new javax.swing.JTree();
         menuSor = new javax.swing.JMenuBar();
         fajlMenu = new javax.swing.JMenu();
+        exportPdf = new javax.swing.JMenuItem();
         kilepes = new javax.swing.JMenuItem();
         etteremMenu = new javax.swing.JMenu();
         etteremValt = new javax.swing.JMenuItem();
@@ -82,6 +83,14 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         jScrollPane2.setViewportView(foglalasFa);
 
         fajlMenu.setText("Fájl");
+
+        exportPdf.setText("Mentés PDF-be");
+        exportPdf.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportPdfActionPerformed(evt);
+            }
+        });
+        fajlMenu.add(exportPdf);
 
         kilepes.setText("Kilépés");
         kilepes.addActionListener(new java.awt.event.ActionListener() {
@@ -334,6 +343,10 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         reszletekMegjelenit();
     }//GEN-LAST:event_reszletekActionPerformed
 
+    private void exportPdfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPdfActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_exportPdfActionPerformed
+
     protected void loadTreeFromDB() throws SQLException {
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("root");
         foglalasFaModel = new DefaultTreeModel(rootNode);
@@ -441,6 +454,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private javax.swing.JMenu etteremMenu;
     private javax.swing.JMenuItem etteremTorol;
     private javax.swing.JMenuItem etteremValt;
+    private javax.swing.JMenuItem exportPdf;
     private javax.swing.JMenu fajlMenu;
     private javax.swing.JTree foglalasFa;
     private javax.swing.JMenu foglalasMenu;
@@ -454,8 +468,4 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem torol;
     private javax.swing.JMenuItem ujAsztal;
     // End of variables declaration//GEN-END:variables
-
-    
-
-    
 }

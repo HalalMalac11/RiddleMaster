@@ -9,6 +9,14 @@
             <Property name="text" type="java.lang.String" value="F&#xe1;jl"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="exportPdf">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Ment&#xe9;s PDF-be"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportPdfActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="kilepes">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Kil&#xe9;p&#xe9;s"/>
