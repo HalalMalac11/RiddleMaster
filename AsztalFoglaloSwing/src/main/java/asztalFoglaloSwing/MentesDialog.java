@@ -26,6 +26,9 @@ public class MentesDialog extends javax.swing.JDialog {
         datumVeg = new javax.swing.JTextField();
         mentesUtvonalLabel = new javax.swing.JLabel();
         tallozas = new javax.swing.JButton();
+        export = new javax.swing.JButton();
+        asztalLabel = new javax.swing.JLabel();
+        asztalCB = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PDF-ként");
@@ -37,8 +40,6 @@ public class MentesDialog extends javax.swing.JDialog {
 
         formatumGroup.add(reszletes);
         reszletes.setText("Részletes");
-
-        preview.setText("jLabel1");
 
         jLabel1.setText("Kezdő dátum: (yyyy-MM-dd)");
 
@@ -53,6 +54,15 @@ public class MentesDialog extends javax.swing.JDialog {
             }
         });
 
+        export.setText("Exportálás");
+        export.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportActionPerformed(evt);
+            }
+        });
+
+        asztalLabel.setText("Asztal:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -61,40 +71,45 @@ public class MentesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(formatumLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(preview))
+                        .addComponent(tallozas)
+                        .addGap(18, 18, 18)
+                        .addComponent(mentesUtvonalLabel))
+                    .addComponent(export)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(egyszeru)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
                             .addComponent(reszletes)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel2))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(datumKezd, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
-                                    .addComponent(datumVeg)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(tallozas)
-                                .addGap(18, 18, 18)
-                                .addComponent(mentesUtvonalLabel)))
-                        .addGap(0, 80, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addComponent(formatumLabel)
+                            .addComponent(egyszeru))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(datumKezd, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
+                            .addComponent(datumVeg)
+                            .addComponent(preview, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(asztalLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(asztalCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(formatumLabel)
-                    .addComponent(preview))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(egyszeru)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(reszletes)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(formatumLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(egyszeru)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(reszletes))
+                    .addComponent(preview, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(asztalLabel)
+                    .addComponent(asztalCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(datumKezd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
@@ -106,7 +121,9 @@ public class MentesDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tallozas)
                     .addComponent(mentesUtvonalLabel))
-                .addContainerGap(102, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(export)
+                .addContainerGap())
         );
 
         pack();
@@ -117,14 +134,22 @@ public class MentesDialog extends javax.swing.JDialog {
         jf.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int valasz = jf.showSaveDialog(null);  
         if (valasz == JFileChooser.APPROVE_OPTION){
-            mentesUtvonalLabel.setText(jf.getSelectedFile().getAbsolutePath());
+            utvonal=jf.getSelectedFile().getAbsolutePath();
+            mentesUtvonalLabel.setText(utvonal);
         }  
     }//GEN-LAST:event_tallozasActionPerformed
 
+    private void exportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportActionPerformed
+        
+    }//GEN-LAST:event_exportActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<Asztal> asztalCB;
+    private javax.swing.JLabel asztalLabel;
     private javax.swing.JTextField datumKezd;
     private javax.swing.JTextField datumVeg;
     private javax.swing.JRadioButton egyszeru;
+    private javax.swing.JButton export;
     private javax.swing.ButtonGroup formatumGroup;
     private javax.swing.JLabel formatumLabel;
     private javax.swing.JLabel jLabel1;

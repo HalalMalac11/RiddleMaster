@@ -8,11 +8,13 @@ import com.itextpdf.layout.Document;
 import java.awt.event.KeyEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 
 public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
@@ -68,7 +70,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         asztalMenu = new javax.swing.JMenu();
         ujAsztal = new javax.swing.JMenuItem();
         asztalTorol = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        ujTipus = new javax.swing.JMenuItem();
         foglalasMenu = new javax.swing.JMenu();
         hozzaAd = new javax.swing.JMenuItem();
         edit = new javax.swing.JMenuItem();
@@ -82,6 +84,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         kivalasztottEtteremLabel.setFont(new java.awt.Font("Calibri", 1, 24)); // NOI18N
         kivalasztottEtteremLabel.setText("jLabel1");
 
+        foglalasFa.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         foglalasFa.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 foglalasFaMouseClicked(evt);
@@ -145,13 +148,13 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         });
         asztalMenu.add(asztalTorol);
 
-        jMenuItem1.setText("Új típus");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        ujTipus.setText("Új típus");
+        ujTipus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                ujTipusActionPerformed(evt);
             }
         });
-        asztalMenu.add(jMenuItem1);
+        asztalMenu.add(ujTipus);
 
         etteremMenu.add(asztalMenu);
 
@@ -159,6 +162,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
 
         foglalasMenu.setText("Foglalás");
 
+        hozzaAd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/bookAdd.png"))); // NOI18N
         hozzaAd.setText("Foglalas felvétele");
         hozzaAd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -167,6 +171,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         });
         foglalasMenu.add(hozzaAd);
 
+        edit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/bookEdit.png"))); // NOI18N
         edit.setText("Szerkesztés");
         edit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -175,6 +180,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         });
         foglalasMenu.add(edit);
 
+        torol.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/bookDelete.png"))); // NOI18N
         torol.setText("Törlés");
         torol.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -183,6 +189,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         });
         foglalasMenu.add(torol);
 
+        reszletek.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/book.png"))); // NOI18N
         reszletek.setText("Részletek megtekintése");
         reszletek.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -228,8 +235,14 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
 
     private void editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editActionPerformed
         if(foglalasFa.getLastSelectedPathComponent()!=null){
-            AddFoglalasDialog afd = new AddFoglalasDialog(this,true, (DefaultMutableTreeNode) foglalasFa.getLastSelectedPathComponent());
-            afd.setVisible(true);
+            DefaultMutableTreeNode selected = (DefaultMutableTreeNode) foglalasFa.getLastSelectedPathComponent();
+            if(selected.getUserObject() instanceof Foglalas){
+                Foglalas f =(Foglalas) selected.getUserObject();
+                AddFoglalasDialog afd = new AddFoglalasDialog(this,true, f);
+                afd.setVisible(true);
+            }else{
+                JOptionPane.showMessageDialog(errorFrame,"A kiválasztott elem nem egy foglalás!","Hiba!",JOptionPane.ERROR_MESSAGE);
+            }
         }else{
             JOptionPane.showMessageDialog(errorFrame,"Nincs kiválasztva foglalás!","Hiba!",JOptionPane.ERROR_MESSAGE);
         }
@@ -238,20 +251,24 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private void torolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_torolActionPerformed
         if(foglalasFa.getLastSelectedPathComponent()!=null){
             DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) foglalasFa.getLastSelectedPathComponent();
-            Foglalas f = (Foglalas) selectedNode.getUserObject();
-            int valasz=JOptionPane.showConfirmDialog(errorFrame,"Biztosan törölni szeretné?\n"+f,"Törlés",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
-            if(valasz==JOptionPane.YES_OPTION){
-                String sql="DELETE FROM `foglalas`  WHERE `foglalas_id`='"+f.getFoglalas_id()+"'";
-                try{
-                    Statement stmt= con.createStatement();
-                    stmt.execute(sql);
-                    boolean success=stmt.getUpdateCount()==1;
-                    if(success){
-                        foglalasFa.removeSelectionPath(foglalasFa.getSelectionPath());
+            if (selectedNode.getUserObject() instanceof Asztal) {
+                Foglalas f = (Foglalas) selectedNode.getUserObject();
+                int valasz=JOptionPane.showConfirmDialog(errorFrame,"Biztosan törölni szeretné?\n"+f,"Törlés",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+                if(valasz==JOptionPane.YES_OPTION){
+                    String sql="DELETE FROM `foglalas`  WHERE `foglalas_id`='"+f.getFoglalas_id()+"'";
+                    try{
+                        Statement stmt= con.createStatement();
+                        stmt.execute(sql);
+                        boolean success=stmt.getUpdateCount()==1;
+                        if(success){
+                            foglalasFa.removeSelectionPath(foglalasFa.getSelectionPath());
+                        }
+                    } catch (SQLException ex) {
+                        JOptionPane.showMessageDialog(errorFrame,"Sikertelen törlés!\n"+ex,"Hiba!",JOptionPane.ERROR_MESSAGE);
                     }
-                } catch (SQLException ex) {
-                    JOptionPane.showMessageDialog(errorFrame,"Sikertelen törlés!\n"+ex,"Hiba!",JOptionPane.ERROR_MESSAGE);
                 }
+            }else{
+                JOptionPane.showMessageDialog(errorFrame,"A kiválasztott elem nem foglalás!","Hiba!",JOptionPane.ERROR_MESSAGE);
             }
         }else{
             JOptionPane.showMessageDialog(errorFrame,"Nincs kiválasztva foglalás!","Hiba!",JOptionPane.ERROR_MESSAGE);
@@ -272,10 +289,10 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         aad.setVisible(true);
     }//GEN-LAST:event_ujAsztalActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void ujTipusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ujTipusActionPerformed
         AddTipusDialog atd= new AddTipusDialog(this,true);
         atd.setVisible(true);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_ujTipusActionPerformed
 
     private void asztalTorolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_asztalTorolActionPerformed
         if(foglalasFa.getLastSelectedPathComponent()!=null){
@@ -376,10 +393,15 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 + "WHERE `foglalas_idopont_kezd`>'"+todaysDateTime+"' AND `foglalas`.`asztal_id`="+etteremRs.getInt(1)+" ORDER BY `foglalas_idopont_kezd`";
                 Statement foglalasStmt = con.createStatement();
                 ResultSet foglalasRs =foglalasStmt.executeQuery(sql);
+                boolean vanFoglalas=false;
                 while(foglalasRs.next()){
+                    vanFoglalas=true;
                     f= new Foglalas(foglalasRs.getInt("foglalas_id"),foglalasRs.getString("foglalas_nev"),foglalasRs.getString("foglalas_telszam"),foglalasRs.getInt("foglalas_csoport_meret"),a,foglalasRs.getString("foglalas_idopont_kezd"),foglalasRs.getString("foglalas_idopont_veg"));
                     DefaultMutableTreeNode foglalasNode = new DefaultMutableTreeNode(f);
                     asztalNode.add(foglalasNode);
+                }
+                if (!vanFoglalas) {
+                    asztalNode.add(new DefaultMutableTreeNode("Ehhez az asztalhoz nem tartoznak foglalások!"));
                 }
                 rootNode.add(asztalNode);
             } catch (IllegalArgumentException|OldDateException|InvalidTimeException ex) {
@@ -426,7 +448,8 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     }
     private void reszletekMegjelenit(){
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) foglalasFa.getLastSelectedPathComponent();
-        if (selectedNode.getUserObject() instanceof Foglalas) {
+        
+        if (selectedNode!=null &&selectedNode.getUserObject() instanceof Foglalas) {
             Foglalas f=(Foglalas) selectedNode.getUserObject();
         
             ReszletekFrame rf = new ReszletekFrame(this,f);
@@ -442,6 +465,14 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         try
         {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            URL tableURL = AsztalFoglaloMainFrame.class.getResource("/images/table2.png");
+            Icon tableIcon = new ImageIcon(tableURL);
+            URL bookURL = AsztalFoglaloMainFrame.class.getResource("/images/book.png");
+            Icon bookIcon = new ImageIcon(bookURL);
+
+            UIManager.put("Tree.closedIcon", tableIcon);
+            UIManager.put("Tree.openIcon", tableIcon);
+            UIManager.put("Tree.leafIcon", bookIcon);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -467,7 +498,6 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private javax.swing.JTree foglalasFa;
     private javax.swing.JMenu foglalasMenu;
     private javax.swing.JMenuItem hozzaAd;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JMenuItem kilepes;
     private javax.swing.JLabel kivalasztottEtteremLabel;
@@ -475,5 +505,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem reszletek;
     private javax.swing.JMenuItem torol;
     private javax.swing.JMenuItem ujAsztal;
+    private javax.swing.JMenuItem ujTipus;
     // End of variables declaration//GEN-END:variables
+
 }

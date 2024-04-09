@@ -20,7 +20,6 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
     private JFrame errorFrame= new JFrame();
     private Foglalas eredeti;
     private boolean update, asztalBetoltve;
-    private DefaultMutableTreeNode updatableNode;
     private AsztalFoglaloMainFrame mainFrame;
     
     public AddFoglalasDialog(AsztalFoglaloMainFrame parent, boolean modal) {
@@ -40,11 +39,10 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
         ferohelySegitsegValtas();
     }
-    public AddFoglalasDialog(AsztalFoglaloMainFrame parent, boolean modal, DefaultMutableTreeNode treeNode) {
+    public AddFoglalasDialog(AsztalFoglaloMainFrame parent, boolean modal, Foglalas f) {
         this(parent,modal);
         update=true;
-        updatableNode=treeNode;
-        eredeti=(Foglalas) treeNode.getUserObject();
+        eredeti=f;
         foglaloNev.setText(eredeti.getFoglalas_nev());
         tSzam.setText(eredeti.getFoglalas_telszam());
         emberSzam.setText(""+eredeti.getFoglalas_csoport_meret());
