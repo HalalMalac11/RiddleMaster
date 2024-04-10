@@ -251,17 +251,17 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private void torolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_torolActionPerformed
         if(foglalasFa.getLastSelectedPathComponent()!=null){
             DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) foglalasFa.getLastSelectedPathComponent();
-            if (selectedNode.getUserObject() instanceof Asztal) {
+            if (selectedNode.getUserObject() instanceof Foglalas) {
                 Foglalas f = (Foglalas) selectedNode.getUserObject();
                 int valasz=JOptionPane.showConfirmDialog(errorFrame,"Biztosan törölni szeretné?\n"+f,"Törlés",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
                 if(valasz==JOptionPane.YES_OPTION){
-                    String sql="DELETE FROM `foglalas`  WHERE `foglalas_id`='"+f.getFoglalas_id()+"'";
+                    String sql="DELETE FROM `foglalas` WHERE `foglalas_id`='"+f.getFoglalas_id()+"'";
                     try{
                         Statement stmt= con.createStatement();
                         stmt.execute(sql);
                         boolean success=stmt.getUpdateCount()==1;
                         if(success){
-                            foglalasFa.removeSelectionPath(foglalasFa.getSelectionPath());
+                            loadTreeFromDB();
                         }
                     } catch (SQLException ex) {
                         JOptionPane.showMessageDialog(errorFrame,"Sikertelen törlés!\n"+ex,"Hiba!",JOptionPane.ERROR_MESSAGE);
@@ -378,19 +378,19 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         
         String todaysDateTime=fullDateTime.format(LocalDateTime.now());
         String sql = "SELECT * FROM `asztal` WHERE `etterem_id`='"+etterem.getId()+"'";
-        Statement etteremStmt = con.createStatement();
-        ResultSet etteremRs = etteremStmt.executeQuery(sql);
+        Statement asztalStmt = con.createStatement();
+        ResultSet asztalRs = asztalStmt.executeQuery(sql);
         Asztal a;
         
         Foglalas f;
-        while(etteremRs.next()){
+        while(asztalRs.next()){
             try {
-                a= new Asztal(etteremRs.getInt(3),etterem.getNev(),etteremRs.getInt(1),getTipus(etteremRs.getInt(2)));
+                a= new Asztal(asztalRs.getInt(3),etterem.getNev(),asztalRs.getInt(1),getTipus(asztalRs.getInt(2)));
                 DefaultMutableTreeNode asztalNode = new DefaultMutableTreeNode(a);
                 sql="SELECT `asztal`.`etterem_id`,`foglalas`.`asztal_id`, `foglalas_id`, `foglalas_nev`,`foglalas_telszam`,`foglalas_csoport_meret`,`foglalas_idopont_kezd`,`foglalas_idopont_veg` "
                 + "FROM `foglalas` "
                 + "INNER JOIN `asztal` ON `asztal`.`asztal_id`=`foglalas`.`asztal_id` "
-                + "WHERE `foglalas_idopont_kezd`>'"+todaysDateTime+"' AND `foglalas`.`asztal_id`="+etteremRs.getInt(1)+" ORDER BY `foglalas_idopont_kezd`";
+                + "WHERE `foglalas_idopont_kezd`>'"+todaysDateTime+"' AND `foglalas`.`asztal_id`="+asztalRs.getInt(1)+" ORDER BY `foglalas_idopont_kezd`";
                 Statement foglalasStmt = con.createStatement();
                 ResultSet foglalasRs =foglalasStmt.executeQuery(sql);
                 boolean vanFoglalas=false;
@@ -400,16 +400,17 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                     DefaultMutableTreeNode foglalasNode = new DefaultMutableTreeNode(f);
                     asztalNode.add(foglalasNode);
                 }
+                foglalasRs.close();
                 if (!vanFoglalas) {
                     asztalNode.add(new DefaultMutableTreeNode("Ehhez az asztalhoz nem tartoznak foglalások!"));
                 }
                 rootNode.add(asztalNode);
-            } catch (IllegalArgumentException|OldDateException|InvalidTimeException ex) {
+            } catch (IllegalArgumentException|InvalidTimeException ex) {
                 JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
             System.exit(0);
             }
         }
-        etteremRs.close();
+        asztalRs.close();
         foglalasFa.setModel(foglalasFaModel);
         foglalasFa.expandRow(0);
         foglalasFa.setRootVisible(false);

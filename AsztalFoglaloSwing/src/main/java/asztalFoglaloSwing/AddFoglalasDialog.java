@@ -15,7 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-public class AddFoglalasDialog extends javax.swing.JDialog {
+public class AddFoglalasDialog extends javax.swing.JDialog implements iDateFormatting {
     private DefaultComboBoxModel<Asztal> asztalokDCBM;
     private JFrame errorFrame= new JFrame();
     private Foglalas eredeti;
@@ -192,7 +192,12 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
 
             try {
                 Asztal a = (Asztal) asztalokComboBox.getSelectedItem();
-                f = new Foglalas(0,foglaloNev.getText(),tSzam.getText(),Integer.parseInt(emberSzam.getText()),a,new String(datum.getText()+" "+idopontKezd.getText()+":00"),new String(datum.getText()+" "+idopontVeg.getText()+":00"));
+                String ujIdopontKezd = datum.getText()+" "+idopontKezd.getText()+":00";
+                LocalDateTime foglalas_idopont_kezd = LocalDateTime.parse(ujIdopontKezd,fullDateTime);
+                if (foglalas_idopont_kezd.isBefore(LocalDateTime.now())){
+                    throw new OldDateException("5");
+                }
+                f = new Foglalas(0,foglaloNev.getText(),tSzam.getText(),Integer.parseInt(emberSzam.getText()),a,new String(ujIdopontKezd),datum.getText()+" "+idopontVeg.getText()+":00");
                 if(lefoglalhato(f)){
                     if (!update){
                         if(addFoglalas(f)){

@@ -12,6 +12,7 @@ public class AddTipusDialog extends javax.swing.JDialog {
     public AddTipusDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     @SuppressWarnings("unchecked")
