@@ -1,6 +1,9 @@
 package asztalFoglaloSwing;
 
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -154,10 +157,41 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
     private void exportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportActionPerformed
     try {
             String fajlNev="Foglalasok_";
-            String keresKezd=LocalDate.now().format(onlyDate);
-            String keresVeg;
+            String foglalasSql ="SELECT * FROM `foglalas` WHERE `asztal_id`='0' AND `foglalas_idopont_kezd`>=";
+            int datumKezdStatus=inputEllenorzes(datumKezd);
+            String keresKezd="",keresVeg="";
+            if(datumKezdStatus==1){
+                keresKezd=datumKezd.getText();
+                foglalasSql+="'"+keresKezd+"'";
+                fajlNev+=keresKezd;
+            }else if(datumKezdStatus==0){
+                keresKezd=LocalDate.now().format(onlyDate);
+                foglalasSql+="'"+keresKezd+"'";
+                fajlNev+=keresKezd;
+            }else{
+                JOptionPane.showMessageDialog(new JFrame(),"Nem megfelelő formátumú kezdő dátum!","Hiba!",JOptionPane.ERROR_MESSAGE);
+            }
             
-            PdfWriter pw = new PdfWriter(utvonal);
+            int datumVegStatus=inputEllenorzes(datumVeg);
+            
+            if(datumVegStatus==1){
+                keresVeg=datumVeg.getText();
+                foglalasSql+="'"+keresVeg+"'";
+                fajlNev+="_"+keresVeg;
+            }else if(datumVegStatus==-1){
+                JOptionPane.showMessageDialog(new JFrame(),"Nem megfelelő formátumú vég dátum!","Hiba!",JOptionPane.ERROR_MESSAGE);
+            }
+            if(datumKezdStatus!=-1&&datumVegStatus!=-1){
+                String vegsoUtvonal=utvonal+"\\"+fajlNev+".pdf";
+                vegsoUtvonal=vegsoUtvonal.replace('\\', '/');
+                System.out.println(vegsoUtvonal);
+                PdfWriter pw = new PdfWriter(vegsoUtvonal);
+                PdfDocument pdfDoc = new PdfDocument(pw);
+                Document doc = new Document(pdfDoc);
+                pdfDoc.addNewPage();
+
+                doc.close();
+            }
         } catch (FileNotFoundException ex) {
             JOptionPane.showMessageDialog(new JFrame(),"A fájlt nem sikerült létrehozni!","Hiba!",JOptionPane.ERROR_MESSAGE);
         }
@@ -181,7 +215,7 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
     // End of variables declaration//GEN-END:variables
 
     private int inputEllenorzes(JTextField datumField) {
-        Pattern p = Pattern.compile("(?:^d{4}-d{2}-d{2}$)");
+        Pattern p = Pattern.compile("(?:^\\d{4}-\\d{2}-\\d{2}$)");
         Matcher m = p.matcher(datumField.getText());
         if(!datumField.getText().isBlank()&&!m.find()){
             return -1;
