@@ -34,7 +34,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
             asztalBetoltve=true;
         }catch (SQLException sqle) {
             JOptionPane.showMessageDialog(errorFrame,"Sikertelen adatbázis művelet!\n"+sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
+            this.dispose();
         }
         setLocationRelativeTo(null);
         ferohelySegitsegValtas();
@@ -287,12 +287,13 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
         String sql="SELECT * FROM `asztal` WHERE `etterem_id`='"+mainFrame.getEtterem().getId()+"'";
         Statement stmt = AsztalFoglaloMainFrame.con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
-        Asztal a;
+        Asztal a=new Asztal("Válasszon asztalt");
+        asztalokDCBM.addElement(a);
         while(rs.next()){
             a= new Asztal(rs.getInt("asztal_szam"),mainFrame.getEtterem().getNev(),rs.getInt("asztal_id"),mainFrame.getTipus(rs.getInt("tipus_id")));
             asztalokDCBM.addElement(a);
         }
-        asztalokComboBox.setSelectedIndex(0);
+            asztalokComboBox.setSelectedIndex(0);
     }
     
     
@@ -343,8 +344,12 @@ public class AddFoglalasDialog extends javax.swing.JDialog {
     }
 
     private void ferohelySegitsegValtas(){
-        Asztal a = (Asztal) asztalokComboBox.getSelectedItem();
-        emberSzamLabel.setText(emberSzamLabel.getText().replaceAll("(?:\\s{1}\\d*\\s{1})",(" "+a.getTipus().getTipus_ferohely()+" ")));
+        String hintSzam="0";
+        if(asztalokComboBox.getSelectedIndex()!=0){
+            Asztal a = (Asztal) asztalokComboBox.getSelectedItem();
+            hintSzam=""+a.getTipus().getTipus_ferohely();
+        }
+        emberSzamLabel.setText(emberSzamLabel.getText().replaceAll("(?:\\s{1}\\d*\\s{1})",(" "+hintSzam+" ")));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

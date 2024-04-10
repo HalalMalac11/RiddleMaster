@@ -4,8 +4,8 @@ public class Tipus {
     private int tipus_id,tipus_ferohely;
 
     public Tipus(int tipus_id, int tipus_ferohely) {
-        this.tipus_id = tipus_id;
-        this.tipus_ferohely = tipus_ferohely;
+        this.setTipus_id(tipus_id);
+        this.setTipus_ferohely(tipus_ferohely);
     }
 
     public int getTipus_id() {

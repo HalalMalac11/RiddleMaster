@@ -6,10 +6,16 @@ public class Asztal {
     private Tipus tipus;
 
     public Asztal(int asztal_szam, String etterem_nev, int asztal_id, Tipus tipus) {
-        this.asztalNev = etterem_nev+"_"+asztal_szam;
-        this.asztal_id = asztal_id;
-        this.tipus =tipus;
+        this.setAsztalNev(etterem_nev+"_"+asztal_szam);
+        this.setAsztal_id(asztal_id);
+        this.setTipus(tipus);
     }
+
+    public Asztal(String uresAsztalNev) {
+        this.asztalNev =uresAsztalNev;
+    }
+    
+    
 
 
     public String getAsztalNev() {
