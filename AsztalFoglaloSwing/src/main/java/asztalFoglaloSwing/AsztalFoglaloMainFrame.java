@@ -1,7 +1,6 @@
 package asztalFoglaloSwing;
 
 import java.time.LocalDateTime;
-import static asztalFoglaloSwing.iDateFormatting.dtf;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
@@ -16,6 +15,7 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import static asztalFoglaloSwing.iDateFormatting.fullDateTime;
 
 public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     //private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
@@ -376,7 +376,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("root");
         foglalasFaModel = new DefaultTreeModel(rootNode);
         
-        String todaysDateTime=dtf.format(LocalDateTime.now());
+        String todaysDateTime=fullDateTime.format(LocalDateTime.now());
         String sql = "SELECT * FROM `asztal` WHERE `etterem_id`='"+etterem.getId()+"'";
         Statement etteremStmt = con.createStatement();
         ResultSet etteremRs = etteremStmt.executeQuery(sql);
