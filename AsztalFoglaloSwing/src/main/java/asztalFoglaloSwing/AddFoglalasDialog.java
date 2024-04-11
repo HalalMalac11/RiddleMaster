@@ -49,7 +49,12 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
         datum.setText(eredeti.getIdopontKezdString(false).substring(0,10));
         idopontKezd.setText(eredeti.getIdopontKezdString(false).substring(11));
         idopontVeg.setText(eredeti.getIdopontVegString(false).substring(11));
-        asztalokComboBox.setSelectedItem(eredeti.getAsztal());
+        for (int i = 1; i < asztalokComboBox.getItemCount(); i++) {
+            if (asztalokComboBox.getItemAt(i).getAsztal_id()==eredeti.getAsztal().getAsztal_id()) {
+                asztalokComboBox.setSelectedIndex(i);
+                break;
+            }
+        }
         this.setTitle("Foglalás szerkesztése");
     }
 
@@ -198,6 +203,9 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
                     throw new OldDateException("5");
                 }
                 f = new Foglalas(0,foglaloNev.getText(),tSzam.getText(),Integer.parseInt(emberSzam.getText()),a,new String(ujIdopontKezd),datum.getText()+" "+idopontVeg.getText()+":00");
+                if(update){
+                    f.setFoglalas_id(eredeti.getFoglalas_id());
+                }
                 if(lefoglalhato(f)){
                     if (!update){
                         if(addFoglalas(f)){
@@ -208,7 +216,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
                             feedBackLabel.setForeground(Color.red);
                         }
                     }else{
-                        f.setFoglalas_id(eredeti.getFoglalas_id());
+                        
                         if(updateFoglalas(f)){
                         feedBackLabel.setText("Sikeres szerkesztés!");
                         feedBackLabel.setForeground(Color.green);
@@ -281,6 +289,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
     public boolean lefoglalhato(Foglalas ujFoglalas) throws SQLException
     {
         String sql ="SELECT `foglalas_id`,`asztal_id` FROM `foglalas` WHERE (((`foglalas_idopont_veg`>'"+ujFoglalas.getIdopontKezdString(true)+"' AND `foglalas_idopont_kezd`<'"+ujFoglalas.getIdopontVegString(true)+"') OR (`foglalas_idopont_kezd`='"+ujFoglalas.getIdopontKezdString(true)+"')) OR (`foglalas_idopont_kezd`<'"+ujFoglalas.getIdopontVegString(true)+"' AND `foglalas_idopont_kezd`>'"+ujFoglalas.getIdopontKezdString(true)+"')) AND `asztal_id`='"+ujFoglalas.getAsztal().getAsztal_id()+"' AND `foglalas`.`foglalas_id`!='"+ujFoglalas.getFoglalas_id()+"';";
+        System.out.println(sql);
         Statement stmt =AsztalFoglaloMainFrame.con.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         boolean foglalhato=!rs.next();
@@ -327,7 +336,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
             return hibakod;
         }
         hibakod++;
-        if(this.asztalokComboBox.getSelectedIndex()==-1){
+        if(this.asztalokComboBox.getSelectedIndex()<1){
             return hibakod;
         }
         hibakod++;

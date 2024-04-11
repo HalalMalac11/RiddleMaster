@@ -186,68 +186,93 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
 
     private void exportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportActionPerformed
     try {
-            String fajlNev="Foglalasok_";
+            int debug=0;
+            String fajlNev=mainFrame.getEtterem().getNev()+"_Foglalasok_";
             String foglalasSql ="SELECT * FROM `foglalas` WHERE `asztal_id`='0' AND `foglalas_idopont_kezd`>=";
-            String asztalSql="SELECT * FROM `asztal`";
+            String asztalSql="SELECT * FROM `asztal` WHERE `etterem_id`='"+mainFrame.getEtterem().getId()+"'";
             if(asztalCB.getSelectedIndex()!=0){
                 Asztal a = (Asztal) asztalCB.getSelectedItem();
-                asztalSql+=" WHERE `asztal_id`='"+a.getAsztal_id()+"'";
+                asztalSql+=" `asztal_id`='"+a.getAsztal_id()+"'";
             }
+            
+            
             int datumKezdStatus=inputEllenorzes(datumKezd);
             String keresKezd="",keresVeg="";
+            
+            
             if(datumKezdStatus==1){
                 keresKezd=datumKezd.getText();
                 foglalasSql+="'"+keresKezd+" 00:00:00'";
                 fajlNev+=keresKezd;
+            
             }else if(datumKezdStatus==0){
                 keresKezd=LocalDate.now().format(onlyDate);
                 foglalasSql+="'"+keresKezd+" 00:00:00'";
                 fajlNev+=keresKezd;
+                
+            
             }else{
                 JOptionPane.showMessageDialog(new JFrame(),"Nem megfelelő formátumú kezdő dátum!","Hiba!",JOptionPane.ERROR_MESSAGE);
             }
             
             int datumVegStatus=inputEllenorzes(datumVeg);
             
+            
             if(datumVegStatus==1){
                 LocalDate ld= LocalDate.parse(datumVeg.getText(), onlyDate).plusDays(1);
                 keresVeg=ld.format(onlyDate);
                 foglalasSql+="AND `foglalas_idopont_kezd`<='"+keresVeg+" 00:00:00'";
                 fajlNev+="_"+keresVeg;
+                
+            
             }else if(datumVegStatus==-1){
                 JOptionPane.showMessageDialog(new JFrame(),"Nem megfelelő formátumú vég dátum!","Hiba!",JOptionPane.ERROR_MESSAGE);
             }
             if(datumKezdStatus!=-1&&datumVegStatus!=-1){
                 String vegsoUtvonal=utvonal+"\\"+fajlNev+".pdf";
                 vegsoUtvonal=vegsoUtvonal.replace('\\', '/');
+                
+            
                 PdfWriter pw = new PdfWriter(vegsoUtvonal);
                 PdfDocument pdfDoc = new PdfDocument(pw);
                 Document doc = new Document(pdfDoc);
+                
+            
                 FontProgram fontProgram = FontProgramFactory.createFont( ) ;
                 PdfFont font = PdfFontFactory.createFont( fontProgram,  "CP1250") ;
                 doc.setFont( font );
+                
+            
                 pdfDoc.addNewPage();
                 doc.setBottomMargin(60);
+                
+            
                 Statement asztalStmt = AsztalFoglaloMainFrame.con.createStatement();
                 
                 ResultSet asztalRs=asztalStmt.executeQuery(asztalSql);
                 while(asztalRs.next()){
+                    
+            
                     Paragraph asztalNev = new Paragraph(mainFrame.getEtterem().getNev()+"_"+asztalRs.getString("asztal_szam")).setFontSize(50f).setBold();
                     doc.add(asztalNev);
                     Statement foglalasStmt = AsztalFoglaloMainFrame.con.createStatement();
                     System.out.println(foglalasSql.replaceAll("(?:'\\d*')","'"+asztalRs.getString("asztal_id")+"'"));
                     foglalasSql=foglalasSql.replaceAll("(?:'\\d*')","'"+asztalRs.getString("asztal_id")+"'");
                     ResultSet foglalasRs = foglalasStmt.executeQuery(foglalasSql);
+                    
+            
                         List foglalasLista = new List();
                         foglalasLista.setMarginLeft(20);
                         foglalasLista.setListSymbol("");
                         
+            
                         while(foglalasRs.next()){
                             Foglalas f = new Foglalas(foglalasRs.getInt("foglalas_id"),foglalasRs.getString("foglalas_nev"),foglalasRs.getString("foglalas_telszam"),foglalasRs.getInt("foglalas_csoport_meret"),new Asztal(0,"blank",0,new Tipus(0,99)),foglalasRs.getString("foglalas_idopont_kezd"),foglalasRs.getString("foglalas_idopont_veg"));
                             Paragraph listaElem= new Paragraph(f.getFoglalas_nev()+" "+f.getIdoIntervallumString()).setFontSize(20f).setPaddingBottom(0);
                             ListItem li= new ListItem();
                             li.add(listaElem);
                             
+            
                             if(reszletes.isSelected()){
                                 ListItem liReszletek= new ListItem();
                                 List reszletek = new List().setMarginLeft(20);
@@ -257,6 +282,8 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
                                 liReszletek.add(reszletek);
                                 li.add(liReszletek);
                                 //foglalasLista.add(liReszletek);
+                                
+            
                             }
                             foglalasLista.add(li);
                             
@@ -267,8 +294,12 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
                 }
                 asztalRs.close();
                 doc.close();
+                
+            
                 File keszFajl= new File(vegsoUtvonal);
                 Desktop.getDesktop().open(keszFajl);
+                
+            
             }
         } catch (FileNotFoundException fnfe) {
             JOptionPane.showMessageDialog(new JFrame(),"A fájlt nem sikerült létrehozni!","Hiba!",JOptionPane.ERROR_MESSAGE);
@@ -301,9 +332,9 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
     private int inputEllenorzes(JTextField datumField) {
         Pattern p = Pattern.compile("(?:^\\d{4}-\\d{2}-\\d{2}$)");
         Matcher m = p.matcher(datumField.getText());
-        if(!datumField.getText().isBlank()&&!m.find()){
+        if(!datumField.getText().trim().isEmpty()&&!m.find()){
             return -1;
-        }else if(datumField.getText().isBlank()){
+        }else if(datumField.getText().trim().isEmpty()){
             return 0;
         }
         return 1;

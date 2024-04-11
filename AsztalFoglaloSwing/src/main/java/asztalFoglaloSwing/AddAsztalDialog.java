@@ -114,7 +114,7 @@ public class AddAsztalDialog extends javax.swing.JDialog {
     private void submitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitActionPerformed
         String szam=asztalSzam.getText();
         boolean ok = true;
-        if(!szam.isBlank()){
+        if(!szam.trim().isEmpty()){
             for (int i = 0; i < szam.length(); i++) {
                 if (!Character.isDigit(szam.charAt(i))) {
                     JOptionPane.showMessageDialog(new JFrame(),"Az asztal száma csak szám lehet!","Hiba!",JOptionPane.ERROR_MESSAGE);
