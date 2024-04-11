@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2024. Ápr 08. 19:31
+-- Létrehozás ideje: 2024. Ápr 11. 10:50
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -28,10 +28,10 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `asztal` (
-  `asztal_id` tinyint(3) UNSIGNED NOT NULL,
+  `asztal_id` int(10) UNSIGNED NOT NULL,
   `tipus_id` tinyint(3) UNSIGNED NOT NULL,
   `asztal_szam` tinyint(3) UNSIGNED NOT NULL,
-  `etterem_id` tinyint(3) UNSIGNED NOT NULL
+  `etterem_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
 --
@@ -49,7 +49,7 @@ INSERT INTO `asztal` (`asztal_id`, `tipus_id`, `asztal_szam`, `etterem_id`) VALU
 --
 
 CREATE TABLE `etterem` (
-  `etterem_id` tinyint(3) UNSIGNED NOT NULL,
+  `etterem_id` int(10) UNSIGNED NOT NULL,
   `etterem_nev` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_swedish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
@@ -58,8 +58,7 @@ CREATE TABLE `etterem` (
 --
 
 INSERT INTO `etterem` (`etterem_id`, `etterem_nev`) VALUES
-(1, 'Krusty Crab'),
-(8, 'TesztBS');
+(1, 'Krusty Crab');
 
 -- --------------------------------------------------------
 
@@ -68,11 +67,11 @@ INSERT INTO `etterem` (`etterem_id`, `etterem_nev`) VALUES
 --
 
 CREATE TABLE `foglalas` (
-  `foglalas_id` smallint(5) UNSIGNED NOT NULL,
+  `foglalas_id` int(10) UNSIGNED NOT NULL,
   `foglalas_nev` varchar(40) NOT NULL,
   `foglalas_telszam` varchar(12) NOT NULL,
   `foglalas_csoport_meret` tinyint(4) UNSIGNED NOT NULL,
-  `asztal_id` tinyint(3) UNSIGNED NOT NULL,
+  `asztal_id` int(10) UNSIGNED NOT NULL,
   `foglalas_idopont_kezd` datetime NOT NULL,
   `foglalas_idopont_veg` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
@@ -82,7 +81,15 @@ CREATE TABLE `foglalas` (
 --
 
 INSERT INTO `foglalas` (`foglalas_id`, `foglalas_nev`, `foglalas_telszam`, `foglalas_csoport_meret`, `asztal_id`, `foglalas_idopont_kezd`, `foglalas_idopont_veg`) VALUES
-(2, 'asd', 'asd', 12, 3, '2024-12-12 11:00:00', '2024-12-12 12:00:00');
+(2, 'asd', 'asd', 12, 3, '2024-11-03 11:00:00', '2024-11-03 12:00:00'),
+(3, 'asd', 'asd', 6, 3, '2024-11-04 12:00:00', '2024-11-04 13:00:00'),
+(4, 'asd', 'asd', 12, 3, '2024-11-02 11:00:00', '2024-11-02 12:00:00'),
+(11, 'asd', 'asd', 12, 3, '2024-11-05 08:00:00', '2024-11-05 09:00:00'),
+(12, 'asd', 'asd', 12, 3, '2025-03-02 19:00:00', '2025-03-02 19:02:00'),
+(13, 'asd', 'asd', 12, 3, '3000-03-02 19:00:00', '3000-03-02 19:02:00'),
+(14, 'asd', 'asd', 12, 3, '2033-02-03 19:00:00', '2033-02-03 19:02:00'),
+(15, 'asd', 'asd', 12, 3, '2033-02-03 19:05:00', '2033-02-03 19:05:00'),
+(16, 'asd', 'asd', 12, 3, '2033-02-03 19:06:00', '2033-02-03 19:06:00');
 
 -- --------------------------------------------------------
 
@@ -91,8 +98,8 @@ INSERT INTO `foglalas` (`foglalas_id`, `foglalas_nev`, `foglalas_telszam`, `fogl
 --
 
 CREATE TABLE `nyitvatartas` (
-  `nyitvatartas_id` tinyint(3) UNSIGNED NOT NULL,
-  `etterem_id` tinyint(3) UNSIGNED NOT NULL,
+  `nyitvatartas_id` int(10) UNSIGNED NOT NULL,
+  `etterem_id` int(10) UNSIGNED NOT NULL,
   `nyitvatartas_nap` tinyint(3) UNSIGNED NOT NULL,
   `nyitvatartas_nyitas` time NOT NULL,
   `nyitvatartas_zaras` time NOT NULL
@@ -109,14 +116,7 @@ INSERT INTO `nyitvatartas` (`nyitvatartas_id`, `etterem_id`, `nyitvatartas_nap`,
 (4, 1, 4, '08:00:00', '22:00:00'),
 (5, 1, 5, '08:00:00', '22:00:00'),
 (6, 1, 6, '08:00:00', '22:00:00'),
-(7, 1, 7, '08:00:00', '20:00:00'),
-(43, 8, 0, '00:00:00', '23:59:00'),
-(44, 8, 1, '00:00:00', '23:59:00'),
-(45, 8, 2, '00:00:00', '23:59:00'),
-(46, 8, 3, '00:00:00', '23:59:00'),
-(47, 8, 4, '00:00:00', '23:59:00'),
-(48, 8, 5, '00:00:00', '23:59:00'),
-(49, 8, 6, '00:00:00', '23:59:00');
+(7, 1, 7, '08:00:00', '20:00:00');
 
 -- --------------------------------------------------------
 
@@ -135,8 +135,7 @@ CREATE TABLE `tipus` (
 
 INSERT INTO `tipus` (`tipus_id`, `tipus_ferohely`) VALUES
 (1, 12),
-(2, 6),
-(3, 8);
+(2, 6);
 
 --
 -- Indexek a kiírt táblákhoz
@@ -147,7 +146,6 @@ INSERT INTO `tipus` (`tipus_id`, `tipus_ferohely`) VALUES
 --
 ALTER TABLE `asztal`
   ADD PRIMARY KEY (`asztal_id`),
-  ADD UNIQUE KEY `asztal_szam` (`asztal_szam`,`etterem_id`),
   ADD KEY `tipus_id` (`tipus_id`),
   ADD KEY `etterem_id` (`etterem_id`);
 
@@ -155,8 +153,7 @@ ALTER TABLE `asztal`
 -- A tábla indexei `etterem`
 --
 ALTER TABLE `etterem`
-  ADD PRIMARY KEY (`etterem_id`),
-  ADD UNIQUE KEY `etterem_nev` (`etterem_nev`);
+  ADD PRIMARY KEY (`etterem_id`);
 
 --
 -- A tábla indexei `foglalas`
@@ -186,31 +183,31 @@ ALTER TABLE `tipus`
 -- AUTO_INCREMENT a táblához `asztal`
 --
 ALTER TABLE `asztal`
-  MODIFY `asztal_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `asztal_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT a táblához `etterem`
 --
 ALTER TABLE `etterem`
-  MODIFY `etterem_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `etterem_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT a táblához `foglalas`
 --
 ALTER TABLE `foglalas`
-  MODIFY `foglalas_id` smallint(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `foglalas_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT a táblához `nyitvatartas`
 --
 ALTER TABLE `nyitvatartas`
-  MODIFY `nyitvatartas_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `nyitvatartas_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT a táblához `tipus`
 --
 ALTER TABLE `tipus`
-  MODIFY `tipus_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `tipus_id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Megkötések a kiírt táblákhoz

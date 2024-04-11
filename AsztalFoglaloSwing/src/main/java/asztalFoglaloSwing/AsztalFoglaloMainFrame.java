@@ -18,8 +18,8 @@ import javax.swing.tree.DefaultTreeModel;
 import static asztalFoglaloSwing.iDateFormatting.fullDateTime;
 
 public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
-    //private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
-    private final String dbURL="jdbc:mysql://localhost:3306/asztalfoglalo",dbUser="foglalas_kezelo",dbPass="4N6jqhr7dnwCACRI";
+    private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
+    //private final String dbURL="jdbc:mysql://localhost:3306/asztalfoglalo",dbUser="foglalas_kezelo",dbPass="4N6jqhr7dnwCACRI";
     protected DefaultTreeModel foglalasFaModel;
     private JFrame errorFrame= new JFrame();
     private Etterem etterem;

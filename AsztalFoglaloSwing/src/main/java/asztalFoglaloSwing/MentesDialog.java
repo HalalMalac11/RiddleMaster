@@ -1,13 +1,20 @@
 package asztalFoglaloSwing;
 
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.FontProgramFactory;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.color.DeviceRgb;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import static com.itextpdf.kernel.pdf.PdfName.BaseFont;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
 import java.awt.Desktop;
+import java.awt.Font;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -216,7 +223,11 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
                 PdfWriter pw = new PdfWriter(vegsoUtvonal);
                 PdfDocument pdfDoc = new PdfDocument(pw);
                 Document doc = new Document(pdfDoc);
+                FontProgram fontProgram = FontProgramFactory.createFont( ) ;
+                PdfFont font = PdfFontFactory.createFont( fontProgram,  "CP1250") ;
+                doc.setFont( font );
                 pdfDoc.addNewPage();
+                doc.setBottomMargin(60);
                 Statement asztalStmt = AsztalFoglaloMainFrame.con.createStatement();
                 
                 ResultSet asztalRs=asztalStmt.executeQuery(asztalSql);
@@ -236,17 +247,18 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
                             Paragraph listaElem= new Paragraph(f.getFoglalas_nev()+" "+f.getIdoIntervallumString()).setFontSize(20f).setPaddingBottom(0);
                             ListItem li= new ListItem();
                             li.add(listaElem);
-                            foglalasLista.add(li);
+                            
                             if(reszletes.isSelected()){
                                 ListItem liReszletek= new ListItem();
                                 List reszletek = new List().setMarginLeft(20);
-                                reszletek.add("Csoport mérete: "+f.getFoglalas_csoport_meret()+"fő");
+                                reszletek.add("Csoport mérete: "+f.getFoglalas_csoport_meret()+" fő");
                                 reszletek.add("Telefonszám: "+f.getFoglalas_telszam());
                                 reszletek.add("Foglalás azonosítója: "+f.getFoglalas_id());
                                 liReszletek.add(reszletek);
-                                foglalasLista.add(liReszletek);
+                                li.add(liReszletek);
+                                //foglalasLista.add(liReszletek);
                             }
-                            
+                            foglalasLista.add(li);
                             
                         }
                         foglalasRs.close();
@@ -265,7 +277,7 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
         } catch (SQLException sqle) {
             JOptionPane.showMessageDialog(new JFrame(),"Lekérdezési hiba!\n"+sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
         } catch (IllegalArgumentException | InvalidTimeException | DateTimeParseException ex) {
-            JOptionPane.showMessageDialog(new JFrame(),"Nem várt adat az adatbázisból!","Hiba!",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(new JFrame(),"Nem várt adat az adatbázisból!\n"+ex,"Hiba!",JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_exportActionPerformed
 
