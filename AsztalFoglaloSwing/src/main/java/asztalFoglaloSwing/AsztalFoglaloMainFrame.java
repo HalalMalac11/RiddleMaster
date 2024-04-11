@@ -18,15 +18,17 @@ import javax.swing.tree.DefaultTreeModel;
 import static asztalFoglaloSwing.iDateFormatting.fullDateTime;
 
 public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
-    private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
-    //private final String dbURL="jdbc:mysql://localhost:3306/asztalfoglalo",dbUser="foglalas_kezelo",dbPass="4N6jqhr7dnwCACRI";
+    //private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
+    private final String dbURL="jdbc:mysql://localhost:3306/asztalfoglalo",dbUser="foglalas_kezelo",dbPass="4N6jqhr7dnwCACRI";
     protected DefaultTreeModel foglalasFaModel;
     private JFrame errorFrame= new JFrame();
     private Etterem etterem;
     public static Connection con;
+    private boolean searching;
     
     public AsztalFoglaloMainFrame() {
         initComponents();
+        searching=false;
         try {
             con = DriverManager.getConnection(dbURL,dbUser,dbPass);
             EtteremValasztDialog evd = new EtteremValasztDialog(this,true);
@@ -60,6 +62,8 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         kivalasztottEtteremLabel = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         foglalasFa = new javax.swing.JTree();
+        searchField = new javax.swing.JTextField();
+        search = new javax.swing.JButton();
         menuSor = new javax.swing.JMenuBar();
         fajlMenu = new javax.swing.JMenu();
         exportPdf = new javax.swing.JMenuItem();
@@ -91,6 +95,16 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             }
         });
         jScrollPane2.setViewportView(foglalasFa);
+
+        search.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/magnifier.png"))); // NOI18N
+        search.setMaximumSize(new java.awt.Dimension(60, 60));
+        search.setMinimumSize(new java.awt.Dimension(60, 60));
+        search.setPreferredSize(new java.awt.Dimension(60, 60));
+        search.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchActionPerformed(evt);
+            }
+        });
 
         fajlMenu.setText("Fájl");
 
@@ -209,20 +223,32 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(kivalasztottEtteremLabel)
-                        .addGap(0, 257, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(kivalasztottEtteremLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(kivalasztottEtteremLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -372,7 +398,16 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         md.setVisible(true);
     }//GEN-LAST:event_exportPdfActionPerformed
 
-    protected void loadTreeFromDB() throws SQLException {
+    private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
+        
+    }//GEN-LAST:event_searchActionPerformed
+
+    public void loadTreeFromDB() throws SQLException {
+        loadTreeFromDB("");
+    }
+    
+    public void loadTreeFromDB(String searchWhere) throws SQLException {
+        
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("root");
         foglalasFaModel = new DefaultTreeModel(rootNode);
         
@@ -387,10 +422,11 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             try {
                 a= new Asztal(asztalRs.getInt(3),etterem.getNev(),asztalRs.getInt(1),getTipus(asztalRs.getInt(2)));
                 DefaultMutableTreeNode asztalNode = new DefaultMutableTreeNode(a);
-                sql="SELECT `asztal`.`etterem_id`,`foglalas`.`asztal_id`, `foglalas_id`, `foglalas_nev`,`foglalas_telszam`,`foglalas_csoport_meret`,`foglalas_idopont_kezd`,`foglalas_idopont_veg` "
+                String defaultWhere="`foglalas_idopont_kezd`>'"+todaysDateTime+"' AND `foglalas`.`asztal_id`="+asztalRs.getInt(1);
+                sql="SELECT * "
                 + "FROM `foglalas` "
                 + "INNER JOIN `asztal` ON `asztal`.`asztal_id`=`foglalas`.`asztal_id` "
-                + "WHERE `foglalas_idopont_kezd`>'"+todaysDateTime+"' AND `foglalas`.`asztal_id`="+asztalRs.getInt(1)+" ORDER BY `foglalas_idopont_kezd`";
+                + "WHERE "+(searchWhere.isEmpty()?defaultWhere:searchWhere)+" ORDER BY `foglalas_idopont_kezd`";
                 Statement foglalasStmt = con.createStatement();
                 ResultSet foglalasRs =foglalasStmt.executeQuery(sql);
                 boolean vanFoglalas=false;
@@ -404,7 +440,10 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                 if (!vanFoglalas) {
                     asztalNode.add(new DefaultMutableTreeNode("Ehhez az asztalhoz nem tartoznak foglalások!"));
                 }
-                rootNode.add(asztalNode);
+                if(searching&&!vanFoglalas){
+                }else{
+                    rootNode.add(asztalNode);
+                }
             } catch (IllegalArgumentException|InvalidTimeException ex) {
                 JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
             System.exit(0);
@@ -504,6 +543,8 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel kivalasztottEtteremLabel;
     private javax.swing.JMenuBar menuSor;
     private javax.swing.JMenuItem reszletek;
+    private javax.swing.JButton search;
+    private javax.swing.JTextField searchField;
     private javax.swing.JMenuItem torol;
     private javax.swing.JMenuItem ujAsztal;
     private javax.swing.JMenuItem ujTipus;
