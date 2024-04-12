@@ -198,7 +198,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
             try {
                 Asztal a = (Asztal) asztalokComboBox.getSelectedItem();
                 String ujIdopontKezd = datum.getText()+" "+idopontKezd.getText()+":00";
-                LocalDateTime foglalas_idopont_kezd = LocalDateTime.parse(ujIdopontKezd,fullDateTime);
+                LocalDateTime foglalas_idopont_kezd = LocalDateTime.parse(ujIdopontKezd,FULLDATETIME);
                 if (foglalas_idopont_kezd.isBefore(LocalDateTime.now())){
                     throw new OldDateException("5");
                 }
@@ -207,23 +207,27 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
                     f.setFoglalas_id(eredeti.getFoglalas_id());
                 }
                 if(lefoglalhato(f)){
-                    if (!update){
-                        if(addFoglalas(f)){
-                            feedBackLabel.setText("Sikeres hozzáadás!");
-                            feedBackLabel.setForeground(Color.green);
+                    if(!nyitvatartasonKivuli(f)){
+                        if (!update){
+                            if(addFoglalas(f)){
+                                feedBackLabel.setText("Sikeres hozzáadás!");
+                                feedBackLabel.setForeground(Color.green);
+                            }else{
+                                feedBackLabel.setText("A hozzáadás sikertelen!");
+                                feedBackLabel.setForeground(Color.red);
+                            }
                         }else{
-                            feedBackLabel.setText("A hozzáadás sikertelen!");
-                            feedBackLabel.setForeground(Color.red);
+
+                            if(updateFoglalas(f)){
+                            feedBackLabel.setText("Sikeres szerkesztés!");
+                            feedBackLabel.setForeground(Color.green);
+                            }else{
+                                feedBackLabel.setText("A szerkesztés sikertelen!");
+                                feedBackLabel.setForeground(Color.red);
+                            }
                         }
                     }else{
-                        
-                        if(updateFoglalas(f)){
-                        feedBackLabel.setText("Sikeres szerkesztés!");
-                        feedBackLabel.setForeground(Color.green);
-                        }else{
-                            feedBackLabel.setText("A szerkesztés sikertelen!");
-                            feedBackLabel.setForeground(Color.red);
-                        }
+                        hibakod=18;
                     }
                 }else{
                     hibakod=17;
@@ -248,7 +252,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
         if(hibakod!=0){
             String[] mezok={"","Név","Telefonszám","Asztal","Csoport mérete","Dátum","Időpont"};
             String[] hibaFoTipus={"A * mező nem lehet üres! ","Hiba a(z) * megadásánál!"};
-            String[] hibaAlTipus={"","A csoport mérete nem lehet kisebb mint 1!","A csoport mérete nem lehet nagyobb mint az asztal kapacitása!","Nem értelmezhető időpont","Az időpont vége nem lehet az időpont kezdete előtt!","A foglalás nem lehet múltbéli időponton!","Nem várt dátum vagy idő formátum!","A foglalás időpontja nem eshet egybe egy másikéval ugyanannál az asztalnál!"};
+            String[] hibaAlTipus={"","A csoport mérete nem lehet kisebb mint 1!","A csoport mérete nem lehet nagyobb mint az asztal kapacitása!","Nem értelmezhető időpont","Az időpont vége nem lehet az időpont kezdete előtt!","A foglalás nem lehet múltbéli időponton!","Nem várt dátum vagy idő formátum!","A foglalás időpontja nem eshet egybe egy másikéval ugyanannál az asztalnál!","A foglalás időpontja nem lehet a nyitvatartáson kívűl!"};
             String hibaUzenet="";
             if(hibakod<10){
                 hibaUzenet=hibaFoTipus[0].replace("*",mezok[hibakod]);
@@ -295,6 +299,13 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
         boolean foglalhato=!rs.next();
         rs.close();
         return foglalhato;
+    }
+    
+    private boolean nyitvatartasonKivuli(Foglalas ujFoglalas){
+        LocalTime[][] nyitvatartas=mainFrame.getEtterem().getNyitvatartas();
+        int nap = ujFoglalas.getFoglalas_idopont_kezd().getDayOfWeek().getValue();
+        LocalTime idopontKezdTime=ujFoglalas.getFoglalas_idopont_kezd().toLocalTime(),idopontVegTime=ujFoglalas.getFoglalas_idopont_veg().toLocalTime();
+        return (idopontKezdTime.isBefore(nyitvatartas[nap][0])||idopontVegTime.isBefore(nyitvatartas[nap][1]));
     }
     
     private void loadAsztalokModel() throws SQLException{

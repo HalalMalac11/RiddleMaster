@@ -206,7 +206,7 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
                 fajlNev+=keresKezd;
             
             }else if(datumKezdStatus==0){
-                keresKezd=LocalDate.now().format(onlyDate);
+                keresKezd=LocalDate.now().format(ONLYDATE);
                 foglalasSql+="'"+keresKezd+" 00:00:00'";
                 fajlNev+=keresKezd;
                 
@@ -219,8 +219,8 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
             
             
             if(datumVegStatus==1){
-                LocalDate ld= LocalDate.parse(datumVeg.getText(), onlyDate).plusDays(1);
-                keresVeg=ld.format(onlyDate);
+                LocalDate ld= LocalDate.parse(datumVeg.getText(), ONLYDATE).plusDays(1);
+                keresVeg=ld.format(ONLYDATE);
                 foglalasSql+="AND `foglalas_idopont_kezd`<='"+keresVeg+" 00:00:00'";
                 fajlNev+="_"+keresVeg;
                 

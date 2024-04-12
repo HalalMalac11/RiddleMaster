@@ -15,11 +15,14 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
-import static asztalFoglaloSwing.iDateFormatting.fullDateTime;
+import java.time.LocalTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import static asztalFoglaloSwing.iDateFormatting.FULLDATETIME;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
-public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
+public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateFormatting {
     //private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
     private final String dbURL="jdbc:mysql://localhost:3306/asztalfoglalo",dbUser="foglalas_kezelo",dbPass="4N6jqhr7dnwCACRI";
     protected DefaultTreeModel foglalasFaModel;
@@ -98,7 +101,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(foglalasFa);
 
-        searchField.setToolTipText("<html>\n\"<i>név</i>\" foglalás keresése név alapján<br>\n\"_<i>asztal száma</i>\" foglalás keresése az asztal száma alapján<br>\n\"#<i>csoport mérete</i>\" foglalás keresése a csoportnak a mérete alapján\n");
+        searchField.setToolTipText("<html>\n\"<i>név</i>\" keresés név alapján<br>\n\"_<i>asztal száma</i>\" keresés az asztal száma alapján<br>\n\"#<i>csoport mérete</i>\" keresés a csoportnak a mérete alapján<br>\n\"<i>dátum</i>\" keresés név alapján<br>\n\"k:<i>12:00</i>\" keresés az iddőpont kezdete alapján<br>\n\"v:<i>12:00</i>\" keresés az iddőpont vége alapján\n");
 
         search.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/magnifier.png"))); // NOI18N
         search.setMaximumSize(new java.awt.Dimension(60, 60));
@@ -408,20 +411,46 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         if(searchedText.isEmpty()){
             searching=false;
         }
-        Pattern pattern = Pattern.compile("(?:^[a-zA-Z ]+$)");
+        Pattern pattern = Pattern.compile("(?:^[a-zA-ZíűáéúőóüöÍŰÁÉÚŐÓÜÖ ]+$)");
         Matcher matcher = pattern.matcher(searchedText);
         if(matcher.find()){
-            searchWhere="`foglalas_nev` LIKE '"+searchedText+"' ";
+            searchWhere="`foglalas_nev` LIKE '%"+searchedText+"%' ";
         }
-        pattern = Pattern.compile("(?:^_{1}\\d+$)");
+        pattern = Pattern.compile("(?:^_{1} ?\\d+$)");
         matcher = pattern.matcher(searchedText);
         if(matcher.find()){
+            searchedText=searchedText.substring(1).trim();
             searchWhere="`asztal_szam` = '"+searchedText.substring(1)+"' ";
         }
-        pattern = Pattern.compile("(?:^#{1}\\d+$)");
+        pattern = Pattern.compile("(?:^#{1} ?\\d+$)");
         matcher = pattern.matcher(searchedText);
         if(matcher.find()){
+            searchedText=searchedText.substring(1).trim();
             searchWhere="`foglalas_csoport_meret` = '"+searchedText.substring(1)+"' ";
+        }
+        pattern = Pattern.compile("(?:^[0-9]{4}-[0-9]{2}-[0-9]{2}$)");
+        matcher = pattern.matcher(searchedText);
+        if(matcher.find()){
+            try{
+                LocalDate searchDate= LocalDate.parse(searchedText, ONLYDATE);
+                searchWhere="`foglalas_idopont_kezd` LIKE '"+searchedText+"%' ";
+            }catch(DateTimeParseException dtpe){}
+        }
+        pattern = Pattern.compile("(?:^k: ?[0-9]{2}:[0-9]{2}$)");
+        matcher = pattern.matcher(searchedText);
+        if(matcher.find()){
+            searchedText=searchedText.substring(2).trim();
+            if (validIdo(searchedText)) {
+                searchWhere="`foglalas_idopont_kezd` LIKE '%"+searchedText+":00%' ";
+            }
+        }
+        pattern = Pattern.compile("(?:^v: ?[0-9]{2}:[0-9]{2}$)");
+        matcher = pattern.matcher(searchedText);
+        if(matcher.find()){
+            searchedText=searchedText.substring(2).trim();
+            if (validIdo(searchedText)) {
+                searchWhere="`foglalas_idopont_veg` LIKE '%"+searchedText+":00%' ";
+            }
         }
         try {
             loadTreeFromDB(searchWhere);
@@ -431,6 +460,14 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         searching=false;
     }//GEN-LAST:event_searchActionPerformed
 
+    private boolean validIdo(String idopont){
+        try{
+            LocalTime.parse(idopont,ONLYTIME);
+            return true;
+        }catch(DateTimeParseException dtpe){}
+        return false;
+    }
+    
     public void loadTreeFromDB() throws SQLException {
         loadTreeFromDB("");
     }
@@ -440,7 +477,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("root");
         foglalasFaModel = new DefaultTreeModel(rootNode);
         
-        String todaysDateTime=fullDateTime.format(LocalDateTime.now());
+        String todaysDateTime=FULLDATETIME.format(LocalDateTime.now());
         String sql = "SELECT * FROM `asztal` WHERE `etterem_id`='"+etterem.getId()+"'";
         Statement asztalStmt = con.createStatement();
         ResultSet asztalRs = asztalStmt.executeQuery(sql);

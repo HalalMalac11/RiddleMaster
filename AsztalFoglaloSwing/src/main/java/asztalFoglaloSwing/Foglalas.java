@@ -16,8 +16,8 @@ public class Foglalas implements iDateFormatting{
         this.setAsztal(asztal);
         this.setFoglalas_csoport_meret(foglalas_csoport_meret);
         validateIdopont(new String[]{formattedIdopontKezd.substring(11),formattedIdopontVeg.substring(11)});
-        this.setFoglalas_idopont_kezd(LocalDateTime.parse(formattedIdopontKezd, fullDateTime));
-        this.setFoglalas_idopont_veg(LocalDateTime.parse(formattedIdopontVeg, fullDateTime));
+        this.setFoglalas_idopont_kezd(LocalDateTime.parse(formattedIdopontKezd, FULLDATETIME));
+        this.setFoglalas_idopont_veg(LocalDateTime.parse(formattedIdopontVeg, FULLDATETIME));
     }
 
     public int getFoglalas_id() {
@@ -68,7 +68,7 @@ public class Foglalas implements iDateFormatting{
     }
 
     public String getIdopontKezdString(boolean withSeconds) {
-        String idopont= fullDateTime.format(foglalas_idopont_kezd);
+        String idopont= FULLDATETIME.format(foglalas_idopont_kezd);
         if (withSeconds) {
             return idopont;
         }
@@ -84,7 +84,7 @@ public class Foglalas implements iDateFormatting{
     }
     
     public String getIdopontVegString(boolean withSeconds) {
-        String idopont= fullDateTime.format(foglalas_idopont_veg);
+        String idopont= FULLDATETIME.format(foglalas_idopont_veg);
         if (withSeconds) {
             return idopont;
         }
