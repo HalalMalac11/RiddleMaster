@@ -187,11 +187,10 @@
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      <Component id="searchField" min="-2" pref="35" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      <Component id="search" min="-2" pref="35" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="searchField" alignment="1" min="-2" pref="35" max="-2" attributes="0"/>
+                          <Component id="search" alignment="1" min="-2" pref="35" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -232,6 +231,9 @@
       </SubComponents>
     </Container>
     <Component class="javax.swing.JTextField" name="searchField">
+      <Properties>
+        <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;&quot;&lt;i&gt;n&#xe9;v&lt;/i&gt;&quot; foglal&#xe1;s keres&#xe9;se n&#xe9;v alapj&#xe1;n&lt;br&gt;&#xa;&quot;_&lt;i&gt;asztal sz&#xe1;ma&lt;/i&gt;&quot; foglal&#xe1;s keres&#xe9;se az asztal sz&#xe1;ma alapj&#xe1;n&lt;br&gt;&#xa;&quot;#&lt;i&gt;csoport m&#xe9;rete&lt;/i&gt;&quot; foglal&#xe1;s keres&#xe9;se a csoportnak a m&#xe9;rete alapj&#xe1;n&#xa;"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="search">
       <Properties>

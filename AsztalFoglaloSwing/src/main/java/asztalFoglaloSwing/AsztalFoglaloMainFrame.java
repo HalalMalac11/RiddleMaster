@@ -16,6 +16,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import static asztalFoglaloSwing.iDateFormatting.fullDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     //private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
@@ -95,6 +97,8 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             }
         });
         jScrollPane2.setViewportView(foglalasFa);
+
+        searchField.setToolTipText("<html>\n\"<i>név</i>\" foglalás keresése név alapján<br>\n\"_<i>asztal száma</i>\" foglalás keresése az asztal száma alapján<br>\n\"#<i>csoport mérete</i>\" foglalás keresése a csoportnak a mérete alapján\n");
 
         search.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/magnifier.png"))); // NOI18N
         search.setMaximumSize(new java.awt.Dimension(60, 60));
@@ -242,10 +246,9 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(search, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(searchField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(search, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -399,7 +402,33 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_exportPdfActionPerformed
 
     private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
-        
+        String searchedText=searchField.getText().trim();
+        String searchWhere="";
+        searching=true;
+        if(searchedText.isEmpty()){
+            searching=false;
+        }
+        Pattern pattern = Pattern.compile("(?:^[a-zA-Z ]+$)");
+        Matcher matcher = pattern.matcher(searchedText);
+        if(matcher.find()){
+            searchWhere="`foglalas_nev` LIKE '"+searchedText+"' ";
+        }
+        pattern = Pattern.compile("(?:^_{1}\\d+$)");
+        matcher = pattern.matcher(searchedText);
+        if(matcher.find()){
+            searchWhere="`asztal_szam` = '"+searchedText.substring(1)+"' ";
+        }
+        pattern = Pattern.compile("(?:^#{1}\\d+$)");
+        matcher = pattern.matcher(searchedText);
+        if(matcher.find()){
+            searchWhere="`foglalas_csoport_meret` = '"+searchedText.substring(1)+"' ";
+        }
+        try {
+            loadTreeFromDB(searchWhere);
+        } catch (SQLException sqle) {
+            JOptionPane.showMessageDialog(errorFrame,"Sikertelen adatbázis kapcsolódás!\n"+sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+        }
+        searching=false;
     }//GEN-LAST:event_searchActionPerformed
 
     public void loadTreeFromDB() throws SQLException {
@@ -422,11 +451,11 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame {
             try {
                 a= new Asztal(asztalRs.getInt(3),etterem.getNev(),asztalRs.getInt(1),getTipus(asztalRs.getInt(2)));
                 DefaultMutableTreeNode asztalNode = new DefaultMutableTreeNode(a);
-                String defaultWhere="`foglalas_idopont_kezd`>'"+todaysDateTime+"' AND `foglalas`.`asztal_id`="+asztalRs.getInt(1);
+                String defaultWhere="`foglalas_idopont_kezd`>'"+todaysDateTime+"'";
                 sql="SELECT * "
                 + "FROM `foglalas` "
                 + "INNER JOIN `asztal` ON `asztal`.`asztal_id`=`foglalas`.`asztal_id` "
-                + "WHERE "+(searchWhere.isEmpty()?defaultWhere:searchWhere)+" ORDER BY `foglalas_idopont_kezd`";
+                + "WHERE "+(searchWhere.isEmpty()?defaultWhere:searchWhere)+" AND `foglalas`.`asztal_id`='"+asztalRs.getInt(1)+"' ORDER BY `foglalas_idopont_kezd`";
                 Statement foglalasStmt = con.createStatement();
                 ResultSet foglalasRs =foglalasStmt.executeQuery(sql);
                 boolean vanFoglalas=false;
