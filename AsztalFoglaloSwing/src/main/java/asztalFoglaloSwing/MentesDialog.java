@@ -307,7 +307,7 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
             JOptionPane.showMessageDialog(new JFrame(),"Az elkészült fájlt nem sikerült megnyitni!","Hiba!",JOptionPane.ERROR_MESSAGE);
         } catch (SQLException sqle) {
             JOptionPane.showMessageDialog(new JFrame(),"Lekérdezési hiba!\n"+sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
-        } catch (IllegalArgumentException | InvalidTimeException | DateTimeParseException ex) {
+        } catch (IllegalArgumentException | DateTimeParseException ex) {
             JOptionPane.showMessageDialog(new JFrame(),"Nem várt adat az adatbázisból!\n"+ex,"Hiba!",JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_exportActionPerformed

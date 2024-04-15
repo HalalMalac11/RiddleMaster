@@ -4,11 +4,11 @@ import java.time.LocalTime;
 
 
 public class Etterem {
-    String nev;
-    int id;
-    LocalTime[][] nyitvatartas;
+    private String nev;
+    private int id;
+    private String[][] nyitvatartas;
 
-    public Etterem(String nev, int id, LocalTime[][] nyitvatartas) {
+    public Etterem(String nev, int id, String[][] nyitvatartas) {
         this.setNev(nev);
         this.setId(id);
         this.setNyitvatartas(nyitvatartas);
@@ -30,11 +30,11 @@ public class Etterem {
         this.id = id;
     }
 
-    public LocalTime[][] getNyitvatartas() {
+    public String[][] getNyitvatartas() {
         return nyitvatartas;
     }
 
-    public void setNyitvatartas(LocalTime[][] nyitvatartas) {
+    public void setNyitvatartas(String[][] nyitvatartas) {
         this.nyitvatartas = nyitvatartas;
     }
 

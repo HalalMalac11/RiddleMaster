@@ -41,7 +41,6 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
             EtteremValasztDialog evd = new EtteremValasztDialog(this,true);
             evd.setVisible(true);
             loadTreeFromDB();
-            
         } catch (SQLException sqle) {
             JOptionPane.showMessageDialog(errorFrame,"Sikertelen adatbázis kapcsolódás!\n"+sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
             System.exit(0);
@@ -534,7 +533,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
                 }else{
                     rootNode.add(asztalNode);
                 }
-            } catch (IllegalArgumentException|InvalidTimeException ex) {
+            } catch (IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(errorFrame,"Ennek nem kéne megtörténni!\n"+ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
             System.exit(0);
             }

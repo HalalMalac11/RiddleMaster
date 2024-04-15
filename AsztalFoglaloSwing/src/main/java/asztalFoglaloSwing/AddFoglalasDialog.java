@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
@@ -189,10 +190,12 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
     }// </editor-fold>//GEN-END:initComponents
 
     private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
-        int hibakod=0;
+        String hibasMezo="";
 
-        hibakod=uresCheck();
-        if(hibakod==0){
+        hibasMezo=uresCheck();
+        if(hibasMezo.isEmpty()){
+            String hibasAdatUzenet=dataCheck();
+            if(hibasAdatUzenet.isEmpty()){
             Foglalas f;
 
             try {
@@ -200,7 +203,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
                 String ujIdopontKezd = datum.getText()+" "+idopontKezd.getText()+":00";
                 LocalDateTime foglalas_idopont_kezd = LocalDateTime.parse(ujIdopontKezd,FULLDATETIME);
                 if (foglalas_idopont_kezd.isBefore(LocalDateTime.now())){
-                    throw new OldDateException("5");
+                    throw new OldDateException("Az időpont nem lehet múltbéli!");
                 }
                 f = new Foglalas(0,foglaloNev.getText(),tSzam.getText(),Integer.parseInt(emberSzam.getText()),a,new String(ujIdopontKezd),datum.getText()+" "+idopontVeg.getText()+":00");
                 if(update){
@@ -227,18 +230,17 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
                             }
                         }
                     }else{
-                        hibakod=18;
+                        JOptionPane.showMessageDialog(errorFrame,"A foglalás nem eshet a nyitvatartáson kívűl!","Hiba!",JOptionPane.ERROR_MESSAGE);
+                        feedBackLabel.setText("A hozzáadás sikertelen!");
+                        feedBackLabel.setForeground(Color.red);
                     }
                 }else{
-                    hibakod=17;
+                    JOptionPane.showMessageDialog(errorFrame,"A foglalás nem eshet egybe egy másik foglalással!","Hiba!",JOptionPane.ERROR_MESSAGE);
+                    feedBackLabel.setText("A hozzáadás sikertelen!");
+                    feedBackLabel.setForeground(Color.red);
                 }
-            }catch (OldDateException | InvalidTimeException | IllegalArgumentException | DateTimeParseException ex){
-                hibakod=10;
-                if(ex instanceof DateTimeParseException){
-                    hibakod+=6;
-                }else{
-                    hibakod+=Integer.parseInt(ex.getMessage());
-                }
+            }catch (OldDateException | IllegalArgumentException | DateTimeParseException ex){
+                JOptionPane.showMessageDialog(errorFrame,ex.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
                 feedBackLabel.setText("A hozzáadás sikertelen!");
                 feedBackLabel.setForeground(Color.red);
             } catch (SQLException sqle) {
@@ -248,19 +250,18 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
                 JOptionPane.showMessageDialog(errorFrame,"Sikertelen driver betöltés!\n"+cnfe.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
                 System.exit(0);
             }
-        }
-        if(hibakod!=0){
-            String[] mezok={"","Név","Telefonszám","Asztal","Csoport mérete","Dátum","Időpont"};
-            String[] hibaFoTipus={"A * mező nem lehet üres! ","Hiba a(z) * megadásánál!"};
-            String[] hibaAlTipus={"","A csoport mérete nem lehet kisebb mint 1!","A csoport mérete nem lehet nagyobb mint az asztal kapacitása!","Nem értelmezhető időpont","Az időpont vége nem lehet az időpont kezdete előtt!","A foglalás nem lehet múltbéli időponton!","Nem várt dátum vagy idő formátum!","A foglalás időpontja nem eshet egybe egy másikéval ugyanannál az asztalnál!","A foglalás időpontja nem lehet a nyitvatartáson kívűl!"};
-            String hibaUzenet="";
-            if(hibakod<10){
-                hibaUzenet=hibaFoTipus[0].replace("*",mezok[hibakod]);
             }else{
-                hibaUzenet=hibaFoTipus[1].replace("*",mezok[((hibakod>12)?6:4)])+"\n"+hibaAlTipus[hibakod-10];
+                JOptionPane.showMessageDialog(errorFrame,hibasAdatUzenet,"Hiba!",JOptionPane.ERROR_MESSAGE);
+                feedBackLabel.setText("A hozzáadás sikertelen!");
+                feedBackLabel.setForeground(Color.red);
             }
-            JOptionPane.showMessageDialog(errorFrame,hibaUzenet,"Hiba!",JOptionPane.ERROR_MESSAGE);
+        }else{
+            String hibauzenet=hibasMezo.equals("asztal")?"Kérem válasszon ki egy asztalt!":"A "+hibasMezo+" nem lehet üres!";
+            JOptionPane.showMessageDialog(errorFrame,hibauzenet,"Hiba!",JOptionPane.ERROR_MESSAGE);
+            feedBackLabel.setText("A hozzáadás sikertelen!");
+            feedBackLabel.setForeground(Color.red);
         }
+            
     }//GEN-LAST:event_submitButtonActionPerformed
 
     private void asztalokComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_asztalokComboBoxItemStateChanged
@@ -302,10 +303,11 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
     }
     
     private boolean nyitvatartasonKivuli(Foglalas ujFoglalas){
-        LocalTime[][] nyitvatartas=mainFrame.getEtterem().getNyitvatartas();
-        int nap = ujFoglalas.getFoglalas_idopont_kezd().getDayOfWeek().getValue();
+        String[][] nyitvatartas=mainFrame.getEtterem().getNyitvatartas();
+        int nap = ujFoglalas.getFoglalas_idopont_kezd().getDayOfWeek().getValue()-1;
         LocalTime idopontKezdTime=ujFoglalas.getFoglalas_idopont_kezd().toLocalTime(),idopontVegTime=ujFoglalas.getFoglalas_idopont_veg().toLocalTime();
-        return (idopontKezdTime.isBefore(nyitvatartas[nap][0])||idopontVegTime.isBefore(nyitvatartas[nap][1]));
+        boolean b = (idopontKezdTime.isBefore(LocalTime.parse(nyitvatartas[nap][0], ONLYTIME))||idopontVegTime.isAfter(LocalTime.parse(nyitvatartas[nap][1], ONLYTIME)));
+        return b;
     }
     
     private void loadAsztalokModel() throws SQLException{
@@ -321,52 +323,93 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
             asztalokComboBox.setSelectedIndex(0);
     }
     
-    
-    
-    private void validateIdopont(String[] idopont) throws InvalidTimeException{
-        LocalDate ld = LocalDate.parse(datum.getText());
-        int nap = ld.getDayOfWeek().getValue();
-        LocalTime[][] nyitvatartas=mainFrame.getEtterem().getNyitvatartas();
-        for (int i = 0; i < 2; i++) {
-            String[] idopontSplit= idopont[i].split(":");
-            LocalTime idopontTimeInstance = LocalTime.of(Integer.parseInt(idopontSplit[0]),Integer.parseInt(idopontSplit[1]));
-            if(nyitvatartas[nap-1][0].isAfter(idopontTimeInstance)||nyitvatartas[nap-1][1].isBefore(idopontTimeInstance)){
-                throw new InvalidTimeException("0");
-            }
-        }
-        
-    }
-    
-    private int uresCheck(){
-        int hibakod=1;
+    private String uresCheck(){
         if(this.foglaloNev.getText().trim().isEmpty()){
-            return hibakod;
+            return "név";
         }
-        hibakod++;
         if(this.tSzam.getText().trim().isEmpty()){
-            return hibakod;
+            return "telefon szám";
         }
-        hibakod++;
         if(this.asztalokComboBox.getSelectedIndex()<1){
-            return hibakod;
+            return "asztal";
         }
-        hibakod++;
         if(this.emberSzam.getText().trim().isEmpty()){
-            return hibakod;
+            return "csoport mérete";
         }
-        hibakod++;
         if(this.datum.getText().trim().isEmpty()){
-            return hibakod;
+            return "dátum";
         }
-        hibakod++;
         if(this.idopontKezd.getText().trim().isEmpty()){
-            return hibakod;
+            return "időpont kezdete";
         }
         if(this.idopontVeg.getText().trim().isEmpty()){
-            return hibakod;
+            return "időpont vége";
         }
-        return 0;
+        return "";
     }
+    
+    private String dataCheck(){
+            String checkedString=this.foglaloNev.getText().trim();
+            Pattern pattern = Pattern.compile("(?:^[a-zA-ZíűáéúőóüöÍŰÁÉÚŐÓÜÖ ]*$)");
+            Matcher matcher = pattern.matcher(checkedString);
+            if(!matcher.find()){
+                
+                return "A névben csak a magyar ábécé betűi és szóköz szerepelhet!";
+            }else if(checkedString.length()>40){
+                return "A név maximum 40 karakter hosszú lehet!";
+            }
+            checkedString=this.tSzam.getText().trim();
+            pattern = Pattern.compile("(?:^\\+?[0-9]*$)");
+            matcher = pattern.matcher(checkedString);
+            if(!matcher.find()){
+                return "Nem megfelelő telefonszám formátum!";
+            }else if(checkedString.length()>13||checkedString.length()<11){
+                return "A telefonszám csak 11-13 karakter hosszú lehet!";
+            }
+            checkedString=this.emberSzam.getText().trim();
+            pattern = Pattern.compile("(?:^[0-9]*$)");
+            matcher = pattern.matcher(checkedString);
+            if(!matcher.find()){
+                return "A csoport mérete csak szám lehet!";
+            }
+            checkedString=this.datum.getText().trim();
+            pattern = Pattern.compile("(?:^[0-9]{4}-[0-9]{2}-[0-9]{2}$)");
+            matcher = pattern.matcher(checkedString);
+            if(!matcher.find()){
+                return "Nem megfelelő dátum formátum!";
+            }else{
+                try {
+                    LocalDate ld = LocalDate.parse(checkedString, ONLYDATE);
+                } catch (DateTimeParseException dtpe) {
+                    return "Invalid dátum";
+                }
+            }
+            checkedString=this.idopontKezd.getText().trim();
+            pattern = Pattern.compile("(?:^[0-9]{2}:[0-9]{2}$)");
+            matcher = pattern.matcher(checkedString);
+            if(!matcher.find()){
+                return "Nem megfelelő idő formátum az időpont kezdetében!";
+            }else{
+                try {
+                    LocalTime ld = LocalTime.parse(checkedString, ONLYTIME);
+                } catch (DateTimeParseException dtpe) {
+                    return "Invalid idő az időpont kezdetében";
+                }
+            }
+            checkedString=this.idopontVeg.getText().trim();
+            pattern = Pattern.compile("(?:^[0-9]{2}:[0-9]{2}$)");
+            matcher = pattern.matcher(checkedString);
+            if(!matcher.find()){
+                return "Nem megfelelő idő formátum az időpont végében!";
+            }else{
+                try {
+                    LocalTime ld = LocalTime.parse(checkedString, ONLYTIME);
+                } catch (DateTimeParseException dtpe) {
+                    return "Invalid idő az időpont végében";
+                }
+            }
+        return "";
+    } 
 
     private void ferohelySegitsegValtas(){
         String hintSzam="0";

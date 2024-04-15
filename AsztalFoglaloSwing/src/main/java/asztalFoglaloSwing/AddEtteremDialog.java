@@ -1,5 +1,6 @@
 package asztalFoglaloSwing;
 
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,7 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-public class AddEtteremDialog extends javax.swing.JDialog {
+public class AddEtteremDialog extends javax.swing.JDialog implements iDateFormatting {
     
     private boolean alreadyFilled;
     private AsztalFoglaloMainFrame mainFrame;
@@ -310,12 +311,12 @@ public class AddEtteremDialog extends javax.swing.JDialog {
                         ResultSet ujEtterem = stmt.getResultSet();
                         ujEtterem.next();
                         int ujEtteremId=ujEtterem.getInt(1);
-                        LocalTime[][] nyitvatartas= new LocalTime[7][2];
+                        String[][] nyitvatartas= new String[7][2];
                         for (int i = 0; i < nyitvatartasMezok.length; i++) {
                             StringTokenizer st = new StringTokenizer(nyitvatartasMezok[i][0].getText(),":");
-                            nyitvatartas[i][0]=LocalTime.of(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
+                            nyitvatartas[i][0]=LocalTime.of(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())).format(ONLYTIME);
                             st = new StringTokenizer(nyitvatartasMezok[i][1].getText(),":");
-                            nyitvatartas[i][1]=LocalTime.of(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
+                            nyitvatartas[i][1]=LocalTime.of(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())).format(ONLYTIME);
                             sql ="INSERT INTO `nyitvatartas`(`etterem_id`, `nyitvatartas_nap`, `nyitvatartas_nyitas`, `nyitvatartas_zaras`) VALUES ('"+ujEtteremId+"','"+i+"','"+nyitvatartasMezok[i][0].getText()+":00"+"','"+nyitvatartasMezok[i][1].getText()+":00"+"')";
                             stmt.execute(sql);
                         }

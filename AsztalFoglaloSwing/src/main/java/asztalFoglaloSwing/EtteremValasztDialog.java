@@ -10,7 +10,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-public class EtteremValasztDialog extends javax.swing.JDialog {
+public class EtteremValasztDialog extends javax.swing.JDialog implements iDateFormatting {
     private DefaultComboBoxModel<Etterem> dcbm;
     protected AsztalFoglaloMainFrame MainFrame;
     public boolean etteremAdded;
@@ -28,26 +28,27 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
             if (stmt.execute(sql)) {
                 ResultSet rsEttermek = stmt.getResultSet();
                 ResultSet rsNyitvatartas;
-                LocalTime[][] nyitvatartasMatrix= new LocalTime[7][2];
-                Etterem etterem;
+                
+                
                 StringTokenizer st;
                 int etteremId;
                 while (rsEttermek.next()) {
                     etteremId=rsEttermek.getInt(2);
                     sql="SELECT `nyitvatartas_nyitas`,`nyitvatartas_zaras` FROM `nyitvatartas` WHERE `etterem_id`='"+etteremId+"' ORDER BY `nyitvatartas_nap`";
                     Statement nyitvaStmt = AsztalFoglaloMainFrame.getStmt().getConnection().createStatement();
-                    
+                    String[][] nyitvatartasMatrix= new String[7][2];
                     rsNyitvatartas = nyitvaStmt.executeQuery(sql);
                     
                     for (int i = 0; i < nyitvatartasMatrix.length; i++) {
                         rsNyitvatartas.next();
                         st = new StringTokenizer(rsNyitvatartas.getString(1),":");
-                        nyitvatartasMatrix[i][0]=LocalTime.of(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
+                        String lt = LocalTime.of(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())).format(ONLYTIME);
+                        nyitvatartasMatrix[i][0]=lt;
                         st = new StringTokenizer(rsNyitvatartas.getString(2),":");
-                        nyitvatartasMatrix[i][1]=LocalTime.of(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
+                        lt = LocalTime.of(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())).format(ONLYTIME);
+                        nyitvatartasMatrix[i][1]=lt;
                     }
-                    etterem = new Etterem(rsEttermek.getString(1), etteremId, nyitvatartasMatrix);
-                    dcbm.addElement(etterem);
+                    dcbm.addElement(new Etterem(rsEttermek.getString(1), etteremId, nyitvatartasMatrix));
                     rsNyitvatartas.close();
                 }
             }

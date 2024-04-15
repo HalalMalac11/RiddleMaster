@@ -9,13 +9,12 @@ public class Foglalas implements iDateFormatting{
     private LocalDateTime foglalas_idopont_kezd, foglalas_idopont_veg;
     private Asztal asztal;
 
-    public Foglalas(int foglalas_id, String foglalas_nev, String foglalas_telszam, int foglalas_csoport_meret, Asztal asztal, String formattedIdopontKezd, String formattedIdopontVeg) throws IllegalArgumentException, InvalidTimeException, DateTimeParseException {   
+    public Foglalas(int foglalas_id, String foglalas_nev, String foglalas_telszam, int foglalas_csoport_meret, Asztal asztal, String formattedIdopontKezd, String formattedIdopontVeg) throws IllegalArgumentException, DateTimeParseException {   
         this.setFoglalas_id(foglalas_id);
         this.setFoglalas_nev(foglalas_nev);
         this.setFoglalas_telszam(foglalas_telszam);
         this.setAsztal(asztal);
         this.setFoglalas_csoport_meret(foglalas_csoport_meret);
-        validateIdopont(new String[]{formattedIdopontKezd.substring(11),formattedIdopontVeg.substring(11)});
         this.setFoglalas_idopont_kezd(LocalDateTime.parse(formattedIdopontKezd, FULLDATETIME));
         this.setFoglalas_idopont_veg(LocalDateTime.parse(formattedIdopontVeg, FULLDATETIME));
     }
@@ -52,9 +51,9 @@ public class Foglalas implements iDateFormatting{
     public void setFoglalas_csoport_meret(int emberszam) throws IllegalArgumentException{
         int asztalKapacitas = asztal.getTipus().getTipus_ferohely();
         if (emberszam<1){
-            throw new IllegalArgumentException("1");
+            throw new IllegalArgumentException("A csoport mérete nem lehet kisebb mint 1!");
         }else if(emberszam>asztalKapacitas){
-            throw new IllegalArgumentException("2");
+            throw new IllegalArgumentException("A csoport mérete nem lehet nagyobb mint az asztal kapacitása!");
         }
         this.foglalas_csoport_meret = emberszam;
     }
@@ -103,20 +102,7 @@ public class Foglalas implements iDateFormatting{
         return ""+this.getIdopontKezdString(false)+" - "+(this.getFoglalas_idopont_veg().getHour()<10?"0"+this.getFoglalas_idopont_veg().getHour():this.getFoglalas_idopont_veg().getHour())+":"+(this.getFoglalas_idopont_veg().getMinute()<10?"0"+this.getFoglalas_idopont_veg().getMinute():this.getFoglalas_idopont_veg().getMinute());
     }
     
-    private void validateIdopont(String[] idopont) throws InvalidTimeException{
-        String[][] idopontSplit= {idopont[0].split(":"),idopont[1].split(":")};
-        for (int i = 0; i < 2; i++) {
-            if (Integer.parseInt(idopontSplit[i][0])>23||Integer.parseInt(idopontSplit[i][0])<0||Integer.parseInt(idopontSplit[i][1])>59||Integer.parseInt(idopontSplit[i][1])<0){
-                throw new InvalidTimeException("3");
-            }
-        }
-        LocalTime idopontKezdTimeInstance = LocalTime.of(Integer.parseInt(idopontSplit[0][0]),Integer.parseInt(idopontSplit[0][1])),
-                idopontVegTimeInstance = LocalTime.of(Integer.parseInt(idopontSplit[1][0]),Integer.parseInt(idopontSplit[1][1]));
-        
-        if (idopontKezdTimeInstance.isAfter(idopontVegTimeInstance)) {
-            throw new InvalidTimeException("4");
-        }
-    }
+    
 
     @Override
     public String toString() {
