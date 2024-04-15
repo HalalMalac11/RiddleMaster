@@ -247,7 +247,7 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
                 doc.setBottomMargin(60);
                 
             
-                Statement asztalStmt = AsztalFoglaloMainFrame.con.createStatement();
+                Statement asztalStmt = AsztalFoglaloMainFrame.getStmt();
                 
                 ResultSet asztalRs=asztalStmt.executeQuery(asztalSql);
                 while(asztalRs.next()){
@@ -255,7 +255,7 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
             
                     Paragraph asztalNev = new Paragraph(mainFrame.getEtterem().getNev()+"_"+asztalRs.getString("asztal_szam")).setFontSize(50f).setBold();
                     doc.add(asztalNev);
-                    Statement foglalasStmt = AsztalFoglaloMainFrame.con.createStatement();
+                    Statement foglalasStmt = asztalStmt.getConnection().createStatement();
                     System.out.println(foglalasSql.replaceAll("(?:'\\d*')","'"+asztalRs.getString("asztal_id")+"'"));
                     foglalasSql=foglalasSql.replaceAll("(?:'\\d*')","'"+asztalRs.getString("asztal_id")+"'");
                     ResultSet foglalasRs = foglalasStmt.executeQuery(foglalasSql);
@@ -342,7 +342,7 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
     
     private void loadAsztalokModel() throws SQLException{
         String sql="SELECT * FROM `asztal` WHERE `etterem_id`='"+mainFrame.getEtterem().getId()+"'";
-        Statement stmt = AsztalFoglaloMainFrame.con.createStatement();
+        Statement stmt = AsztalFoglaloMainFrame.getStmt();
         ResultSet rs = stmt.executeQuery(sql);
         Asztal a=new Asztal("Válasszon asztalt");
         asztalokDCBM.addElement(a);

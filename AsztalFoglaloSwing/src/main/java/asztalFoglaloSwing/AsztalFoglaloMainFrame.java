@@ -28,7 +28,8 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
     protected DefaultTreeModel foglalasFaModel;
     private JFrame errorFrame= new JFrame();
     private Etterem etterem;
-    public static Connection con;
+    private Connection con;
+    private static Statement stmt;
     private boolean searching;
     
     public AsztalFoglaloMainFrame() {
@@ -36,6 +37,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
         searching=false;
         try {
             con = DriverManager.getConnection(dbURL,dbUser,dbPass);
+            stmt = con.createStatement();
             EtteremValasztDialog evd = new EtteremValasztDialog(this,true);
             evd.setVisible(true);
             loadTreeFromDB();
@@ -56,6 +58,10 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
 
     public Etterem getEtterem() {
         return etterem;
+    }
+
+    public static Statement getStmt() {
+        return stmt;
     }
     
     
@@ -102,6 +108,11 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
         jScrollPane2.setViewportView(foglalasFa);
 
         searchField.setToolTipText("<html>\n\"<i>név</i>\" keresés név alapján<br>\n\"_<i>asztal száma</i>\" keresés az asztal száma alapján<br>\n\"#<i>csoport mérete</i>\" keresés a csoportnak a mérete alapján<br>\n\"<i>dátum</i>\" keresés név alapján<br>\n\"k:<i>12:00</i>\" keresés az iddőpont kezdete alapján<br>\n\"v:<i>12:00</i>\" keresés az iddőpont vége alapján\n");
+        searchField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchFieldActionPerformed(evt);
+            }
+        });
 
         search.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/magnifier.png"))); // NOI18N
         search.setMaximumSize(new java.awt.Dimension(60, 60));
@@ -405,6 +416,14 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
     }//GEN-LAST:event_exportPdfActionPerformed
 
     private void searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchActionPerformed
+        kereses();
+    }//GEN-LAST:event_searchActionPerformed
+
+    private void searchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchFieldActionPerformed
+        kereses();
+    }//GEN-LAST:event_searchFieldActionPerformed
+
+    private void kereses(){
         String searchedText=searchField.getText().trim();
         String searchWhere="";
         searching=true;
@@ -458,8 +477,8 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
             JOptionPane.showMessageDialog(errorFrame,"Sikertelen adatbázis kapcsolódás!\n"+sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
         }
         searching=false;
-    }//GEN-LAST:event_searchActionPerformed
-
+    }
+    
     private boolean validIdo(String idopont){
         try{
             LocalTime.parse(idopont,ONLYTIME);
@@ -491,14 +510,19 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
                 String defaultWhere="`foglalas_idopont_kezd`>'"+todaysDateTime+"'";
                 sql="SELECT * "
                 + "FROM `foglalas` "
-                + "INNER JOIN `asztal` ON `asztal`.`asztal_id`=`foglalas`.`asztal_id` "
                 + "WHERE "+(searchWhere.isEmpty()?defaultWhere:searchWhere)+" AND `foglalas`.`asztal_id`='"+asztalRs.getInt(1)+"' ORDER BY `foglalas_idopont_kezd`";
                 Statement foglalasStmt = con.createStatement();
                 ResultSet foglalasRs =foglalasStmt.executeQuery(sql);
                 boolean vanFoglalas=false;
                 while(foglalasRs.next()){
                     vanFoglalas=true;
-                    f= new Foglalas(foglalasRs.getInt("foglalas_id"),foglalasRs.getString("foglalas_nev"),foglalasRs.getString("foglalas_telszam"),foglalasRs.getInt("foglalas_csoport_meret"),a,foglalasRs.getString("foglalas_idopont_kezd"),foglalasRs.getString("foglalas_idopont_veg"));
+                    f= new Foglalas(foglalasRs.getInt("foglalas_id"),
+                            foglalasRs.getString("foglalas_nev"),
+                            foglalasRs.getString("foglalas_telszam"),
+                            foglalasRs.getInt("foglalas_csoport_meret"),
+                            a,
+                            foglalasRs.getString("foglalas_idopont_kezd"),
+                            foglalasRs.getString("foglalas_idopont_veg"));
                     DefaultMutableTreeNode foglalasNode = new DefaultMutableTreeNode(f);
                     asztalNode.add(foglalasNode);
                 }

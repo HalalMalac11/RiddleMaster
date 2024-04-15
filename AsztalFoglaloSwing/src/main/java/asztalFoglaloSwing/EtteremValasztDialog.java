@@ -24,7 +24,7 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
         dcbm= new DefaultComboBoxModel<Etterem>();
         try {
             String sql = "SELECT `etterem_nev`, `etterem_id` FROM `etterem`;";
-            Statement stmt = AsztalFoglaloMainFrame.con.createStatement();
+            Statement stmt = AsztalFoglaloMainFrame.getStmt();
             if (stmt.execute(sql)) {
                 ResultSet rsEttermek = stmt.getResultSet();
                 ResultSet rsNyitvatartas;
@@ -35,7 +35,7 @@ public class EtteremValasztDialog extends javax.swing.JDialog {
                 while (rsEttermek.next()) {
                     etteremId=rsEttermek.getInt(2);
                     sql="SELECT `nyitvatartas_nyitas`,`nyitvatartas_zaras` FROM `nyitvatartas` WHERE `etterem_id`='"+etteremId+"' ORDER BY `nyitvatartas_nap`";
-                    Statement nyitvaStmt = AsztalFoglaloMainFrame.con.createStatement();
+                    Statement nyitvaStmt = AsztalFoglaloMainFrame.getStmt().getConnection().createStatement();
                     
                     rsNyitvatartas = nyitvaStmt.executeQuery(sql);
                     

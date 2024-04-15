@@ -85,7 +85,7 @@ public class AddTipusDialog extends javax.swing.JDialog {
         if (ok) {
             try {
                 String sql = "INSERT INTO `tipus`(`tipus_ferohely`) VALUES ('"+tipus_ferohely+"')";
-                Statement stmt= AsztalFoglaloMainFrame.con.createStatement();
+                Statement stmt= AsztalFoglaloMainFrame.getStmt();
                 stmt.execute(sql);
                 dispose();
             } catch (SQLException sqle) {

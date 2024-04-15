@@ -302,7 +302,7 @@ public class AddEtteremDialog extends javax.swing.JDialog {
                 try {
                     
                         String sql ="INSERT INTO `etterem`(`etterem_nev`) VALUES ('"+this.etteremNev.getText()+"')";
-                        Statement stmt =AsztalFoglaloMainFrame.con.createStatement();
+                        Statement stmt =AsztalFoglaloMainFrame.getStmt();
                         stmt.execute(sql);
                         
                         sql ="SELECT `etterem_id` FROM `etterem` WHERE `etterem_nev` LIKE '"+this.etteremNev.getText()+"'";

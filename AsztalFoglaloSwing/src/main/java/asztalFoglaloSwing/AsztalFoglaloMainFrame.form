@@ -234,6 +234,9 @@
       <Properties>
         <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;&quot;&lt;i&gt;n&#xe9;v&lt;/i&gt;&quot; keres&#xe9;s n&#xe9;v alapj&#xe1;n&lt;br&gt;&#xa;&quot;_&lt;i&gt;asztal sz&#xe1;ma&lt;/i&gt;&quot; keres&#xe9;s az asztal sz&#xe1;ma alapj&#xe1;n&lt;br&gt;&#xa;&quot;#&lt;i&gt;csoport m&#xe9;rete&lt;/i&gt;&quot; keres&#xe9;s a csoportnak a m&#xe9;rete alapj&#xe1;n&lt;br&gt;&#xa;&quot;&lt;i&gt;d&#xe1;tum&lt;/i&gt;&quot; keres&#xe9;s n&#xe9;v alapj&#xe1;n&lt;br&gt;&#xa;&quot;k:&lt;i&gt;12:00&lt;/i&gt;&quot; keres&#xe9;s az idd&#x151;pont kezdete alapj&#xe1;n&lt;br&gt;&#xa;&quot;v:&lt;i&gt;12:00&lt;/i&gt;&quot; keres&#xe9;s az idd&#x151;pont v&#xe9;ge alapj&#xe1;n&#xa;"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchFieldActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="search">
       <Properties>

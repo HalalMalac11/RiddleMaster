@@ -272,7 +272,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
             "`foglalas` (`foglalas_id`, `foglalas_nev`, `foglalas_telszam`, `foglalas_csoport_meret`, `asztal_id`, `foglalas_idopont_kezd`, `foglalas_idopont_veg`) "+
             "VALUES "+
             "(NULL, '"+f.getFoglalas_nev()+"', '"+f.getFoglalas_telszam()+"', '"+f.getFoglalas_csoport_meret()+"', '"+f.getAsztal().getAsztal_id()+"', '"+f.getIdopontKezdString(true)+"', '"+f.getIdopontVegString(true)+"');";
-        Statement stmt = AsztalFoglaloMainFrame.con.createStatement();
+        Statement stmt = AsztalFoglaloMainFrame.getStmt();
         stmt.execute(sql);
         boolean success=stmt.getUpdateCount()==1;
         if(success){
@@ -282,7 +282,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
     }
     public boolean updateFoglalas(Foglalas f) throws SQLException, ClassNotFoundException{
         String sql="UPDATE `foglalas` SET `foglalas_nev`='"+f.getFoglalas_nev()+"',`foglalas_telszam`='"+f.getFoglalas_telszam()+"',`foglalas_csoport_meret`='"+f.getFoglalas_csoport_meret()+"',`asztal_id`='"+f.getAsztal().getAsztal_id()+"',`foglalas_idopont_kezd`='"+f.getIdopontKezdString(true)+"',`foglalas_idopont_veg`='"+f.getIdopontVegString(true)+"' WHERE `foglalas_id`='"+eredeti.getFoglalas_id()+"'";
-        Statement stmt =AsztalFoglaloMainFrame.con.createStatement();
+        Statement stmt =AsztalFoglaloMainFrame.getStmt();
         stmt.execute(sql);
         boolean success=stmt.getUpdateCount()==1;
         if(success){
@@ -294,7 +294,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
     {
         String sql ="SELECT `foglalas_id`,`asztal_id` FROM `foglalas` WHERE (((`foglalas_idopont_veg`>'"+ujFoglalas.getIdopontKezdString(true)+"' AND `foglalas_idopont_kezd`<'"+ujFoglalas.getIdopontVegString(true)+"') OR (`foglalas_idopont_kezd`='"+ujFoglalas.getIdopontKezdString(true)+"')) OR (`foglalas_idopont_kezd`<'"+ujFoglalas.getIdopontVegString(true)+"' AND `foglalas_idopont_kezd`>'"+ujFoglalas.getIdopontKezdString(true)+"')) AND `asztal_id`='"+ujFoglalas.getAsztal().getAsztal_id()+"' AND `foglalas`.`foglalas_id`!='"+ujFoglalas.getFoglalas_id()+"';";
         System.out.println(sql);
-        Statement stmt =AsztalFoglaloMainFrame.con.createStatement();
+        Statement stmt =AsztalFoglaloMainFrame.getStmt();
         ResultSet rs = stmt.executeQuery(sql);
         boolean foglalhato=!rs.next();
         rs.close();
@@ -310,7 +310,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
     
     private void loadAsztalokModel() throws SQLException{
         String sql="SELECT * FROM `asztal` WHERE `etterem_id`='"+mainFrame.getEtterem().getId()+"'";
-        Statement stmt = AsztalFoglaloMainFrame.con.createStatement();
+        Statement stmt = AsztalFoglaloMainFrame.getStmt();
         ResultSet rs = stmt.executeQuery(sql);
         Asztal a=new Asztal("Válasszon asztalt");
         asztalokDCBM.addElement(a);

@@ -16,7 +16,7 @@ public class AddAsztalDialog extends javax.swing.JDialog {
         DefaultComboBoxModel<Tipus> ferohelyModel= new DefaultComboBoxModel<Tipus>();
         try{
             String sql = "SELECT * FROM `tipus` ORDER BY `tipus_ferohely` ASC";
-            Statement stmt=AsztalFoglaloMainFrame.con.createStatement();
+            Statement stmt=AsztalFoglaloMainFrame.getStmt();
             ResultSet rs=stmt.executeQuery(sql);
             while(rs.next()){
                 Tipus t = new Tipus(rs.getInt("tipus_id"),rs.getInt("tipus_ferohely"));
@@ -125,7 +125,7 @@ public class AddAsztalDialog extends javax.swing.JDialog {
                 try{
                     Tipus selected = (Tipus) ferohelyCB.getSelectedItem();
                     String sql = "INSERT INTO `asztal`(`tipus_id`, `asztal_szam`, `etterem_id`) VALUES ('"+selected.getTipus_id()+"','"+asztalSzam.getText()+"','"+mf.getEtterem().getId()+"')";
-                    Statement stmt=AsztalFoglaloMainFrame.con.createStatement();
+                    Statement stmt=AsztalFoglaloMainFrame.getStmt();
                     stmt.execute(sql);
                     this.dispose();
                     mf.loadTreeFromDB();
