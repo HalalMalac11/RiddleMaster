@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -72,27 +74,20 @@ public class AddTipusDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void submitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitActionPerformed
-        String tipus_ferohely= ferohelySzam.getText().trim();
-        boolean ok = true;
-        if(tipus_ferohely.isEmpty()){
-            ok=false;
-        }
-        for (int i = 0; i < tipus_ferohely.length(); i++) {
-            if(!Character.isDigit(tipus_ferohely.charAt(i))){
-                ok=false;
-            }
-        }
-        if (ok) {
+        String tipus_ferohely = ferohelySzam.getText().trim();
+        Pattern pattern = Pattern.compile("(?:^\\d+$)");
+        Matcher matcher = pattern.matcher(tipus_ferohely);
+        if (matcher.find()) {
             try {
-                String sql = "INSERT INTO `tipus`(`tipus_ferohely`) VALUES ('"+tipus_ferohely+"')";
-                Statement stmt= AsztalFoglaloMainFrame.getStmt();
+                String sql = "INSERT INTO `tipus`(`tipus_ferohely`) VALUES ('" + tipus_ferohely + "')";
+                Statement stmt = AsztalFoglaloMainFrame.getStmt();
                 stmt.execute(sql);
                 dispose();
             } catch (SQLException sqle) {
-                JOptionPane.showMessageDialog(new JFrame(),"Ilyen típus már létezik!","Hiba!",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(new JFrame(), "Ilyen típus már létezik!", "Hiba!", JOptionPane.ERROR_MESSAGE);
             }
-        }else{
-            JOptionPane.showMessageDialog(new JFrame(),"A megadott férőhely szám nem megfelelő","Hiba!",JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(new JFrame(), "A megadott férőhely szám nem megfelelő", "Hiba!", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_submitActionPerformed
 

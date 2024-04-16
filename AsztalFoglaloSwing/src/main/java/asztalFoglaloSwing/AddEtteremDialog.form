@@ -28,34 +28,34 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="cimLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                          <Component id="nevLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="etteremNev" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                      <Component id="nyitvatartasLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
+                      <Component id="formatSegitsegLabel" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel12" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel14" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel16" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="hetfoLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="keddLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="szerdaLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="csutortokLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="pentekLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="szombatLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="vasarnapLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="hNyitas" min="-2" pref="45" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                              <Component id="kotojel1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="hZaras" min="-2" pref="45" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -64,42 +64,42 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="kNyitas" min="-2" pref="45" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
+                              <Component id="kotojel2" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="kZaras" min="-2" pref="45" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="szeNyitas" min="-2" pref="45" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
+                              <Component id="kotojel3" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="szeZaras" min="-2" pref="45" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="csNyitas" min="-2" pref="45" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
+                              <Component id="kotojel4" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="csZaras" min="-2" pref="45" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="pNyitas" min="-2" pref="45" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
+                              <Component id="kotojel5" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="pZaras" min="-2" pref="45" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="szoNyitas" min="-2" pref="45" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel15" min="-2" max="-2" attributes="0"/>
+                              <Component id="kotojel6" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="szoZaras" min="-2" pref="45" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="vNyitas" min="-2" pref="45" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel17" min="-2" max="-2" attributes="0"/>
+                              <Component id="kotojel7" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="vZaras" min="-2" pref="45" max="-2" attributes="0"/>
                           </Group>
@@ -115,65 +115,65 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+              <Component id="cimLabel" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="nevLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="etteremNev" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel18" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="nyitvatartasLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="formatSegitsegLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="hetfoLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="hNyitas" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="kotojel1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="hZaras" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="fill" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="keddLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="kNyitas" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="kotojel2" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="kZaras" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="szerdaLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="szeNyitas" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="kotojel3" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="szeZaras" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="csutortokLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="csNyitas" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="kotojel4" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="csZaras" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="pentekLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="pNyitas" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="kotojel5" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="pZaras" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel14" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="szombatLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="szoNyitas" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel15" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="kotojel6" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="szoZaras" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel16" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="vasarnapLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="vNyitas" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel17" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="kotojel7" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="vZaras" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="13" max="32767" attributes="0"/>
@@ -184,7 +184,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JLabel" name="jLabel1">
+    <Component class="javax.swing.JLabel" name="cimLabel">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Calibri" size="18" style="1"/>
@@ -192,14 +192,14 @@
         <Property name="text" type="java.lang.String" value="&#xc9;tterem hozz&#xe1;ad&#xe1;sa"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel2">
+    <Component class="javax.swing.JLabel" name="nevLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="N&#xe9;v:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="etteremNev">
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel3">
+    <Component class="javax.swing.JLabel" name="nyitvatartasLabel">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Calibri" size="14" style="1"/>
@@ -207,7 +207,7 @@
         <Property name="text" type="java.lang.String" value="Nyitvatart&#xe1;s"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel4">
+    <Component class="javax.swing.JLabel" name="hetfoLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Hetf&#x151;:"/>
       </Properties>
@@ -217,7 +217,7 @@
         <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="hNyitasFocusLost"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel5">
+    <Component class="javax.swing.JLabel" name="kotojel1">
       <Properties>
         <Property name="text" type="java.lang.String" value="-"/>
       </Properties>
@@ -227,91 +227,91 @@
         <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="hZarasFocusLost"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel6">
+    <Component class="javax.swing.JLabel" name="keddLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Kedd:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="kNyitas">
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel7">
+    <Component class="javax.swing.JLabel" name="kotojel2">
       <Properties>
         <Property name="text" type="java.lang.String" value="-"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="kZaras">
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel8">
+    <Component class="javax.swing.JLabel" name="szerdaLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Szerda:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="szeNyitas">
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel9">
+    <Component class="javax.swing.JLabel" name="kotojel3">
       <Properties>
         <Property name="text" type="java.lang.String" value="-"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="szeZaras">
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel10">
+    <Component class="javax.swing.JLabel" name="csutortokLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Cs&#xfc;t&#xf6;rt&#xf6;k:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="csNyitas">
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel11">
+    <Component class="javax.swing.JLabel" name="kotojel4">
       <Properties>
         <Property name="text" type="java.lang.String" value="-"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="csZaras">
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel12">
+    <Component class="javax.swing.JLabel" name="pentekLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="P&#xe9;ntek:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="pNyitas">
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel13">
+    <Component class="javax.swing.JLabel" name="kotojel5">
       <Properties>
         <Property name="text" type="java.lang.String" value="-"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="pZaras">
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel14">
+    <Component class="javax.swing.JLabel" name="szombatLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Szombat:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="szoNyitas">
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel15">
+    <Component class="javax.swing.JLabel" name="kotojel6">
       <Properties>
         <Property name="text" type="java.lang.String" value="-"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="szoZaras">
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel16">
+    <Component class="javax.swing.JLabel" name="vasarnapLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Vas&#xe1;rnap:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="vNyitas">
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel17">
+    <Component class="javax.swing.JLabel" name="kotojel7">
       <Properties>
         <Property name="text" type="java.lang.String" value="-"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="vZaras">
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel18">
+    <Component class="javax.swing.JLabel" name="formatSegitsegLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="(HH:mm)"/>
       </Properties>

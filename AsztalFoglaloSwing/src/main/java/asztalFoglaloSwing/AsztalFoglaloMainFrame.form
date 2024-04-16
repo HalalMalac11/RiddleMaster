@@ -152,7 +152,7 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
-    <Property name="title" type="java.lang.String" value="Asztal foglalas"/>
+    <Property name="title" type="java.lang.String" value="Asztal foglal&#xf3;"/>
     <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>

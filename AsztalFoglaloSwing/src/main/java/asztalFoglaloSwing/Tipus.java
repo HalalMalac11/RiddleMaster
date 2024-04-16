@@ -1,7 +1,8 @@
 package asztalFoglaloSwing;
 
 public class Tipus {
-    private int tipus_id,tipus_ferohely;
+
+    private int tipus_id, tipus_ferohely;
 
     public Tipus(int tipus_id, int tipus_ferohely) {
         this.setTipus_id(tipus_id);
@@ -26,7 +27,7 @@ public class Tipus {
 
     @Override
     public String toString() {
-        return ""+this.getTipus_ferohely();
+        return "" + this.getTipus_ferohely();
     }
-    
+
 }

@@ -11,55 +11,55 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class EtteremValasztDialog extends javax.swing.JDialog implements iDateFormatting {
+
     private DefaultComboBoxModel<Etterem> dcbm;
     protected AsztalFoglaloMainFrame MainFrame;
     public boolean etteremAdded;
 
     public EtteremValasztDialog(AsztalFoglaloMainFrame parent, boolean modal) {
         super(parent, modal);
-        this.MainFrame=parent;
-        etteremAdded=false;
+        this.MainFrame = parent;
+        etteremAdded = false;
         initComponents();
         setLocationRelativeTo(null);
-        dcbm= new DefaultComboBoxModel<Etterem>();
+        dcbm = new DefaultComboBoxModel<Etterem>();
         try {
             String sql = "SELECT `etterem_nev`, `etterem_id` FROM `etterem`;";
             Statement stmt = AsztalFoglaloMainFrame.getStmt();
             if (stmt.execute(sql)) {
                 ResultSet rsEttermek = stmt.getResultSet();
                 ResultSet rsNyitvatartas;
-                
-                
+
                 StringTokenizer st;
                 int etteremId;
                 while (rsEttermek.next()) {
-                    etteremId=rsEttermek.getInt(2);
-                    sql="SELECT `nyitvatartas_nyitas`,`nyitvatartas_zaras` FROM `nyitvatartas` WHERE `etterem_id`='"+etteremId+"' ORDER BY `nyitvatartas_nap`";
+                    etteremId = rsEttermek.getInt(2);
+                    sql = "SELECT `nyitvatartas_nyitas`,`nyitvatartas_zaras` FROM `nyitvatartas` WHERE `etterem_id`='" + etteremId + "' ORDER BY `nyitvatartas_nap`";
                     Statement nyitvaStmt = AsztalFoglaloMainFrame.getStmt().getConnection().createStatement();
-                    String[][] nyitvatartasMatrix= new String[7][2];
+                    String[][] nyitvatartasMatrix = new String[7][2];
                     rsNyitvatartas = nyitvaStmt.executeQuery(sql);
-                    
+
                     for (int i = 0; i < nyitvatartasMatrix.length; i++) {
                         rsNyitvatartas.next();
-                        st = new StringTokenizer(rsNyitvatartas.getString(1),":");
-                        String lt = LocalTime.of(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())).format(ONLYTIME);
-                        nyitvatartasMatrix[i][0]=lt;
-                        st = new StringTokenizer(rsNyitvatartas.getString(2),":");
-                        lt = LocalTime.of(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())).format(ONLYTIME);
-                        nyitvatartasMatrix[i][1]=lt;
+                        st = new StringTokenizer(rsNyitvatartas.getString(1), ":");
+                        String lt = LocalTime.of(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())).format(ONLYTIME);
+                        nyitvatartasMatrix[i][0] = lt;
+                        st = new StringTokenizer(rsNyitvatartas.getString(2), ":");
+                        lt = LocalTime.of(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())).format(ONLYTIME);
+                        nyitvatartasMatrix[i][1] = lt;
                     }
                     dcbm.addElement(new Etterem(rsEttermek.getString(1), etteremId, nyitvatartasMatrix));
                     rsNyitvatartas.close();
                 }
             }
-            if(dcbm.getSize()!=0){
+            if (dcbm.getSize() != 0) {
                 this.ettermekComboBox.setModel(dcbm);
                 this.ettermekComboBox.setSelectedIndex(0);
-            }else{
+            } else {
                 this.submit.setEnabled(false);
             }
         } catch (SQLException sqle) {
-            JOptionPane.showMessageDialog(new JFrame(), "Adatbázis csatlakozás hiba!\n"+sqle.getMessage(),"HIBA!",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(new JFrame(), "Adatbázis csatlakozás hiba!\n" + sqle.getMessage(), "HIBA!", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
     }
@@ -74,6 +74,7 @@ public class EtteremValasztDialog extends javax.swing.JDialog implements iDateFo
         ujEtterem = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("Étterem kiválasztása");
 
         valasszLabel.setFont(new java.awt.Font("Calibri", 1, 24)); // NOI18N
         valasszLabel.setText("Válasszon egy éttermet!");
@@ -131,9 +132,9 @@ public class EtteremValasztDialog extends javax.swing.JDialog implements iDateFo
     }//GEN-LAST:event_submitActionPerformed
 
     private void ujEtteremActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ujEtteremActionPerformed
-        AddEtteremDialog aed = new AddEtteremDialog(this,true,MainFrame);
+        AddEtteremDialog aed = new AddEtteremDialog(this, true, MainFrame);
         aed.setVisible(true);
-        if(etteremAdded){
+        if (etteremAdded) {
             this.dispose();
         }
     }//GEN-LAST:event_ujEtteremActionPerformed

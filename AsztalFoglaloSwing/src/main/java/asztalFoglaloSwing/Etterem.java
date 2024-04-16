@@ -2,8 +2,8 @@ package asztalFoglaloSwing;
 
 import java.time.LocalTime;
 
-
 public class Etterem {
+
     private String nev;
     private int id;
     private String[][] nyitvatartas;
@@ -42,7 +42,5 @@ public class Etterem {
     public String toString() {
         return this.getNev();
     }
-    
-    
-}
 
+}

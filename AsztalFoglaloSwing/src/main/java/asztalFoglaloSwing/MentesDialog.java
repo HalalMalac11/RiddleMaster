@@ -35,25 +35,28 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileSystemView;
 
-public class MentesDialog extends javax.swing.JDialog implements iDateFormatting{
+public class MentesDialog extends javax.swing.JDialog implements iDateFormatting {
+
     private String utvonal;
     private DefaultComboBoxModel<Asztal> asztalokDCBM;
     private AsztalFoglaloMainFrame mainFrame;
+
     public MentesDialog(AsztalFoglaloMainFrame parent, boolean modal) {
         super(parent, modal);
-        mainFrame=parent;
+        mainFrame = parent;
         asztalokDCBM = new DefaultComboBoxModel<Asztal>();
         initComponents();
         try {
             loadAsztalokModel();
         } catch (SQLException sqle) {
-            JOptionPane.showMessageDialog(new JFrame(),"Sikertelen adatbázis művelet!\n"+sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(new JFrame(), "Sikertelen adatbázis művelet!\n" + sqle.getMessage(), "Hiba!", JOptionPane.ERROR_MESSAGE);
         }
         utvonal = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
         mentesUtvonalLabel.setText(utvonal);
         egyszeru.setSelected(true);
         setLocationRelativeTo(null);
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -74,15 +77,27 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
         asztalCB = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("PDF-ként");
+        setTitle("Mentés");
 
         formatumLabel.setText("Válasszon formátumot:");
 
         formatumGroup.add(egyszeru);
         egyszeru.setText("Egyszerű");
+        egyszeru.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                egyszeruActionPerformed(evt);
+            }
+        });
 
         formatumGroup.add(reszletes);
         reszletes.setText("Részletes");
+        reszletes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reszletesActionPerformed(evt);
+            }
+        });
+
+        preview.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/egyszeruformat.png"))); // NOI18N
 
         kezdDatumLabel.setText("Kezdő dátum: (yyyy-MM-dd)");
 
@@ -129,7 +144,7 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
                             .addComponent(egyszeru))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(datumKezd, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
+                            .addComponent(datumKezd)
                             .addComponent(datumVeg)
                             .addComponent(preview, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
@@ -150,11 +165,11 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(reszletes))
                     .addComponent(preview, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(asztalLabel)
                     .addComponent(asztalCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(datumKezd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(kezdDatumLabel))
@@ -177,140 +192,131 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
     private void tallozasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tallozasActionPerformed
         JFileChooser jf = new JFileChooser(FileSystemView.getFileSystemView());
         jf.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int valasz = jf.showSaveDialog(null);  
-        if (valasz == JFileChooser.APPROVE_OPTION){
-            utvonal=jf.getSelectedFile().getAbsolutePath();
+        int valasz = jf.showSaveDialog(null);
+        if (valasz == JFileChooser.APPROVE_OPTION) {
+            utvonal = jf.getSelectedFile().getAbsolutePath();
             mentesUtvonalLabel.setText(utvonal);
-        }  
+        }
     }//GEN-LAST:event_tallozasActionPerformed
 
     private void exportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportActionPerformed
-    try {
-            int debug=0;
-            String fajlNev=mainFrame.getEtterem().getNev()+"_Foglalasok_";
-            String foglalasSql ="SELECT * FROM `foglalas` WHERE `asztal_id`='0' AND `foglalas_idopont_kezd`>=";
-            String asztalSql="SELECT * FROM `asztal` WHERE `etterem_id`='"+mainFrame.getEtterem().getId()+"'";
-            if(asztalCB.getSelectedIndex()!=0){
+        try {
+            int debug = 0;
+            String fajlNev = mainFrame.getEtterem().getNev() + "_Foglalasok_";
+            String foglalasSql = "SELECT * FROM `foglalas` WHERE `asztal_id`='0' AND `foglalas_idopont_kezd`>=";
+            String asztalSql = "SELECT * FROM `asztal` WHERE `etterem_id`='" + mainFrame.getEtterem().getId() + "'";
+            if (asztalCB.getSelectedIndex() != 0) {
                 Asztal a = (Asztal) asztalCB.getSelectedItem();
-                asztalSql+=" `asztal_id`='"+a.getAsztal_id()+"'";
+                asztalSql += " `asztal_id`='" + a.getAsztal_id() + "'";
             }
-            
-            
-            int datumKezdStatus=inputEllenorzes(datumKezd);
-            String keresKezd="",keresVeg="";
-            
-            
-            if(datumKezdStatus==1){
-                keresKezd=datumKezd.getText();
-                foglalasSql+="'"+keresKezd+" 00:00:00'";
-                fajlNev+=keresKezd;
-            
-            }else if(datumKezdStatus==0){
-                keresKezd=LocalDate.now().format(ONLYDATE);
-                foglalasSql+="'"+keresKezd+" 00:00:00'";
-                fajlNev+=keresKezd;
-                
-            
-            }else{
-                JOptionPane.showMessageDialog(new JFrame(),"Nem megfelelő formátumú kezdő dátum!","Hiba!",JOptionPane.ERROR_MESSAGE);
+
+            int datumKezdStatus = inputEllenorzes(datumKezd);
+            String keresKezd = "", keresVeg = "";
+
+            if (datumKezdStatus == 1) {
+                keresKezd = datumKezd.getText();
+                foglalasSql += "'" + keresKezd + " 00:00:00'";
+                fajlNev += keresKezd;
+
+            } else if (datumKezdStatus == 0) {
+                keresKezd = LocalDate.now().format(ONLYDATE);
+                foglalasSql += "'" + keresKezd + " 00:00:00'";
+                fajlNev += keresKezd;
+
+            } else {
+                JOptionPane.showMessageDialog(new JFrame(), "Nem megfelelő formátumú kezdő dátum!", "Hiba!", JOptionPane.ERROR_MESSAGE);
             }
-            
-            int datumVegStatus=inputEllenorzes(datumVeg);
-            
-            
-            if(datumVegStatus==1){
-                LocalDate ld= LocalDate.parse(datumVeg.getText(), ONLYDATE).plusDays(1);
-                keresVeg=ld.format(ONLYDATE);
-                foglalasSql+="AND `foglalas_idopont_kezd`<='"+keresVeg+" 00:00:00'";
-                fajlNev+="_"+keresVeg;
-                
-            
-            }else if(datumVegStatus==-1){
-                JOptionPane.showMessageDialog(new JFrame(),"Nem megfelelő formátumú vég dátum!","Hiba!",JOptionPane.ERROR_MESSAGE);
+
+            int datumVegStatus = inputEllenorzes(datumVeg);
+
+            if (datumVegStatus == 1) {
+                LocalDate ld = LocalDate.parse(datumVeg.getText(), ONLYDATE).plusDays(1);
+                keresVeg = ld.format(ONLYDATE);
+                foglalasSql += "AND `foglalas_idopont_kezd`<='" + keresVeg + " 00:00:00'";
+                fajlNev += "_" + keresVeg;
+
+            } else if (datumVegStatus == -1) {
+                JOptionPane.showMessageDialog(new JFrame(), "Nem megfelelő formátumú vég dátum!", "Hiba!", JOptionPane.ERROR_MESSAGE);
             }
-            if(datumKezdStatus!=-1&&datumVegStatus!=-1){
-                String vegsoUtvonal=utvonal+"\\"+fajlNev+".pdf";
-                vegsoUtvonal=vegsoUtvonal.replace('\\', '/');
-                
-            
+            if (datumKezdStatus != -1 && datumVegStatus != -1) {
+                String vegsoUtvonal = utvonal + "\\" + fajlNev + ".pdf";
+                vegsoUtvonal = vegsoUtvonal.replace('\\', '/');
+
                 PdfWriter pw = new PdfWriter(vegsoUtvonal);
                 PdfDocument pdfDoc = new PdfDocument(pw);
                 Document doc = new Document(pdfDoc);
-                
-            
-                FontProgram fontProgram = FontProgramFactory.createFont( ) ;
-                PdfFont font = PdfFontFactory.createFont( fontProgram,  "CP1250") ;
-                doc.setFont( font );
-                
-            
+
+                FontProgram fontProgram = FontProgramFactory.createFont();
+                PdfFont font = PdfFontFactory.createFont(fontProgram, "CP1250");
+                doc.setFont(font);
+
                 pdfDoc.addNewPage();
                 doc.setBottomMargin(60);
-                
-            
+
                 Statement asztalStmt = AsztalFoglaloMainFrame.getStmt();
-                
-                ResultSet asztalRs=asztalStmt.executeQuery(asztalSql);
-                while(asztalRs.next()){
-                    
-            
-                    Paragraph asztalNev = new Paragraph(mainFrame.getEtterem().getNev()+"_"+asztalRs.getString("asztal_szam")).setFontSize(50f).setBold();
+
+                ResultSet asztalRs = asztalStmt.executeQuery(asztalSql);
+                while (asztalRs.next()) {
+
+                    Paragraph asztalNev = new Paragraph(mainFrame.getEtterem().getNev() + "_" + asztalRs.getString("asztal_szam")).setFontSize(50f).setBold();
                     doc.add(asztalNev);
                     Statement foglalasStmt = asztalStmt.getConnection().createStatement();
-                    System.out.println(foglalasSql.replaceAll("(?:'\\d*')","'"+asztalRs.getString("asztal_id")+"'"));
-                    foglalasSql=foglalasSql.replaceAll("(?:'\\d*')","'"+asztalRs.getString("asztal_id")+"'");
+                    System.out.println(foglalasSql.replaceAll("(?:'\\d*')", "'" + asztalRs.getString("asztal_id") + "'"));
+                    foglalasSql = foglalasSql.replaceAll("(?:'\\d*')", "'" + asztalRs.getString("asztal_id") + "'");
                     ResultSet foglalasRs = foglalasStmt.executeQuery(foglalasSql);
-                    
-            
-                        List foglalasLista = new List();
-                        foglalasLista.setMarginLeft(20);
-                        foglalasLista.setListSymbol("");
-                        
-            
-                        while(foglalasRs.next()){
-                            Foglalas f = new Foglalas(foglalasRs.getInt("foglalas_id"),foglalasRs.getString("foglalas_nev"),foglalasRs.getString("foglalas_telszam"),foglalasRs.getInt("foglalas_csoport_meret"),new Asztal(0,"blank",0,new Tipus(0,99)),foglalasRs.getString("foglalas_idopont_kezd"),foglalasRs.getString("foglalas_idopont_veg"));
-                            Paragraph listaElem= new Paragraph(f.getFoglalas_nev()+" "+f.getIdoIntervallumString()).setFontSize(20f).setPaddingBottom(0);
-                            ListItem li= new ListItem();
-                            li.add(listaElem);
-                            
-            
-                            if(reszletes.isSelected()){
-                                ListItem liReszletek= new ListItem();
-                                List reszletek = new List().setMarginLeft(20);
-                                reszletek.add("Csoport mérete: "+f.getFoglalas_csoport_meret()+" fő");
-                                reszletek.add("Telefonszám: "+f.getFoglalas_telszam());
-                                reszletek.add("Foglalás azonosítója: "+f.getFoglalas_id());
-                                liReszletek.add(reszletek);
-                                li.add(liReszletek);
-                                //foglalasLista.add(liReszletek);
-                                
-            
-                            }
-                            foglalasLista.add(li);
-                            
+
+                    List foglalasLista = new List();
+                    foglalasLista.setMarginLeft(20);
+                    foglalasLista.setListSymbol("");
+
+                    while (foglalasRs.next()) {
+                        Foglalas f = new Foglalas(foglalasRs.getInt("foglalas_id"), foglalasRs.getString("foglalas_nev"), foglalasRs.getString("foglalas_telszam"), foglalasRs.getInt("foglalas_csoport_meret"), new Asztal(0, "blank", 0, new Tipus(0, 99)), foglalasRs.getString("foglalas_idopont_kezd"), foglalasRs.getString("foglalas_idopont_veg"));
+                        Paragraph listaElem = new Paragraph(f.getFoglalas_nev() + " " + f.getIdoIntervallumString()).setFontSize(20f).setPaddingBottom(0);
+                        ListItem li = new ListItem();
+                        li.add(listaElem);
+
+                        if (reszletes.isSelected()) {
+                            ListItem liReszletek = new ListItem();
+                            List reszletek = new List().setMarginLeft(20);
+                            reszletek.add("Csoport mérete: " + f.getFoglalas_csoport_meret() + " fő");
+                            reszletek.add("Telefonszám: " + f.getFoglalas_telszam());
+                            reszletek.add("Foglalás azonosítója: " + f.getFoglalas_id());
+                            liReszletek.add(reszletek);
+                            li.add(liReszletek);
+
                         }
-                        foglalasRs.close();
-                        doc.add(foglalasLista);
-                    
+                        foglalasLista.add(li);
+
+                    }
+                    foglalasRs.close();
+                    doc.add(foglalasLista);
+
                 }
                 asztalRs.close();
                 doc.close();
-                
-            
-                File keszFajl= new File(vegsoUtvonal);
+
+                File keszFajl = new File(vegsoUtvonal);
                 Desktop.getDesktop().open(keszFajl);
-                
-            
+
             }
         } catch (FileNotFoundException fnfe) {
-            JOptionPane.showMessageDialog(new JFrame(),"A fájlt nem sikerült létrehozni!","Hiba!",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(new JFrame(), "A fájlt nem sikerült létrehozni!", "Hiba!", JOptionPane.ERROR_MESSAGE);
         } catch (IOException ioe) {
-            JOptionPane.showMessageDialog(new JFrame(),"Az elkészült fájlt nem sikerült megnyitni!","Hiba!",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(new JFrame(), "Az elkészült fájlt nem sikerült megnyitni!", "Hiba!", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException sqle) {
-            JOptionPane.showMessageDialog(new JFrame(),"Lekérdezési hiba!\n"+sqle.getMessage(),"Hiba!",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(new JFrame(), "Lekérdezési hiba!\n" + sqle.getMessage(), "Hiba!", JOptionPane.ERROR_MESSAGE);
         } catch (IllegalArgumentException | DateTimeParseException ex) {
-            JOptionPane.showMessageDialog(new JFrame(),"Nem várt adat az adatbázisból!\n"+ex,"Hiba!",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(new JFrame(), "Nem várt adat az adatbázisból!\n" + ex, "Hiba!", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_exportActionPerformed
+
+    private void egyszeruActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_egyszeruActionPerformed
+        elonezetValtoztat();
+    }//GEN-LAST:event_egyszeruActionPerformed
+
+    private void reszletesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reszletesActionPerformed
+        elonezetValtoztat();
+    }//GEN-LAST:event_reszletesActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<Asztal> asztalCB;
@@ -332,26 +338,34 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
     private int inputEllenorzes(JTextField datumField) {
         Pattern p = Pattern.compile("(?:^\\d{4}-\\d{2}-\\d{2}$)");
         Matcher m = p.matcher(datumField.getText());
-        if(!datumField.getText().trim().isEmpty()&&!m.find()){
+        if (!datumField.getText().trim().isEmpty() && !m.find()) {
             return -1;
-        }else if(datumField.getText().trim().isEmpty()){
+        } else if (datumField.getText().trim().isEmpty()) {
             return 0;
         }
         return 1;
     }
-    
-    private void loadAsztalokModel() throws SQLException{
-        String sql="SELECT * FROM `asztal` WHERE `etterem_id`='"+mainFrame.getEtterem().getId()+"'";
+
+    private void loadAsztalokModel() throws SQLException {
+        String sql = "SELECT * FROM `asztal` WHERE `etterem_id`='" + mainFrame.getEtterem().getId() + "'";
         Statement stmt = AsztalFoglaloMainFrame.getStmt();
         ResultSet rs = stmt.executeQuery(sql);
-        Asztal a=new Asztal("Válasszon asztalt");
+        Asztal a = new Asztal("Válasszon asztalt");
         asztalokDCBM.addElement(a);
-        while(rs.next()){
+        while (rs.next()) {
 
-            a= new Asztal(rs.getInt("asztal_szam"),mainFrame.getEtterem().getNev(),rs.getInt("asztal_id"),mainFrame.getTipus(rs.getInt("tipus_id")));
+            a = new Asztal(rs.getInt("asztal_szam"), mainFrame.getEtterem().getNev(), rs.getInt("asztal_id"), mainFrame.getTipus(rs.getInt("tipus_id")));
             asztalokDCBM.addElement(a);
         }
-            rs.close();
-            asztalCB.setSelectedIndex(0);
+        rs.close();
+        asztalCB.setSelectedIndex(0);
+    }
+
+    private void elonezetValtoztat() {
+        if (egyszeru.isSelected()) {
+            preview.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/egyszeruformat.png")));
+        }else{
+            preview.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/reszletesformat.png")));
+        }
     }
 }

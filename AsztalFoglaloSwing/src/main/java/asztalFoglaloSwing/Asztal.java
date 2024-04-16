@@ -1,22 +1,20 @@
 package asztalFoglaloSwing;
 
 public class Asztal {
+
     private String asztalNev;
     private int asztal_id;
     private Tipus tipus;
 
     public Asztal(int asztal_szam, String etterem_nev, int asztal_id, Tipus tipus) {
-        this.setAsztalNev(etterem_nev+"_"+asztal_szam);
+        this.setAsztalNev(etterem_nev + "_" + asztal_szam);
         this.setAsztal_id(asztal_id);
         this.setTipus(tipus);
     }
 
     public Asztal(String uresAsztalNev) {
-        this.asztalNev =uresAsztalNev;
+        this.asztalNev = uresAsztalNev;
     }
-    
-    
-
 
     public String getAsztalNev() {
         return asztalNev;
@@ -46,7 +44,5 @@ public class Asztal {
     public String toString() {
         return this.getAsztalNev();
     }
-    
-    
-    
+
 }
