@@ -1,6 +1,7 @@
 package asztalFoglaloSwing;
 
 
+import java.awt.Frame;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -19,8 +20,10 @@ public class AddEtteremDialog extends javax.swing.JDialog implements iDateFormat
     private AsztalFoglaloMainFrame mainFrame;
     private EtteremValasztDialog parent;
     private JTextField[][] nyitvatartasMezok;
+    private boolean update;
+    private Etterem updateEtterem;
 
-    public AddEtteremDialog(EtteremValasztDialog parent, boolean modal,AsztalFoglaloMainFrame mainFrame) {
+    public AddEtteremDialog(EtteremValasztDialog parent, boolean modal, AsztalFoglaloMainFrame mainFrame) {
         super(parent, modal);
         this.mainFrame=mainFrame;
         this.alreadyFilled=false;
@@ -29,6 +32,18 @@ public class AddEtteremDialog extends javax.swing.JDialog implements iDateFormat
         setLocationRelativeTo(null);
         fillNyitvatartasMezok();
     }
+
+    public AddEtteremDialog(AsztalFoglaloMainFrame mainFrame, boolean modal,Etterem updateEtterem) {
+        super(mainFrame, modal);
+        this.mainFrame = mainFrame;
+        this.updateEtterem = updateEtterem;
+         initComponents();
+        setLocationRelativeTo(null);
+        fillNyitvatartasMezok();
+        feltoltesFrissiteshez();
+    }
+    
+    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -301,24 +316,34 @@ public class AddEtteremDialog extends javax.swing.JDialog implements iDateFormat
             }
             if (allFilled) {
                 try {
-                    
-                        String sql ="INSERT INTO `etterem`(`etterem_nev`) VALUES ('"+this.etteremNev.getText()+"')";
-                        Statement stmt =AsztalFoglaloMainFrame.getStmt();
-                        stmt.execute(sql);
-                        
-                        sql ="SELECT `etterem_id` FROM `etterem` WHERE `etterem_nev` LIKE '"+this.etteremNev.getText()+"'";
-                        stmt.execute(sql);
-                        ResultSet ujEtterem = stmt.getResultSet();
-                        ujEtterem.next();
-                        int ujEtteremId=ujEtterem.getInt(1);
+                    String sql="";
+                        if(!update){
+                            sql="INSERT INTO `etterem`(`etterem_nev`) VALUES ('"+this.etteremNev.getText()+"')";
+                        }else{
+                            sql="UPDATE `etterem` SET `etterem_nev`='"+this.etteremNev.getText()+"' WHERE `etterem_id`='"+updateEtterem.getId()+"'";
+                        }
+                        AsztalFoglaloMainFrame.getStmt().execute(sql);
+                        int ujEtteremId=0;
+                        if(!update){
+                            sql ="SELECT `etterem_id` FROM `etterem` WHERE `etterem_nev` LIKE '"+this.etteremNev.getText()+"'";
+                            ResultSet ujEtterem = AsztalFoglaloMainFrame.getStmt().executeQuery(sql);;
+                            ujEtterem.next();
+                            ujEtteremId=ujEtterem.getInt(1);
+                        }else{
+                            ujEtteremId=updateEtterem.getId();
+                        }
                         String[][] nyitvatartas= new String[7][2];
                         for (int i = 0; i < nyitvatartasMezok.length; i++) {
                             StringTokenizer st = new StringTokenizer(nyitvatartasMezok[i][0].getText(),":");
                             nyitvatartas[i][0]=LocalTime.of(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())).format(ONLYTIME);
                             st = new StringTokenizer(nyitvatartasMezok[i][1].getText(),":");
                             nyitvatartas[i][1]=LocalTime.of(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())).format(ONLYTIME);
-                            sql ="INSERT INTO `nyitvatartas`(`etterem_id`, `nyitvatartas_nap`, `nyitvatartas_nyitas`, `nyitvatartas_zaras`) VALUES ('"+ujEtteremId+"','"+i+"','"+nyitvatartasMezok[i][0].getText()+":00"+"','"+nyitvatartasMezok[i][1].getText()+":00"+"')";
-                            stmt.execute(sql);
+                            if(!update){
+                                sql ="INSERT INTO `nyitvatartas`(`etterem_id`, `nyitvatartas_nap`, `nyitvatartas_nyitas`, `nyitvatartas_zaras`) VALUES ('"+ujEtteremId+"','"+(i+1)+"','"+nyitvatartasMezok[i][0].getText()+":00"+"','"+nyitvatartasMezok[i][1].getText()+":00"+"')";
+                            }else{
+                                sql="UPDATE `nyitvatartas` SET `nyitvatartas_nyitas`='"+nyitvatartasMezok[i][0].getText()+":00', `nyitvatartas_zaras`='"+nyitvatartasMezok[i][1].getText()+":00' WHERE `etterem_id`='"+updateEtterem.getId()+"' AND `nyitvatartas_nap`='"+(i+1)+"'";
+                            }
+                            AsztalFoglaloMainFrame.getStmt().execute(sql);
                         }
                         mainFrame.setEtterem(new Etterem(this.etteremNev.getText(),ujEtteremId,nyitvatartas));
                         parent.etteremAdded=true;
@@ -401,4 +426,14 @@ public class AddEtteremDialog extends javax.swing.JDialog implements iDateFormat
     private javax.swing.JTextField vNyitas;
     private javax.swing.JTextField vZaras;
     // End of variables declaration//GEN-END:variables
+
+    private void feltoltesFrissiteshez() {
+        etteremNev.setText(updateEtterem.getNev());
+        String nyitvatartas[][]=updateEtterem.getNyitvatartas();
+        
+        for (int i = 0; i < nyitvatartasMezok.length; i++) {
+            nyitvatartasMezok[i][0].setText(nyitvatartas[i][0]);
+            nyitvatartasMezok[i][1].setText(nyitvatartas[i][1]);
+        }
+    }
 }

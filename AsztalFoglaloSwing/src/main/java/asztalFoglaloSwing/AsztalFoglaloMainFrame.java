@@ -79,7 +79,9 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
         exportPdf = new javax.swing.JMenuItem();
         kilepes = new javax.swing.JMenuItem();
         etteremMenu = new javax.swing.JMenu();
+        etteremAlMenu = new javax.swing.JMenu();
         etteremValt = new javax.swing.JMenuItem();
+        etteremSzerkeszt = new javax.swing.JMenuItem();
         etteremTorol = new javax.swing.JMenuItem();
         asztalMenu = new javax.swing.JMenu();
         ujAsztal = new javax.swing.JMenuItem();
@@ -145,13 +147,23 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
 
         etteremMenu.setText("Étterem");
 
+        etteremAlMenu.setText("Étterem");
+
         etteremValt.setText("Étterem váltása");
         etteremValt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 etteremValtActionPerformed(evt);
             }
         });
-        etteremMenu.add(etteremValt);
+        etteremAlMenu.add(etteremValt);
+
+        etteremSzerkeszt.setText("Étterem szerkesztése");
+        etteremSzerkeszt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                etteremSzerkesztActionPerformed(evt);
+            }
+        });
+        etteremAlMenu.add(etteremSzerkeszt);
 
         etteremTorol.setText("Étterem törlése");
         etteremTorol.addActionListener(new java.awt.event.ActionListener() {
@@ -159,7 +171,9 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
                 etteremTorolActionPerformed(evt);
             }
         });
-        etteremMenu.add(etteremTorol);
+        etteremAlMenu.add(etteremTorol);
+
+        etteremMenu.add(etteremAlMenu);
 
         asztalMenu.setText("Asztal");
 
@@ -422,6 +436,11 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
         kereses();
     }//GEN-LAST:event_searchFieldActionPerformed
 
+    private void etteremSzerkesztActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_etteremSzerkesztActionPerformed
+        AddEtteremDialog aed = new AddEtteremDialog(this, true,etterem);
+        aed.setVisible(true);
+    }//GEN-LAST:event_etteremSzerkesztActionPerformed
+
     private void kereses(){
         String searchedText=searchField.getText().trim();
         String searchWhere="";
@@ -619,7 +638,9 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
     private javax.swing.JMenu asztalMenu;
     private javax.swing.JMenuItem asztalTorol;
     private javax.swing.JMenuItem edit;
+    private javax.swing.JMenu etteremAlMenu;
     private javax.swing.JMenu etteremMenu;
+    private javax.swing.JMenuItem etteremSzerkeszt;
     private javax.swing.JMenuItem etteremTorol;
     private javax.swing.JMenuItem etteremValt;
     private javax.swing.JMenuItem exportPdf;

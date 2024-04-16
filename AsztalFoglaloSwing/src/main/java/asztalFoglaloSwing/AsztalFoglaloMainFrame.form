@@ -32,22 +32,37 @@
             <Property name="text" type="java.lang.String" value="&#xc9;tterem"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="etteremValt">
+            <Menu class="javax.swing.JMenu" name="etteremAlMenu">
               <Properties>
-                <Property name="text" type="java.lang.String" value="&#xc9;tterem v&#xe1;lt&#xe1;sa"/>
+                <Property name="text" type="java.lang.String" value="&#xc9;tterem"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="etteremValtActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="etteremTorol">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="&#xc9;tterem t&#xf6;rl&#xe9;se"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="etteremTorolActionPerformed"/>
-              </Events>
-            </MenuItem>
+              <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="etteremValt">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="&#xc9;tterem v&#xe1;lt&#xe1;sa"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="etteremValtActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="etteremSzerkeszt">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="&#xc9;tterem szerkeszt&#xe9;se"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="etteremSzerkesztActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="etteremTorol">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="&#xc9;tterem t&#xf6;rl&#xe9;se"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="etteremTorolActionPerformed"/>
+                  </Events>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
             <Menu class="javax.swing.JMenu" name="asztalMenu">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Asztal"/>
