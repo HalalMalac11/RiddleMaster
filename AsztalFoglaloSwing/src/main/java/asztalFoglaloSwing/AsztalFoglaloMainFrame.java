@@ -31,17 +31,15 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
     private Etterem etterem;
     private Connection con;
     private static Statement stmt;
-    private boolean searching;
 
     public AsztalFoglaloMainFrame() {
         initComponents();
-        searching = false;
         try {
             con = DriverManager.getConnection(dbURL, dbUser, dbPass);
             stmt = con.createStatement();
             EtteremValasztDialog evd = new EtteremValasztDialog(this, true);
             evd.setVisible(true);
-            loadTreeFromDB();
+            faBetolt();
         } catch (SQLException sqle) {
             JOptionPane.showMessageDialog(errorFrame, "Sikertelen adatbázis kapcsolódás!\n" + sqle.getMessage(), "Hiba!", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
@@ -316,7 +314,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
                         stmt.execute(sql);
                         boolean success = stmt.getUpdateCount() == 1;
                         if (success) {
-                            loadTreeFromDB();
+                            faBetolt();
                         }
                     } catch (SQLException ex) {
                         JOptionPane.showMessageDialog(errorFrame, "Sikertelen törlés!\n" + ex, "Hiba!", JOptionPane.ERROR_MESSAGE);
@@ -367,7 +365,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
                             stmt.execute(sql);
                             sql = "DELETE FROM `asztal` WHERE `asztal_id`='" + a.getAsztal_id() + "'";
                             stmt.execute(sql);
-                            loadTreeFromDB();
+                            faBetolt();
                         } catch (SQLException sqle) {
                             JOptionPane.showMessageDialog(errorFrame, "Sikertelen törlés!\n" + sqle, "Hiba!", JOptionPane.ERROR_MESSAGE);
                         }
@@ -441,72 +439,73 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
         aed.setVisible(true);
     }//GEN-LAST:event_etteremSzerkesztActionPerformed
 
-    private void kereses() {
-        String searchedText = searchField.getText().trim();
-        String searchWhere = "";
-        searching=!searchedText.isEmpty();
-        if (searching) {
-            Pattern pattern = Pattern.compile("(?:^[a-zA-ZíűáéúőóüöÍŰÁÉÚŐÓÜÖ ]+$)");
-            Matcher matcher = pattern.matcher(searchedText);
-            if (matcher.find()) {
-                searchWhere = "`foglalas_nev` LIKE '%" + searchedText + "%' ";
-            }
-            pattern = Pattern.compile("(?:^_{1} ?\\d+$)");
-            matcher = pattern.matcher(searchedText);
-            if (matcher.find()) {
-                searchedText = searchedText.substring(1).trim();
-                searchWhere = "`asztal_szam` = '" + searchedText.substring(1) + "' ";
-            }
-            pattern = Pattern.compile("(?:^#{1} ?\\d+$)");
-            matcher = pattern.matcher(searchedText);
-            if (matcher.find()) {
-                searchedText = searchedText.substring(1).trim();
-                searchWhere = "`foglalas_csoport_meret` = '" + searchedText.substring(1) + "' ";
-            }
+    private String getKeresesWhere(String keresettSzoveg) {
+        Pattern pattern = Pattern.compile("(?:^[a-zA-ZíűáéúőóüöÍŰÁÉÚŐÓÜÖ ]+$)");
+        Matcher matcher = pattern.matcher(keresettSzoveg);
+        if (matcher.find()) {
+            return "`foglalas_nev` LIKE '%" + keresettSzoveg + "%' ";
+        }
+        pattern = Pattern.compile("(?:^_{1} ?\\d+$)");
+        matcher = pattern.matcher(keresettSzoveg);
+        if (matcher.find()) {
+            keresettSzoveg = keresettSzoveg.substring(1).trim();
+            return "`asztal_szam` = '" + keresettSzoveg.substring(1) + "' ";
+        }
+        pattern = Pattern.compile("(?:^#{1} ?\\d+$)");
+        matcher = pattern.matcher(keresettSzoveg);
+        if (matcher.find()) {
+            keresettSzoveg = keresettSzoveg.substring(1).trim();
+            return "`foglalas_csoport_meret` = '" + keresettSzoveg.substring(1) + "' ";
+        }
 
-            pattern = Pattern.compile("(?:^[0-9]{4}-[0-9]{2}-[0-9]{2}$)");
-            matcher = pattern.matcher(searchedText);
-            if (matcher.find()) {
-                if (validIdo(searchedText,true)) {
-                    searchWhere = "`foglalas_idopont_kezd` LIKE '%" + searchedText + ":00%' ";
-                }
-            }
-            
-            pattern = Pattern.compile("(?:^k: ?[0-9]{2}:[0-9]{2}$)");
-            matcher = pattern.matcher(searchedText);
-            if (matcher.find()) {
-                searchedText = searchedText.substring(2).trim();
-                if (validIdo(searchedText,false)) {
-                    searchWhere = "`foglalas_idopont_kezd` LIKE '%" + searchedText + ":00%' ";
-                }
-            }
-            pattern = Pattern.compile("(?:^v: ?[0-9]{2}:[0-9]{2}$)");
-            matcher = pattern.matcher(searchedText);
-            if (matcher.find()) {
-                searchedText = searchedText.substring(2).trim();
-                if (validIdo(searchedText,false)) {
-                    searchWhere = "`foglalas_idopont_veg` LIKE '%" + searchedText + ":00%' ";
-                }
+        pattern = Pattern.compile("(?:^[0-9]{4}-[0-9]{2}-[0-9]{2}$)");
+        matcher = pattern.matcher(keresettSzoveg);
+        if (matcher.find()) {
+            if (validIdo(keresettSzoveg, true)) {
+                return "`foglalas_idopont_kezd` LIKE '%" + keresettSzoveg + ":00%' ";
             }
         }
-        
+        pattern = Pattern.compile("(?:^k: ?[0-9]{2}:[0-9]{2}$)");
+        matcher = pattern.matcher(keresettSzoveg);
+        if (matcher.find()) {
+            keresettSzoveg = keresettSzoveg.substring(2).trim();
+            if (validIdo(keresettSzoveg, false)) {
+                return "`foglalas_idopont_kezd` LIKE '%" + keresettSzoveg + ":00%' ";
+            }
+        }
+        pattern = Pattern.compile("(?:^v: ?[0-9]{2}:[0-9]{2}$)");
+        matcher = pattern.matcher(keresettSzoveg);
+        if (matcher.find()) {
+            keresettSzoveg = keresettSzoveg.substring(2).trim();
+            if (validIdo(keresettSzoveg, false)) {
+                return "`foglalas_idopont_veg` LIKE '%" + keresettSzoveg + ":00%' ";
+            }
+        }
+        return "";
+    }
+
+    private void kereses() {
+        String keresettSzoveg = searchField.getText().trim();
         try {
-            loadTreeFromDB(searchWhere);
+            if (keresettSzoveg.isEmpty()) {
+                faBetolt();
+            } else {
+                faBetolt(getKeresesWhere(keresettSzoveg));
+            }
         } catch (SQLException sqle) {
             JOptionPane.showMessageDialog(
                     errorFrame,
                     "Sikertelen adatbázis kapcsolódás!\n" + sqle.getMessage(),
-                    "Hiba!", 
+                    "Hiba!",
                     JOptionPane.ERROR_MESSAGE);
         }
-        searching = false;
     }
 
-    private boolean validIdo(String idopont, boolean date) {
+    private boolean validIdo(String idopont, boolean datum) {
         try {
-            if (date) {
-                LocalDate.parse(idopont,ONLYDATE);
-            }else{
+            if (datum) {
+                LocalDate.parse(idopont, ONLYDATE);
+            } else {
                 LocalTime.parse(idopont, ONLYTIME);
             }
             return true;
@@ -515,32 +514,41 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
         return false;
     }
 
-    public void loadTreeFromDB() throws SQLException {
-        loadTreeFromDB("");
+    public void faBetolt() throws SQLException {
+        faBetolt("");
     }
 
-    public void loadTreeFromDB(String searchWhere) throws SQLException {
+    public void faBetolt(String keresesWhere) throws SQLException {
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("root");
         foglalasFaModel = new DefaultTreeModel(rootNode);
 
-        String todaysDateTime = FULLDATETIME.format(LocalDateTime.now());
+        String most = FULLDATETIME.format(LocalDateTime.now());
+        String alapWhere = "`foglalas_idopont_kezd`>'" + most + "'";
         String sql = "SELECT * FROM `asztal` WHERE `etterem_id`='" + etterem.getId() + "'";
         Statement asztalStmt = getStmt();
         ResultSet asztalRs = asztalStmt.executeQuery(sql);
         Asztal a;
         Foglalas f;
+        
         while (asztalRs.next()) {
             try {
-                a = new Asztal(asztalRs.getInt(3), etterem.getNev(), asztalRs.getInt(1), getTipus(asztalRs.getInt(2)));
-                DefaultMutableTreeNode asztalNode = new DefaultMutableTreeNode(a);
+                a = new Asztal(asztalRs.getInt("asztal_szam"), 
+                        etterem.getNev(), 
+                        asztalRs.getInt("asztal_id"), 
+                        getTipus(asztalRs.getInt("tipus_id"))
+                );
                 
-                String defaultWhere = "`foglalas_idopont_kezd`>'" + todaysDateTime + "'";
+                DefaultMutableTreeNode asztalNode = new DefaultMutableTreeNode(a);
+
+                
                 sql = "SELECT * "
                         + "FROM `foglalas` "
-                        + "WHERE " + (searchWhere.isEmpty() ? defaultWhere : searchWhere) +
-                        " AND `foglalas`.`asztal_id`='" + asztalRs.getInt(1) + "' ORDER BY `foglalas_idopont_kezd`";
+                        + "WHERE " + (keresesWhere.isEmpty() ? alapWhere : keresesWhere)
+                        + " AND `foglalas`.`asztal_id`='" + a.getAsztal_id()
+                        + "' ORDER BY `foglalas_idopont_kezd`";
                 Statement foglalasStmt = getStmt().getConnection().createStatement();
                 ResultSet foglalasRs = foglalasStmt.executeQuery(sql);
+                
                 boolean vanFoglalas = false;
                 while (foglalasRs.next()) {
                     vanFoglalas = true;
@@ -555,29 +563,33 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
                     asztalNode.add(foglalasNode);
                 }
                 foglalasRs.close();
-                
+
                 if (!vanFoglalas) {
                     asztalNode.add(new DefaultMutableTreeNode("Ehhez az asztalhoz nem tartoznak foglalások!"));
                 }
-                if (searching && !vanFoglalas) {
+                if (!keresesWhere.isEmpty() && !vanFoglalas) {
                 } else {
                     rootNode.add(asztalNode);
                 }
             } catch (IllegalArgumentException ex) {
-                JOptionPane.showMessageDialog(errorFrame, "Ennek nem kéne megtörténni!\n" + ex.getMessage(), "Hiba!", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(errorFrame, 
+                        "Ennek nem kéne megtörténni!\n" + ex.getMessage(), 
+                        "Hiba!", 
+                        JOptionPane.ERROR_MESSAGE
+                );
                 System.exit(0);
             }
         }
         asztalRs.close();
-        
+
         foglalasFa.setModel(foglalasFaModel);
         foglalasFa.expandRow(0);
         foglalasFa.setRootVisible(false);
     }
 
-    protected Tipus getTipus(int tipusId) throws SQLException {
+    public static Tipus getTipus(int tipusId) throws SQLException {
         String sql = "SELECT `tipus_ferohely` FROM `tipus` WHERE `tipus_id`='" + tipusId + "'";
-        Statement stmt = con.createStatement();
+        Statement stmt = getStmt().getConnection().createStatement();
         if (stmt.execute(sql)) {
             ResultSet rs = stmt.executeQuery(sql);
             rs.next();
@@ -600,7 +612,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
         try {
             EtteremValasztDialog evd = new EtteremValasztDialog(this, true);
             evd.setVisible(true);
-            loadTreeFromDB();
+            faBetolt();
             this.kivalasztottEtteremLabel.setText(etterem.getNev());
         } catch (SQLException sqle) {
             JOptionPane.showMessageDialog(errorFrame, "Sikertelen adatbázis kapcsolódás!\n" + sqle.getMessage(), "Hiba!", JOptionPane.ERROR_MESSAGE);

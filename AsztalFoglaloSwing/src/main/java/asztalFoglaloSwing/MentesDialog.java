@@ -39,11 +39,11 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
 
     private String utvonal;
     private DefaultComboBoxModel<Asztal> asztalokDCBM;
-    private AsztalFoglaloMainFrame mainFrame;
+    private Etterem etterem;
 
     public MentesDialog(AsztalFoglaloMainFrame parent, boolean modal) {
         super(parent, modal);
-        mainFrame = parent;
+        etterem = parent.getEtterem();
         asztalokDCBM = new DefaultComboBoxModel<Asztal>();
         initComponents();
         try {
@@ -202,9 +202,9 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
     private void exportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportActionPerformed
         try {
             int debug = 0;
-            String fajlNev = mainFrame.getEtterem().getNev() + "_Foglalasok_";
+            String fajlNev = this.etterem.getNev() + "_Foglalasok_";
             String foglalasSql = "SELECT * FROM `foglalas` WHERE `asztal_id`='0' AND `foglalas_idopont_kezd`>=";
-            String asztalSql = "SELECT * FROM `asztal` WHERE `etterem_id`='" + mainFrame.getEtterem().getId() + "'";
+            String asztalSql = "SELECT * FROM `asztal` WHERE `etterem_id`='" + this.etterem.getId() + "'";
             if (asztalCB.getSelectedIndex() != 0) {
                 Asztal a = (Asztal) asztalCB.getSelectedItem();
                 asztalSql += " `asztal_id`='" + a.getAsztal_id() + "'";
@@ -258,7 +258,7 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
                 ResultSet asztalRs = asztalStmt.executeQuery(asztalSql);
                 while (asztalRs.next()) {
 
-                    Paragraph asztalNev = new Paragraph(mainFrame.getEtterem().getNev() + "_" + asztalRs.getString("asztal_szam")).setFontSize(50f).setBold();
+                    Paragraph asztalNev = new Paragraph(this.etterem.getNev() + "_" + asztalRs.getString("asztal_szam")).setFontSize(50f).setBold();
                     doc.add(asztalNev);
                     Statement foglalasStmt = asztalStmt.getConnection().createStatement();
                     System.out.println(foglalasSql.replaceAll("(?:'\\d*')", "'" + asztalRs.getString("asztal_id") + "'"));
@@ -347,14 +347,14 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
     }
 
     private void loadAsztalokModel() throws SQLException {
-        String sql = "SELECT * FROM `asztal` WHERE `etterem_id`='" + mainFrame.getEtterem().getId() + "'";
+        String sql = "SELECT * FROM `asztal` WHERE `etterem_id`='" + this.etterem.getId() + "'";
         Statement stmt = AsztalFoglaloMainFrame.getStmt();
         ResultSet rs = stmt.executeQuery(sql);
         Asztal a = new Asztal("Válasszon asztalt");
         asztalokDCBM.addElement(a);
         while (rs.next()) {
 
-            a = new Asztal(rs.getInt("asztal_szam"), mainFrame.getEtterem().getNev(), rs.getInt("asztal_id"), mainFrame.getTipus(rs.getInt("tipus_id")));
+            a = new Asztal(rs.getInt("asztal_szam"), this.etterem.getNev(), rs.getInt("asztal_id"), AsztalFoglaloMainFrame.getTipus(rs.getInt("tipus_id")));
             asztalokDCBM.addElement(a);
         }
         rs.close();

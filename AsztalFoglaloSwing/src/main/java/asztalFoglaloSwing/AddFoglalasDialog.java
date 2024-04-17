@@ -23,10 +23,11 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
     private Foglalas eredeti;
     private boolean update, asztalBetoltve;
     private AsztalFoglaloMainFrame mainFrame;
+    private Etterem etterem;
 
     public AddFoglalasDialog(AsztalFoglaloMainFrame parent, boolean modal) {
         super(parent, modal);
-        this.mainFrame = parent;
+        this.etterem = parent.getEtterem();
         update = false;
         asztalokDCBM = new DefaultComboBoxModel<Asztal>();
         initComponents();
@@ -279,7 +280,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
         stmt.execute(sql);
         boolean success = stmt.getUpdateCount() == 1;
         if (success) {
-            mainFrame.loadTreeFromDB();
+            mainFrame.faBetolt();
         }
         return success;
     }
@@ -290,7 +291,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
         stmt.execute(sql);
         boolean success = stmt.getUpdateCount() == 1;
         if (success) {
-            mainFrame.loadTreeFromDB();
+            mainFrame.faBetolt();
         }
         return success;
     }
@@ -306,7 +307,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
     }
 
     private boolean nyitvatartasonKivuli(Foglalas ujFoglalas) {
-        String[][] nyitvatartas = mainFrame.getEtterem().getNyitvatartas();
+        String[][] nyitvatartas = this.etterem.getNyitvatartas();
         int nap = ujFoglalas.getFoglalas_idopont_kezd().getDayOfWeek().getValue() - 1;
         LocalTime idopontKezdTime = ujFoglalas.getFoglalas_idopont_kezd().toLocalTime(), idopontVegTime = ujFoglalas.getFoglalas_idopont_veg().toLocalTime();
         boolean b = (idopontKezdTime.isBefore(LocalTime.parse(nyitvatartas[nap][0], ONLYTIME)) || idopontVegTime.isAfter(LocalTime.parse(nyitvatartas[nap][1], ONLYTIME)));
@@ -314,13 +315,13 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
     }
 
     private void loadAsztalokModel() throws SQLException {
-        String sql = "SELECT * FROM `asztal` WHERE `etterem_id`='" + mainFrame.getEtterem().getId() + "'";
+        String sql = "SELECT * FROM `asztal` WHERE `etterem_id`='" + this.etterem.getId() + "'";
         Statement stmt = AsztalFoglaloMainFrame.getStmt();
         ResultSet rs = stmt.executeQuery(sql);
         Asztal a = new Asztal("Válasszon asztalt");
         asztalokDCBM.addElement(a);
         while (rs.next()) {
-            a = new Asztal(rs.getInt("asztal_szam"), mainFrame.getEtterem().getNev(), rs.getInt("asztal_id"), mainFrame.getTipus(rs.getInt("tipus_id")));
+            a = new Asztal(rs.getInt("asztal_szam"), this.etterem.getNev(), rs.getInt("asztal_id"), AsztalFoglaloMainFrame.getTipus(rs.getInt("tipus_id")));
             asztalokDCBM.addElement(a);
         }
         asztalokComboBox.setSelectedIndex(0);
