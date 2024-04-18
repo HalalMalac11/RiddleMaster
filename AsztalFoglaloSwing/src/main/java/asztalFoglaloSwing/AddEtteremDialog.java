@@ -43,6 +43,7 @@ public class AddEtteremDialog extends javax.swing.JDialog implements iDateFormat
         fillNyitvatartasMezok();
         feltoltesFrissiteshez();
         submit.setText("Frissítés");
+        this.update=true;
     }
 
     @SuppressWarnings("unchecked")
@@ -341,7 +342,9 @@ public class AddEtteremDialog extends javax.swing.JDialog implements iDateFormat
                         AsztalFoglaloMainFrame.getStmt().execute(sql);
                     }
                     mainFrame.setEtterem(new Etterem(this.etteremNev.getText().trim(), ujEtteremId, nyitvatartas));
-                    parent.etteremAdded = true;
+                    if (!update) {
+                        parent.etteremAdded = true;
+                    }
                     this.dispose();
 
                 } catch (SQLException ex) {

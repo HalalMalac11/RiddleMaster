@@ -449,20 +449,20 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
         matcher = pattern.matcher(keresettSzoveg);
         if (matcher.find()) {
             keresettSzoveg = keresettSzoveg.substring(1).trim();
-            return "`asztal_szam` = '" + keresettSzoveg.substring(1) + "' ";
+            return "`asztal_szam` = '" + keresettSzoveg + "' ";
         }
         pattern = Pattern.compile("(?:^#{1} ?\\d+$)");
         matcher = pattern.matcher(keresettSzoveg);
         if (matcher.find()) {
             keresettSzoveg = keresettSzoveg.substring(1).trim();
-            return "`foglalas_csoport_meret` = '" + keresettSzoveg.substring(1) + "' ";
+            return "`foglalas_csoport_meret` = '" + keresettSzoveg + "' ";
         }
 
         pattern = Pattern.compile("(?:^[0-9]{4}-[0-9]{2}-[0-9]{2}$)");
         matcher = pattern.matcher(keresettSzoveg);
         if (matcher.find()) {
             if (validIdo(keresettSzoveg, true)) {
-                return "`foglalas_idopont_kezd` LIKE '%" + keresettSzoveg + ":00%' ";
+                return "`foglalas_idopont_kezd` LIKE '%" + keresettSzoveg + "%' ";
             }
         }
         pattern = Pattern.compile("(?:^k: ?[0-9]{2}:[0-9]{2}$)");
@@ -524,7 +524,12 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
 
         String most = FULLDATETIME.format(LocalDateTime.now());
         String alapWhere = "`foglalas_idopont_kezd`>'" + most + "'";
-        String sql = "SELECT * FROM `asztal` WHERE `etterem_id`='" + etterem.getId() + "'";
+        boolean asztalKeres=false;
+        if(!keresesWhere.isEmpty()){
+            asztalKeres= keresesWhere.substring(1,2).equals("a");
+        }
+        String sql = "SELECT * FROM `asztal` WHERE `etterem_id`='" + etterem.getId() 
+                + "'"+(asztalKeres?keresesWhere:"");
         Statement asztalStmt = getStmt();
         ResultSet asztalRs = asztalStmt.executeQuery(sql);
         Asztal a;
@@ -543,7 +548,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
                 
                 sql = "SELECT * "
                         + "FROM `foglalas` "
-                        + "WHERE " + (keresesWhere.isEmpty() ? alapWhere : keresesWhere)
+                        + "WHERE " + (keresesWhere.isEmpty()||asztalKeres ? alapWhere : keresesWhere)
                         + " AND `foglalas`.`asztal_id`='" + a.getAsztal_id()
                         + "' ORDER BY `foglalas_idopont_kezd`";
                 Statement foglalasStmt = getStmt().getConnection().createStatement();
