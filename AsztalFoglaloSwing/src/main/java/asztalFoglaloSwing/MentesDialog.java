@@ -261,7 +261,6 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
                     Paragraph asztalNev = new Paragraph(this.etterem.getNev() + "_" + asztalRs.getString("asztal_szam")).setFontSize(50f).setBold();
                     doc.add(asztalNev);
                     Statement foglalasStmt = asztalStmt.getConnection().createStatement();
-                    System.out.println(foglalasSql.replaceAll("(?:'\\d*')", "'" + asztalRs.getString("asztal_id") + "'"));
                     foglalasSql = foglalasSql.replaceAll("(?:'\\d*')", "'" + asztalRs.getString("asztal_id") + "'");
                     ResultSet foglalasRs = foglalasStmt.executeQuery(foglalasSql);
 
@@ -297,7 +296,7 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
 
                 File keszFajl = new File(vegsoUtvonal);
                 Desktop.getDesktop().open(keszFajl);
-
+                this.dispose();
             }
         } catch (FileNotFoundException fnfe) {
             JOptionPane.showMessageDialog(new JFrame(), "A fájlt nem sikerült létrehozni!", "Hiba!", JOptionPane.ERROR_MESSAGE);

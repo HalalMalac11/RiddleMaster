@@ -299,7 +299,6 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
 
     public boolean lefoglalhato(Foglalas ujFoglalas) throws SQLException {
         String sql = "SELECT `foglalas_id`,`asztal_id` FROM `foglalas` WHERE (((`foglalas_idopont_veg`>'" + ujFoglalas.getIdopontKezdString(true) + "' AND `foglalas_idopont_kezd`<'" + ujFoglalas.getIdopontVegString(true) + "') OR (`foglalas_idopont_kezd`='" + ujFoglalas.getIdopontKezdString(true) + "')) OR (`foglalas_idopont_kezd`<'" + ujFoglalas.getIdopontVegString(true) + "' AND `foglalas_idopont_kezd`>'" + ujFoglalas.getIdopontKezdString(true) + "')) AND `asztal_id`='" + ujFoglalas.getAsztal().getAsztal_id() + "' AND `foglalas`.`foglalas_id`!='" + ujFoglalas.getFoglalas_id() + "';";
-        System.out.println(sql);
         Statement stmt = AsztalFoglaloMainFrame.getStmt();
         ResultSet rs = stmt.executeQuery(sql);
         boolean foglalhato = !rs.next();
