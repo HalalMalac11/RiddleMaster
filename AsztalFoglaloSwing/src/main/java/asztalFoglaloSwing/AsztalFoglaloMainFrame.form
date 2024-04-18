@@ -11,6 +11,9 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="exportPdf">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/pdf.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Ment&#xe9;s PDF-be"/>
               </Properties>
               <Events>
@@ -19,6 +22,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="kilepes">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/exit.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Kil&#xe9;p&#xe9;s"/>
               </Properties>
               <Events>
@@ -34,11 +40,17 @@
           <SubComponents>
             <Menu class="javax.swing.JMenu" name="etteremAlMenu">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/restaurantIcon.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="&#xc9;tterem"/>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JMenuItem" name="etteremValt">
                   <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/images/restaurantChangeIcon.png"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="&#xc9;tterem v&#xe1;lt&#xe1;sa"/>
                   </Properties>
                   <Events>
@@ -47,6 +59,9 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="etteremSzerkeszt">
                   <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/images/restaurantEdit.png"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="&#xc9;tterem szerkeszt&#xe9;se"/>
                   </Properties>
                   <Events>
@@ -55,6 +70,9 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="etteremTorol">
                   <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/images/restaurantDelete.png"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="&#xc9;tterem t&#xf6;rl&#xe9;se"/>
                   </Properties>
                   <Events>
@@ -65,11 +83,17 @@
             </Menu>
             <Menu class="javax.swing.JMenu" name="asztalMenu">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/table.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Asztal"/>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JMenuItem" name="ujAsztal">
                   <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/images/tableAdd.png"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="&#xda;j asztal"/>
                   </Properties>
                   <Events>
@@ -78,6 +102,9 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="asztalTorol">
                   <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/images/tableDelete.png"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Asztal t&#xf6;rl&#xe9;se"/>
                   </Properties>
                   <Events>
@@ -86,6 +113,9 @@
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="ujTipus">
                   <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/images/chair.png"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="&#xda;j t&#xed;pus"/>
                   </Properties>
                   <Events>

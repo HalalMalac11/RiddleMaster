@@ -44,6 +44,8 @@ public class AddEtteremDialog extends javax.swing.JDialog implements iDateFormat
         feltoltesFrissiteshez();
         submit.setText("Frissítés");
         this.update=true;
+        this.setTitle("Étterem szerkesztése");
+        cimLabel.setText("Étterem szerkesztése");
     }
 
     @SuppressWarnings("unchecked")

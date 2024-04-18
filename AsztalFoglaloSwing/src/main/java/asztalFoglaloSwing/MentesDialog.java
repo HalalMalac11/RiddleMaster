@@ -207,7 +207,7 @@ public class MentesDialog extends javax.swing.JDialog implements iDateFormatting
             String asztalSql = "SELECT * FROM `asztal` WHERE `etterem_id`='" + this.etterem.getId() + "'";
             if (asztalCB.getSelectedIndex() != 0) {
                 Asztal a = (Asztal) asztalCB.getSelectedItem();
-                asztalSql += " `asztal_id`='" + a.getAsztal_id() + "'";
+                asztalSql += " AND `asztal_id`='" + a.getAsztal_id() + "'";
             }
 
             int datumKezdStatus = inputEllenorzes(datumKezd);

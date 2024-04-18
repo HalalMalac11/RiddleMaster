@@ -24,8 +24,8 @@ import java.time.format.DateTimeParseException;
 
 public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateFormatting {
 
-    private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
-    //private final String dbURL = "jdbc:mysql://localhost:3306/asztalfoglalo", dbUser = "foglalas_kezelo", dbPass = "4N6jqhr7dnwCACRI";
+    //private final String dbURL="jdbc:mysql://nebet.hu/c31kissM_db",dbUser="c31kissM",dbPass="ogqgtWAALB8!b";
+    private final String dbURL = "jdbc:mysql://localhost:3306/asztalfoglalo", dbUser = "foglalas_kezelo", dbPass = "4N6jqhr7dnwCACRI";
     protected DefaultTreeModel foglalasFaModel;
     private JFrame errorFrame = new JFrame();
     private Etterem etterem;
@@ -124,6 +124,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
 
         fajlMenu.setText("Fájl");
 
+        exportPdf.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pdf.png"))); // NOI18N
         exportPdf.setText("Mentés PDF-be");
         exportPdf.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -132,6 +133,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
         });
         fajlMenu.add(exportPdf);
 
+        kilepes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/exit.png"))); // NOI18N
         kilepes.setText("Kilépés");
         kilepes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -144,8 +146,10 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
 
         etteremMenu.setText("Étterem");
 
+        etteremAlMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/restaurantIcon.png"))); // NOI18N
         etteremAlMenu.setText("Étterem");
 
+        etteremValt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/restaurantChangeIcon.png"))); // NOI18N
         etteremValt.setText("Étterem váltása");
         etteremValt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -154,6 +158,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
         });
         etteremAlMenu.add(etteremValt);
 
+        etteremSzerkeszt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/restaurantEdit.png"))); // NOI18N
         etteremSzerkeszt.setText("Étterem szerkesztése");
         etteremSzerkeszt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -162,6 +167,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
         });
         etteremAlMenu.add(etteremSzerkeszt);
 
+        etteremTorol.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/restaurantDelete.png"))); // NOI18N
         etteremTorol.setText("Étterem törlése");
         etteremTorol.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -172,8 +178,10 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
 
         etteremMenu.add(etteremAlMenu);
 
+        asztalMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/table.png"))); // NOI18N
         asztalMenu.setText("Asztal");
 
+        ujAsztal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/tableAdd.png"))); // NOI18N
         ujAsztal.setText("Új asztal");
         ujAsztal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -182,6 +190,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
         });
         asztalMenu.add(ujAsztal);
 
+        asztalTorol.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/tableDelete.png"))); // NOI18N
         asztalTorol.setText("Asztal törlése");
         asztalTorol.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -190,6 +199,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
         });
         asztalMenu.add(asztalTorol);
 
+        ujTipus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/chair.png"))); // NOI18N
         ujTipus.setText("Új típus");
         ujTipus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
