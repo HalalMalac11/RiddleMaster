@@ -27,6 +27,7 @@ public class AddFoglalasDialog extends javax.swing.JDialog implements iDateForma
 
     public AddFoglalasDialog(AsztalFoglaloMainFrame parent, boolean modal) {
         super(parent, modal);
+        mainFrame=parent;
         this.etterem = parent.getEtterem();
         update = false;
         asztalokDCBM = new DefaultComboBoxModel<Asztal>();
