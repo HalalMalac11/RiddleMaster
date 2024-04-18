@@ -529,7 +529,7 @@ public class AsztalFoglaloMainFrame extends javax.swing.JFrame implements iDateF
             asztalKeres= keresesWhere.substring(1,2).equals("a");
         }
         String sql = "SELECT * FROM `asztal` WHERE `etterem_id`='" + etterem.getId() 
-                + "'"+(asztalKeres?keresesWhere:"");
+                + "'"+(asztalKeres?" AND "+keresesWhere:"");
         Statement asztalStmt = getStmt();
         ResultSet asztalRs = asztalStmt.executeQuery(sql);
         Asztal a;
